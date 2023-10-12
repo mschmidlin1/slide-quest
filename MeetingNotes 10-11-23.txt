@@ -1,0 +1,3 @@
+
+power up blocks to give you abilities (like destroying an obstacle)
+portals (one pink to another pink)
