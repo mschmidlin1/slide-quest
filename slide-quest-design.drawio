@@ -1,0 +1,28 @@
+<mxfile host="app.diagrams.net" modified="2023-10-16T00:59:15.395Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36" etag="gRNyjB-A0kbHDr2rMmGT" version="22.0.4" type="device">
+  <diagram name="Page-1" id="b-wnC3-EDF5hsH262Hjv">
+    <mxGraphModel dx="1562" dy="830" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="gyS_Smq8A8Iw5I0Klqke-1" value="&lt;b&gt;Direction (Emum)&lt;/b&gt;:&lt;br&gt;LEFT&lt;br&gt;RIGHT&lt;br&gt;UP&lt;br&gt;DOWN" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="10" y="40" width="120" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="gyS_Smq8A8Iw5I0Klqke-2" value="&lt;b&gt;CellType (Emum)&lt;/b&gt;:&lt;br&gt;EMPTY&lt;br&gt;BLOCKED&lt;br&gt;PLAYER&lt;br&gt;PORTAL&lt;br&gt;POWER_UP" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="180" y="40" width="120" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="gyS_Smq8A8Iw5I0Klqke-3" value="&lt;b&gt;Grid (Class)&lt;/b&gt;:&lt;br&gt;dimensions&lt;br&gt;_grid *np.array*&lt;br&gt;AddBlock(Point)&lt;br&gt;PutPlayer(Point)&lt;br&gt;AddPortal(Point)&lt;br&gt;AddPower_Up(Point)&lt;br&gt;&lt;br&gt;NextBlock(Direction)" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="180" y="150" width="140" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="gyS_Smq8A8Iw5I0Klqke-4" value="&lt;b&gt;Point (NamedTuple)&lt;/b&gt;:&lt;br&gt;x, y" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="330" y="50" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="gyS_Smq8A8Iw5I0Klqke-5" value="&lt;b&gt;SQGame (Class)&lt;/b&gt;:&lt;br&gt;grid *Grid*&lt;br&gt;&lt;br&gt;GenerateBoard()&lt;br&gt;MovePlayer(Direction)&lt;br&gt;DrawBoard()&lt;br&gt;" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="180" y="380" width="140" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="gyS_Smq8A8Iw5I0Klqke-6" value="&lt;b&gt;GameLevel (Emum)&lt;/b&gt;:&lt;br&gt;BEGINNER&lt;br&gt;INTERMEDIATE&lt;br&gt;HARD" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="470" y="30" width="120" height="100" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
