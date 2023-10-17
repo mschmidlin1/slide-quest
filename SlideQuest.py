@@ -1,8 +1,8 @@
 
 
 
-
+game = SQGame()
 
 
 while True:
-    continue
+    game.DrawBoard()
