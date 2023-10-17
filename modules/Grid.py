@@ -30,8 +30,12 @@ class Grid:
     @log
     def NextBlock(self, direction: Direction):
         """
-        Based on where the player is in the grid, it uses the `direction` and returns the type non empty block you encounter next.
+        Based on where the player is in the grid, it uses the `direction` and returns the type of non empty block you encounter next.
+        It 
         """
+        if not self.isGridReady():
+            raise ValueError("Grid play board is not set up.")
+
         if direction==Direction.DOWN:
             pass
         elif direction==Direction.LEFT:
@@ -41,5 +45,32 @@ class Grid:
         elif direction==Direction.UP:
             pass
 
-    # @log
-    # def _next_
+    @log
+    def _next_occupied_cell(self, array):
+        """
+        Takes in an array and iterates through the array until the next non empty cell. 
+
+        Returns (`CellType`, `int`) where the int is the index of the next non empty cell.
+
+        If all cells are emtpy `(CellType.BORDER, len(array))` is returned.
+        """
+        for i, cell in enumerate(array):
+            if cell!=CellType.EMPTY:
+                return cell, i
+        return CellType.BORDER, len(array)
+    
+    @log
+    def isGridReady(self):
+        return self.playerPresent() and self.blockerPresent()
+    @log
+    def playerPresent(self):
+        """
+        Checks if the player position is set somewhere in the Grid.
+        """
+        return np.sum(np.isin(self.grid, [CellType.PLAYER])) > 0
+    @log
+    def blockerPresent(self):
+        """
+        Checks if the player position is set somewhere in the Grid.
+        """
+        return np.sum(np.isin(self.grid, [CellType.BLOCKED])) > 0
