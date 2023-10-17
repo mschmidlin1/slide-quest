@@ -26,5 +26,6 @@ class CellType (Enum):
     EMPTY = 0
     BLOCKED = 1
     PLAYER = 2
-    PORTAL = 3
-    POWER_UP = 4
+    GOAL = 3
+    PORTAL = 4
+    POWER_UP = 5
