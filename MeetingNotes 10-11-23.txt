@@ -1,6 +1,9 @@
 ## Main Thought Process
 
-##### The general idea is of a top-down / isometric 2D game where you control a character either Up or Down, Left or Right with the intention of reaching a goal. The map is comprised of a grid of tiles with the dimensions of 32 x 32 pixels that total up to 26 tiles (832 pixels). These tiles will range from navigable tiles, ice tiles, blocks, walls, player spawn point, and goal. The goal is to understand the ice-sliding mechanic to reach the goal either within a time frame or allotted moves.
+##### The general idea is of a top-down / isometric 2D game where you control a character either Up or Down,
+ Left or Right with the intention of reaching a goal. 
+ The map is comprised of a grid of tiles with the dimensions of 32 x 32 pixels that total up to 26 tiles (832 pixels). 
+ These tiles will range from navigable tiles, ice tiles, blocks, walls, player spawn point, and goal. The goal is to understand the ice-sliding mechanic to reach the goal either within a time frame or allotted moves.
 
  ```
 						┌───────────────────────────┬─┬────┐
@@ -35,6 +38,14 @@ FFa0a840
 FF708028
 FF405010
 ```
+
+### Map Design:
+
+Beginner -> 12 x 12
+Medium -> 16 x 16
+Hard -> 24 x 24
+Advanced -> 32 x 32
+
 
 ### Future Ideas: 
 
