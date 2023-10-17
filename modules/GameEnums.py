@@ -29,3 +29,4 @@ class CellType(Enum):
     GOAL = 3
     PORTAL = 4
     POWER_UP = 5
+    BORDER = 6
