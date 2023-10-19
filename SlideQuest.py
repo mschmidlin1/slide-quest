@@ -1,5 +1,6 @@
 import pygame
 from modules.configs import *
+from modules.sprites import *
 import sys
 
 class Game:
@@ -17,8 +18,9 @@ class Game:
 
     def new(self):
         #initialization of all variables for new games
+        self.all_sprites = pygame.sprite.Group()
+        self.player = Player(self, 0, 0)
         pass
-
 
     def run(self):
         #game loop - set self.playing to False to end game
@@ -43,6 +45,7 @@ class Game:
     def draw(self):
         self.screen.fill(BGCOLOR)
         self.draw_grid()
+        self.all_sprites.draw(self.screen)
         pygame.display.flip()
 
 
@@ -51,7 +54,7 @@ class Game:
         sys.exit()
 
     def update(self):
-        pass
+        self.all_sprites.update()
 
 g = Game()
 
