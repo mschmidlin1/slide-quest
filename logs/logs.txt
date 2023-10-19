@@ -1,1 +1,5 @@
 2023-10-16 20:22:42,285 - DEBUG - Running function test_func
+2023-10-18 20:41:47,900 - DEBUG - Running function Grid
+2023-10-18 20:41:47,901 - DEBUG - Running function __init__
+2023-10-18 20:41:57,364 - DEBUG - Running function Grid
+2023-10-18 20:41:57,364 - DEBUG - Running function __init__

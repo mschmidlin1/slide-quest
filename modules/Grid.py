@@ -1,16 +1,21 @@
-from GameEnums import CellType, Direction
+import sys
+import os
+#necessary to import things from the modules folder
+sys.path.append(os.getcwd())
+
+from modules.GameEnums import CellType, Direction
 import numpy as np
-from Point import Point
+from modules.Point import Point
 
 cell_dtype = np.dtype(CellType)
-from modules.logging import set_logger, log
+from modules.my_logging import set_logger, log
 
 set_logger()
 
 @log
 class Grid:
     """
-    A class that keeps track of the slide quest board and what cells are filled with what items. 
+    A class that keeps track of the slide quest board and what cells are filled with what `CellType`. 
     """
     @log
     def __init__(self, grid_dims):
@@ -20,57 +25,133 @@ class Grid:
         self.grid_dims = grid_dims
         self.grid = np.empty(grid_dims, dtype=cell_dtype)
         self.grid.fill(CellType.EMPTY)
+
+        self.goal_pos = None
     @log
-    def UpdateCell(self, location: Point, cell_type: CellType):
+    def UpdateCell(self, location: Point, cell_type: CellType) -> None:
         """
         Adds a cell of type `type` to the coordinates `location` in the grid.
         """
-        self.grid[location.x, location.y] = cell_type
-
+        self.grid[location] = cell_type
     @log
-    def NextBlock(self, direction: Direction):
+    def NextBlock(self, direction: Direction) -> (CellType, Point):
         """
         Based on where the player is in the grid, it uses the `direction` and returns the type of non empty block you encounter next.
-        It 
+        Returns (CellType, Point) where the type is the next type and Point is it's location.
         """
         if not self.isGridReady():
             raise ValueError("Grid play board is not set up.")
 
-        if direction==Direction.DOWN:
-            pass
-        elif direction==Direction.LEFT:
-            pass
-        elif direction==Direction.RIGHT:
-            pass
-        elif direction==Direction.UP:
-            pass
+        self.player_position = self.Find_Player_Pos()
 
+        if direction==Direction.DOWN:
+            #get column player is in
+            col = self.grid[:,self.player_position.x]
+            #get the index in the column (moving downward) that has the next non empty cell
+            cell_type, idx = self._next_occupied_cell(col, self.player_position.y+1)
+            next_cell_pos = Point(self.player_position.x, idx)
+            return cell_type, next_cell_pos
+        elif direction==Direction.UP:
+            #get column player is in, the [::-1] reverses the direction of the array
+            col = self.grid[:,self.player_position.x][::-1]
+            #get the index in the column (moving upward) that has the next non empty cell, the len(col) - pos is to reverse the position in the array 
+            cell_type, idx = self._next_occupied_cell(col, len(col) - self.player_position.y+1)
+            next_cell_pos = Point(self.player_position.x, len(col) - idx)
+            return cell_type, next_cell_pos
+        elif direction==Direction.RIGHT:
+            #get row the player is in
+            row = self.grid[self.player_position.y,:]
+            #get the index in the row (moving right) that has the next non empty cell
+            cell_type, idx = self._next_occupied_cell(row, self.player_position.x+1)
+            next_cell_pos = Point(idx, self.player_position.y)
+            return cell_type, next_cell_pos
+        elif direction==Direction.LEFT:
+            #get row the player is in, the [::-1] reverses the direction of the array
+            row = self.grid[self.player_position.y,:][::-1]
+            #get the index in the row (moving right) that has the next non empty cell, the len(row) - pos is to reverse the position in the array 
+            cell_type, idx = self._next_occupied_cell(row, len(row) - self.player_position.x+1)
+            next_cell_pos = Point(len(row) - idx, self.player_position.y)
+            return cell_type, next_cell_pos
+        else:
+            raise NotImplementedError(f"Direction type {direction} not implemented.")
     @log
-    def _next_occupied_cell(self, array):
+    def _next_occupied_cell(self, array, start: int) -> (CellType, int):
         """
-        Takes in an array and iterates through the array until the next non empty cell. 
+        Takes in an array and iterates through the array until the next non empty cell.
+
+        Starts at the index `start`. This should generally refer to the player location+1. 
 
         Returns (`CellType`, `int`) where the int is the index of the next non empty cell.
 
         If all cells are emtpy `(CellType.BORDER, len(array))` is returned.
         """
-        for i, cell in enumerate(array):
+        for i in range(start, len(array)):
+            cell = array[i]
             if cell!=CellType.EMPTY:
                 return cell, i
         return CellType.BORDER, len(array)
-    
     @log
-    def isGridReady(self):
-        return self.playerPresent() and self.blockerPresent()
+    def isGridReady(self) -> bool:
+        """
+        Checks if there is a player and at least one blocker in the Grid.
+        """
+        return self.playerPresent() and self.blockerPresent() and self.goalPresent()
     @log
-    def playerPresent(self):
+    def playerPresent(self) -> bool:
         """
         Checks if the player position is set somewhere in the Grid.
         """
         return np.sum(np.isin(self.grid, [CellType.PLAYER])) > 0
     @log
-    def blockerPresent(self):
+    def blockerPresent(self) -> bool:
         """
-        Checks if the player position is set somewhere in the Grid.
+        Checks if at least one blocker is set somewhere in the Grid.
         """
         return np.sum(np.isin(self.grid, [CellType.BLOCKED])) > 0
+    @log
+    def goalPresent(self) -> bool:
+        """
+        Checks if the goal is set somewhere in the Grid.
+        """
+        return np.sum(np.isin(self.grid, [CellType.GOAL])) > 0
+    @log
+    def Find_Player_Pos(self) -> Point:
+        """
+        Finds the player position in the Grid.
+        """
+        return Point(*np.where(self.grid==CellType.PLAYER)[0])
+    @log
+    def Find_Goal_Pos(self) -> Point:
+        """
+        Finds the goal position in the Grid.
+        """
+        return Point(*np.where(self.grid==CellType.GOAL)[0])
+    @log
+    def MovePlayer(self, direction: Direction) -> Point:
+        """
+        Returns the new location of the player.
+        Also updates the grid with the new player location.
+        """
+        cell_type, location = self.NextBlock(direction)
+
+        if cell_type==CellType.BLOCKED or cell_type==CellType.BORDER:
+            if direction == Direction.DOWN:
+                new_player_pos = Point(location.x, location.y-1)
+            elif direction == Direction.UP:
+                new_player_pos = Point(location.x, location.y+1)
+            elif direction == Direction.RIGHT:
+                new_player_pos = Point(location.x-1, location.y)
+            elif direction == Direction.LEFT:
+                new_player_pos = Point(location.x+1, location.y)
+            else:
+                raise NotImplementedError(f"Direction type {direction} not implemented.")
+            self.UpdateCell(self.Find_Player_Pos(), CellType.EMPTY)
+            self.UpdateCell(new_player_pos, CellType.PLAYER)
+            return new_player_pos
+        
+        elif cell_type==CellType.GOAL:
+            self.UpdateCell(self.Find_Player_Pos(), CellType.EMPTY)
+            self.UpdateCell(location, CellType.PLAYER)
+            return location 
+        else:
+            raise NotImplementedError(f"Cell type of {cell_type} not implemented for 'MovePlayer' method.")

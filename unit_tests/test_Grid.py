@@ -1,13 +1,18 @@
 import unittest
+import sys
+import os
+#necessary to import things from the modules folder
+sys.path.append(os.getcwd())
 from modules.Grid import Grid
 
 class TestGrid(unittest.TestCase):
 
-    def test_multiply(self):
-        self.assertEqual(multiply(1, 2), 1*2)
+    def test_init(self):
+        my_grid = Grid((4, 4))
+        print(my_grid.grid)
+        self.assertEqual(my_grid.grid.shape, (4, 4))
 
-    def test_add(self):
-        self.assertEqual(add(1, 2), 1+2)
+
 
 
 if __name__ == '__main__':
