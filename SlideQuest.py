@@ -2,6 +2,8 @@ import pygame
 from modules.configs import *
 from modules.sprites import *
 import sys
+from modules.Grid import *
+from modules.GameEnums import *
 
 class Game:
     """
@@ -31,6 +33,9 @@ class Game:
         #initialization of all variables for new games
         self.all_sprites = pygame.sprite.Group()
         self.player = Player(self, 0, 0)
+        self.player = Player(self, 0, 5)
+        self.player = Player(self, 5, 0)
+        self.player = Player(self, 5, 5)
         pass
 
     
@@ -47,16 +52,27 @@ class Game:
             self.update()
             self.draw()
 
-    
     def events(self):
         """
         This is where we can implement player movement as well as menu interactions such as starting the game or quiting 
         """
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.quit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == Direction.LEFT.value:
+                    print("LEFT")
+                if event.key == Direction.RIGHT.value:
+                    print("RIGHT")
+                    pass
+                if event.key == Direction.UP.value:
+                    print("UP")
+                    pass
+                if event.key == Direction.DOWN.value:
+                    print("DOWN")
+                    pass
 
-    
     def draw_grid(self):
         """
         This is just temporary for showing the dimensions of the grid until we can start implementing sprites more regularly
@@ -88,8 +104,7 @@ class Game:
         """
         self.all_sprites.update()
 
-g = Game()
-
-while True:
+if __name__=="__main__":
+    g = Game()
     g.new()
     g.run()
