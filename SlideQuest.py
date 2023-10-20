@@ -1,15 +1,23 @@
 import pygame
+import sys
 from modules.configs import *
 from modules.sprites import *
-import sys
-from modules.Grid import *
+from modules.GameBoard import *
 from modules.GameEnums import *
+from modules.Point import Point
 
 class Game:
     """
     Basic initialization of pygame necessary variables
     """
     def __init__(self):
+        self.gameboard = GameBoard(GAMEBOARD_DIMENSIONS)
+        self.gameboard.UpdateCell(Point(0, 0), CellType.PLAYER)
+
+        self.gameboard.UpdateCell(Point(5, 0), CellType.BLOCKED)
+        self.gameboard.UpdateCell(Point(4, 1), CellType.GOAL)
+        
+
         pygame.init()
         pygame.display.set_caption(TITLE)
 
@@ -33,9 +41,6 @@ class Game:
         #initialization of all variables for new games
         self.all_sprites = pygame.sprite.Group()
         self.player = Player(self, 0, 0)
-        self.player = Player(self, 0, 5)
-        self.player = Player(self, 5, 0)
-        self.player = Player(self, 5, 5)
         pass
 
     
@@ -62,16 +67,13 @@ class Game:
                 self.quit()
             if event.type == pygame.KEYDOWN:
                 if event.key == Direction.LEFT.value:
-                    print("LEFT")
+                    print(self.gameboard.MovePlayer(Direction.LEFT))
                 if event.key == Direction.RIGHT.value:
-                    print("RIGHT")
-                    pass
+                    print(self.gameboard.MovePlayer(Direction.RIGHT))
                 if event.key == Direction.UP.value:
-                    print("UP")
-                    pass
+                    print(self.gameboard.MovePlayer(Direction.UP))
                 if event.key == Direction.DOWN.value:
-                    print("DOWN")
-                    pass
+                    print(self.gameboard.MovePlayer(Direction.DOWN))
 
     def draw_grid(self):
         """
