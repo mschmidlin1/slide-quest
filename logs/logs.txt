@@ -2570,3 +2570,31 @@
 2023-10-19 22:12:43,326 - DEBUG - Running function UpdateCell
 2023-10-19 22:12:43,326 - DEBUG - Running function UpdateCell
 2023-10-19 22:12:43,326 - DEBUG - Running function goalPresent
+2023-10-19 22:15:01,913 - DEBUG - Running function GameBoard
+2023-10-19 22:15:01,913 - DEBUG - Running function __init__
+2023-10-19 22:15:01,913 - DEBUG - Running function UpdateCell
+2023-10-19 22:15:01,913 - DEBUG - Running function UpdateCell
+2023-10-19 22:15:01,913 - DEBUG - Running function UpdateCell
+2023-10-19 22:15:01,913 - DEBUG - Running function goalPresent
+2023-10-19 22:15:35,957 - DEBUG - Running function GameBoard
+2023-10-19 22:15:35,957 - DEBUG - Running function __init__
+2023-10-19 22:15:35,957 - DEBUG - Running function UpdateCell
+2023-10-19 22:15:35,957 - DEBUG - Running function UpdateCell
+2023-10-19 22:15:35,957 - DEBUG - Running function UpdateCell
+2023-10-19 22:15:35,957 - DEBUG - Running function goalPresent
+2023-10-19 22:15:53,872 - DEBUG - Running function GameBoard
+2023-10-19 22:15:53,872 - DEBUG - Running function __init__
+2023-10-19 22:15:53,872 - DEBUG - Running function UpdateCell
+2023-10-19 22:15:53,872 - DEBUG - Running function UpdateCell
+2023-10-19 22:15:53,872 - DEBUG - Running function UpdateCell
+2023-10-19 22:15:53,873 - DEBUG - Running function goalPresent
+2023-10-19 22:15:55,682 - DEBUG - Running function MovePlayer
+2023-10-19 22:15:55,682 - DEBUG - Running function NextBlock
+2023-10-19 22:15:55,683 - DEBUG - Running function isGameBoardReady
+2023-10-19 22:15:55,683 - DEBUG - Running function playerPresent
+2023-10-19 22:15:55,683 - DEBUG - Running function blockerPresent
+2023-10-19 22:15:55,683 - DEBUG - Running function goalPresent
+2023-10-19 22:15:55,683 - DEBUG - Running function Find_Player_Pos
+2023-10-19 22:15:55,683 - ERROR - Exception raised in Find_Player_Pos. exception: Point.__new__() missing 1 required positional argument: 'y'
+2023-10-19 22:15:55,683 - ERROR - Exception raised in NextBlock. exception: Point.__new__() missing 1 required positional argument: 'y'
+2023-10-19 22:15:55,683 - ERROR - Exception raised in MovePlayer. exception: Point.__new__() missing 1 required positional argument: 'y'
