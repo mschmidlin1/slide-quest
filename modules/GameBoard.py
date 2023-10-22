@@ -32,13 +32,17 @@ class GameBoard:
         """
         Adds a cell of type `type` to the coordinates `location` in the gameboard.
         """
+        #see if cell is occupied
+
         if cell_type==CellType.BORDER:
             raise ValueError("CellType.BORDER not settable on game board.")
         if cell_type==CellType.GOAL and self.goalPresent():
             raise ValueError("CellType.GOAL is already set on board.")
+        if cell_type==CellType.GOAL:
+            self.goal_pos = location
         self.gameboard[location] = cell_type
     @log
-    def NextBlock(self, direction: Direction) -> (CellType, Point):
+    def NextBlock(self, direction: Direction) -> tuple:
         """
         Based on where the player is in the gameboard, it uses the `direction` and returns the type of non empty block you encounter next.
         Returns (CellType, Point) where the type is the next type and Point is it's location.
@@ -59,8 +63,8 @@ class GameBoard:
             #get column player is in, the [::-1] reverses the direction of the array
             col = self.gameboard[:,self.player_position.x][::-1]
             #get the index in the column (moving upward) that has the next non empty cell, the len(col) - pos is to reverse the position in the array 
-            cell_type, idx = self._next_occupied_cell(col, len(col) - self.player_position.y+1)
-            next_cell_pos = Point(self.player_position.x, len(col) - idx)
+            cell_type, idx = self._next_occupied_cell(col, len(col) - self.player_position.y)
+            next_cell_pos = Point(self.player_position.x, len(col) - idx-1)
             return cell_type, next_cell_pos
         elif direction==Direction.RIGHT:
             #get row the player is in
@@ -73,8 +77,8 @@ class GameBoard:
             #get row the player is in, the [::-1] reverses the direction of the array
             row = self.gameboard[self.player_position.y,:][::-1]
             #get the index in the row (moving right) that has the next non empty cell, the len(row) - pos is to reverse the position in the array 
-            cell_type, idx = self._next_occupied_cell(row, len(row) - self.player_position.x+1)
-            next_cell_pos = Point(len(row) - idx, self.player_position.y)
+            cell_type, idx = self._next_occupied_cell(row, len(row) - self.player_position.x)
+            next_cell_pos = Point(len(row) - idx-1, self.player_position.y)
             return cell_type, next_cell_pos
         else:
             raise NotImplementedError(f"Direction type {direction} not implemented.")
@@ -123,13 +127,23 @@ class GameBoard:
         """
         Finds the player position in the GameBoard.
         """
-        return Point(*np.where(self.gameboard==CellType.PLAYER)[0])
+        if not self.playerPresent():
+            raise ValueError(f"Player not on board yet.")
+        row_indexs, col_indexs = np.where(self.gameboard==CellType.PLAYER)
+        if row_indexs.__len__()>1 or col_indexs.__len__()>1:
+            raise ValueError(f"More than one location found for CellType.PLAYER.")
+        return Point(col_indexs[0], row_indexs[0])
     @log
     def Find_Goal_Pos(self) -> Point:
         """
         Finds the goal position in the GameBoard.
         """
-        return Point(*np.where(self.gameboard==CellType.GOAL)[0])
+        if not self.goalPresent():
+            raise ValueError(f"Goal not on board yet.")
+        row_indexs, col_indexs = np.where(self.gameboard==CellType.GOAL)
+        if row_indexs.__len__()>1 or col_indexs.__len__()>1:
+            raise ValueError(f"More than one location found for CellType.GOAL.")
+        return Point(row_indexs[0], col_indexs[0])
     @log
     def MovePlayer(self, direction: Direction) -> Point:
         """
