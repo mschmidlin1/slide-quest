@@ -24,7 +24,7 @@ class GameBoard:
         """
         self.gameboard_dims = gameboard_dims
         self.gameboard = np.empty(gameboard_dims, dtype=cell_dtype)
-        self.gameboard.fill(CellType.EMPTY)
+        self.gameboard.fill(CellType.ICE)
 
         self.goal_pos = None
     @log
@@ -95,7 +95,7 @@ class GameBoard:
         """
         for i in range(start, len(array)):
             cell = array[i]
-            if cell!=CellType.EMPTY:
+            if cell!=CellType.ICE:
                 return cell, i
         return CellType.BORDER, len(array)
     @log
@@ -115,7 +115,7 @@ class GameBoard:
         """
         Checks if at least one blocker is set somewhere in the GameBoard.
         """
-        return np.sum(np.isin(self.gameboard, [CellType.BLOCKED])) > 0
+        return np.sum(np.isin(self.gameboard, [CellType.BLOCK])) > 0
     @log
     def goalPresent(self) -> bool:
         """
@@ -152,7 +152,7 @@ class GameBoard:
         """
         cell_type, location = self.NextBlock(direction)
 
-        if cell_type==CellType.BLOCKED or cell_type==CellType.BORDER:
+        if cell_type==CellType.BLOCK or cell_type==CellType.BORDER:
             if direction == Direction.DOWN:
                 new_player_pos = Point(location.x, location.y-1)
             elif direction == Direction.UP:
@@ -163,12 +163,12 @@ class GameBoard:
                 new_player_pos = Point(location.x+1, location.y)
             else:
                 raise NotImplementedError(f"Direction type {direction} not implemented.")
-            self.UpdateCell(self.Find_Player_Pos(), CellType.EMPTY)
+            self.UpdateCell(self.Find_Player_Pos(), CellType.ICE)
             self.UpdateCell(new_player_pos, CellType.PLAYER)
             return new_player_pos
         
         elif cell_type==CellType.GOAL:
-            self.UpdateCell(self.Find_Player_Pos(), CellType.EMPTY)
+            self.UpdateCell(self.Find_Player_Pos(), CellType.ICE)
             self.UpdateCell(location, CellType.PLAYER)
             return location 
         else:

@@ -14,7 +14,7 @@ class Game:
         self.gameboard = GameBoard(GAMEBOARD_DIMENSIONS)
         self.gameboard.UpdateCell(Point(0, 0), CellType.PLAYER)
 
-        self.gameboard.UpdateCell(Point(5, 0), CellType.BLOCKED)
+        self.gameboard.UpdateCell(Point(5, 0), CellType.BLOCK)
         self.gameboard.UpdateCell(Point(4, 1), CellType.GOAL)
         
 
@@ -40,7 +40,13 @@ class Game:
         """
         #initialization of all variables for new games
         self.all_sprites = pygame.sprite.Group()
+        self.walls = pygame.sprite.Group()
+
         self.player = Player(self, 0, 0)
+        #block object to create from the '1' block
+        Wall(self, 1, 0)
+        Wall(self, 2, 0)
+        Wall(self, 3, 0)
         pass
 
     
@@ -105,6 +111,7 @@ class Game:
         if we want to implement procedural generation like lunatics
         """
         self.all_sprites.update()
+        
 
 if __name__=="__main__":
     g = Game()

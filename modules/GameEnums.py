@@ -23,10 +23,11 @@ class CellType(Enum):
     """
     An Enum class that represents the type of cell to fill the grid.
     """
-    EMPTY = 0
-    BLOCKED = 1
+    ICE = 0
+    BLOCK = 1
     PLAYER = 2
     GOAL = 3
     PORTAL = 4
     POWER_UP = 5
     BORDER = 6
+    GROUND = 7
