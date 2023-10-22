@@ -11,6 +11,8 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.x = x
         self.y = y
+        self.rect.x = x * CELLSIZE
+        self.rect.y = y * CELLSIZE
 
 class Wall(pygame.sprite.Sprite):
     def __init__(self, game, x, y):
@@ -22,6 +24,8 @@ class Wall(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.x = x
         self.y = y
+        self.rect.x = x * CELLSIZE
+        self.rect.y = y * CELLSIZE
 
     def update(self):
         self.rect.x = self.x * CELLSIZE

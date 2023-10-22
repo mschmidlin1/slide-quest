@@ -30,7 +30,11 @@ class Game:
         """
         load map --- this is where we can implement a text file with the exact desgn we want
         """
-        pass
+        path = 'levels\\beginner\\map1.txt'
+        self.map_data = []
+        with open(path, 'rt') as f:
+            for line in f:
+                self.map_data.append(line)
 
     
     def new(self):
@@ -42,14 +46,15 @@ class Game:
         self.all_sprites = pygame.sprite.Group()
         self.walls = pygame.sprite.Group()
 
-        self.player = Player(self, 0, 0)
-        #block object to create from the '1' block
-        Wall(self, 1, 0)
-        Wall(self, 2, 0)
-        Wall(self, 3, 0)
-        pass
+        #this will start the game with the map_data information. We can easily add if statements to add new features like goal etc.
 
-    
+        for row, cells in enumerate(self.map_data):
+            for col, cell in enumerate(cells):
+                if cell == '1':
+                    Wall(self, col, row)
+                if cell == '2':
+                    self.player = Player(self, col, row)
+
     def run(self):
         """
         This is the main function for running all other events, updates and draw calls this is called within the main while loop
@@ -95,8 +100,8 @@ class Game:
         Draw the sprite groups to the screen as well as handle the screen updating (pygame.display.flip())
         """
         self.screen.fill(BGCOLOR)
-        self.draw_grid()
         self.all_sprites.draw(self.screen)
+        self.draw_grid()
         #this is for updating the entire sceen instead of pygame.display.update which only updates a portion
         pygame.display.flip()
 
