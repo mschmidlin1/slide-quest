@@ -40,7 +40,7 @@ class GameBoard:
             raise ValueError("CellType.GOAL is already set on board.")
         if cell_type==CellType.GOAL:
             self.goal_pos = location
-        self.gameboard[location] = cell_type
+        self.gameboard[location.y, location.x] = cell_type
     @log
     def NextBlock(self, direction: Direction) -> tuple:
         """
@@ -143,7 +143,7 @@ class GameBoard:
         row_indexs, col_indexs = np.where(self.gameboard==CellType.GOAL)
         if row_indexs.__len__()>1 or col_indexs.__len__()>1:
             raise ValueError(f"More than one location found for CellType.GOAL.")
-        return Point(row_indexs[0], col_indexs[0])
+        return Point(col_indexs[0], row_indexs[0])
     @log
     def MovePlayer(self, direction: Direction) -> Point:
         """

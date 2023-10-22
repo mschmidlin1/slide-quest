@@ -36,7 +36,7 @@ class Test_UpdateCell(unittest.TestCase):
     def test_UpdateGoalLoc_2_6(self):
         my_gameboard = GameBoard((10, 10))
         my_gameboard.UpdateCell(Point(2, 6), CellType.GOAL)
-        self.assertEqual(my_gameboard.gameboard[2, 6], CellType.GOAL)
+        self.assertEqual(my_gameboard.gameboard[6, 2], CellType.GOAL)
     
     def test_UpdateBorder(self):
         my_gameboard = GameBoard((10, 10))
