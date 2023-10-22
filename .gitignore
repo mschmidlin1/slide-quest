@@ -2,3 +2,4 @@ slide-quest-env
 logs
 __pycache__
 .vscode
+**/__pycache__/

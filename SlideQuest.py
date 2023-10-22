@@ -1,13 +1,23 @@
 import pygame
+import sys
 from modules.configs import *
 from modules.sprites import *
-import sys
+from modules.GameBoard import *
+from modules.GameEnums import *
+from modules.Point import Point
 
 class Game:
     """
     Basic initialization of pygame necessary variables
     """
     def __init__(self):
+        self.gameboard = GameBoard(GAMEBOARD_DIMENSIONS)
+        self.gameboard.UpdateCell(Point(0, 0), CellType.PLAYER)
+
+        self.gameboard.UpdateCell(Point(5, 0), CellType.BLOCKED)
+        self.gameboard.UpdateCell(Point(4, 1), CellType.GOAL)
+        
+
         pygame.init()
         pygame.display.set_caption(TITLE)
 
@@ -47,16 +57,24 @@ class Game:
             self.update()
             self.draw()
 
-    
     def events(self):
         """
         This is where we can implement player movement as well as menu interactions such as starting the game or quiting 
         """
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.quit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == Direction.LEFT.value:
+                    print(self.gameboard.MovePlayer(Direction.LEFT))
+                if event.key == Direction.RIGHT.value:
+                    print(self.gameboard.MovePlayer(Direction.RIGHT))
+                if event.key == Direction.UP.value:
+                    print(self.gameboard.MovePlayer(Direction.UP))
+                if event.key == Direction.DOWN.value:
+                    print(self.gameboard.MovePlayer(Direction.DOWN))
 
-    
     def draw_grid(self):
         """
         This is just temporary for showing the dimensions of the grid until we can start implementing sprites more regularly
@@ -88,8 +106,7 @@ class Game:
         """
         self.all_sprites.update()
 
-g = Game()
-
-while True:
+if __name__=="__main__":
+    g = Game()
     g.new()
     g.run()
