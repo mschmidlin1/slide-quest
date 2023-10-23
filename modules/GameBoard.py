@@ -3,7 +3,7 @@ import os
 #necessary to import things from the modules folder
 sys.path.append(os.getcwd())
 
-from modules.GameEnums import CellType, Direction
+from modules.GameEnums import CellType, Direction, Str_to_CellType_vector_func
 import numpy as np
 from modules.Point import Point
 
@@ -173,3 +173,39 @@ class GameBoard:
             return location 
         else:
             raise NotImplementedError(f"Cell type of {cell_type} not implemented for 'MovePlayer' method.")
+    @log
+    def __str__(self) -> str:
+        """
+        Returns the GameBaord as a string with each row separated by '\\n' and each cell separated by ','.
+        """
+        return '\n'.join([','.join(list(map(str, row))) for row in self.gameboard])
+    @log
+    def SaveBoard(self, filename) -> None:
+        """
+        Saves the current state of the gameboard to a csv file.
+        """
+        with open(filename, mode='w', newline='') as file:
+            file.write(str(self))
+    
+    @log
+    def ReadBoard(self, filename) -> None:
+        """
+        Reads the celltypes from a file and loads them into the GameBoard object.
+        """
+        with open(filename, mode='r', newline='') as f:
+            all_lines = f.readlines()
+
+        string_cells = []
+        for line in all_lines:
+            line = line.strip()
+            string_cells.append(line.split(','))
+        string_cells = np.array(string_cells)
+        self.gameboard = Str_to_CellType_vector_func(string_cells)
+        self.gameboard = self.gameboard.astype(cell_dtype)
+
+
+if __name__=="__main__":
+    my_gameboard = GameBoard((10, 10))
+    # my_gameboard.SaveBoard("test.csv")
+    my_gameboard.ReadBoard("test.csv")
+    print(my_gameboard)

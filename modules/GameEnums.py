@@ -1,5 +1,6 @@
 from enum import Enum
 import pygame
+import numpy as np
 
 class Direction(Enum):
     """
@@ -31,3 +32,11 @@ class CellType(Enum):
     POWER_UP = 5
     BORDER = 6
     GROUND = 7
+
+
+Str_to_CellType = {str(enum_member): enum_member for enum_member in CellType}
+
+def Str_to_CellType_func(string):
+    return Str_to_CellType[string]
+
+Str_to_CellType_vector_func = np.vectorize(Str_to_CellType_func)
