@@ -35,7 +35,6 @@ class Player(pygame.sprite.Sprite):
             move.normalize_ip()
             move = move * self.speed
             self.position += move   
-            print(self.moving)
             self.moving = True
         
         self.rect = list(int(v * CELLSIZE) for v in self.position)
