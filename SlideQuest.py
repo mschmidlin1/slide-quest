@@ -12,29 +12,12 @@ class Game:
     """
     def __init__(self):
         self.gameboard = GameBoard(GAMEBOARD_DIMENSIONS)
-        self.gameboard.UpdateCell(Point(0, 0), CellType.PLAYER)
-
-        self.gameboard.UpdateCell(Point(5, 0), CellType.BLOCK)
-        self.gameboard.UpdateCell(Point(4, 1), CellType.GOAL)
         
-
         pygame.init()
         pygame.display.set_caption(TITLE)
 
         self.screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         self.clock = pygame.time.Clock()
-        self.load_data()
-
-
-    def load_data(self):
-        """
-        load map --- this is where we can implement a text file with the exact desgn we want
-        """
-        path = 'levels\\beginner\\map1.txt'
-        self.map_data = []
-        with open(path, 'rt') as f:
-            for line in f:
-                self.map_data.append(line)
 
     
     def new(self):
@@ -42,24 +25,27 @@ class Game:
         Creation of all sprites, this is needed to initlaize all sprites given their (x, y) values and passed a state of the game object
         This is run before the run function to make sure everything is initialized
         """
-        #initialization of all variables for new games
+
         self.all_sprites = pygame.sprite.Group()
-        self.walls = pygame.sprite.Group()
 
-        #this will start the game with the map_data information. We can easily add if statements to add new features like goal etc.
-
-        for row, cells in enumerate(self.map_data):
+        #implementation of GameBoard to initialize screen with all sprites from map csv
+        for row, cells in enumerate(self.gameboard.ReadBoard("test copy.csv")):
             for col, cell in enumerate(cells):
-                if cell == '1':
+                if cell == 'CellType.BLOCK':
                     Wall(self, col, row)
-                if cell == '2':
+                if cell == 'CellType.PLAYER':
                     self.player = Player(self, col, row)
+                if cell == 'CellType.GOAL':
+                    Goal(self, col, row)
+                if cell == 'CellType.ICE':
+                    Ice(self, col, row)
+                
 
     def run(self):
         """
         This is the main function for running all other events, updates and draw calls this is called within the main while loop
         """
-        
+
         self.playing = True
         #game loop - set self.playing to False to end game
 
@@ -78,18 +64,19 @@ class Game:
                 self.quit()
             if event.type == pygame.KEYDOWN:
                 if event.key == Direction.LEFT.value:
-                    print(self.gameboard.MovePlayer(Direction.LEFT))
+                    self.gameboard.MovePlayer(Direction.LEFT)
                 if event.key == Direction.RIGHT.value:
-                    print(self.gameboard.MovePlayer(Direction.RIGHT))
+                    self.gameboard.MovePlayer(Direction.RIGHT)
                 if event.key == Direction.UP.value:
-                    print(self.gameboard.MovePlayer(Direction.UP))
+                    self.gameboard.MovePlayer(Direction.UP)
                 if event.key == Direction.DOWN.value:
-                    print(self.gameboard.MovePlayer(Direction.DOWN))
+                    self.gameboard.MovePlayer(Direction.DOWN)
 
     def draw_grid(self):
         """
         This is just temporary for showing the dimensions of the grid until we can start implementing sprites more regularly
         """
+
         for x in range(0, WINDOW_WIDTH, CELL_WIDTH):
             pygame.draw.line(self.screen, WHITE, (x, 0), (x, WINDOW_HEIGHT))
         for y in range(0, WINDOW_HEIGHT, CELL_HEIGHT):
@@ -99,12 +86,12 @@ class Game:
         """
         Draw the sprite groups to the screen as well as handle the screen updating (pygame.display.flip())
         """
+
         self.screen.fill(BGCOLOR)
         self.all_sprites.draw(self.screen)
         self.draw_grid()
         #this is for updating the entire sceen instead of pygame.display.update which only updates a portion
         pygame.display.flip()
-
 
     def quit(self):
         pygame.quit()
@@ -115,6 +102,7 @@ class Game:
         updating sprites specifically (moreso for movement) and will handle player screen camera movement 
         if we want to implement procedural generation like lunatics
         """
+
         self.all_sprites.update()
         
 

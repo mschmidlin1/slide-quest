@@ -170,6 +170,7 @@ class GameBoard:
         elif cell_type==CellType.GOAL:
             self.UpdateCell(self.Find_Player_Pos(), CellType.ICE)
             self.UpdateCell(location, CellType.PLAYER)
+            print("WINNER")
             return location 
         else:
             raise NotImplementedError(f"Cell type of {cell_type} not implemented for 'MovePlayer' method.")
@@ -203,9 +204,12 @@ class GameBoard:
         self.gameboard = Str_to_CellType_vector_func(string_cells)
         self.gameboard = self.gameboard.astype(cell_dtype)
 
+        return string_cells
 
 if __name__=="__main__":
-    my_gameboard = GameBoard((10, 10))
+    # my_gameboard = GameBoard((10, 10))
     # my_gameboard.SaveBoard("test.csv")
-    my_gameboard.ReadBoard("test.csv")
-    print(my_gameboard)
+    # my_gameboard.ReadBoard("test.csv")
+    my_gameboard = GameBoard((26, 26))
+    my_gameboard.ReadBoard("test copy.csv")
+    # print(my_gameboard)
