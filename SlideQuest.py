@@ -5,6 +5,7 @@ from modules.sprites import *
 from modules.GameBoard import *
 from modules.GameEnums import *
 from modules.Point import Point
+from modules.MapConverter import update_map
 
 class Game:
     """
@@ -19,25 +20,6 @@ class Game:
         self.screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         self.clock = pygame.time.Clock()
 
-    def convert_digit_to_cell_type(self, char):
-        try:
-            char = int(char)
-            if char in range(26):
-                return CellType(char)
-        except ValueError:
-            pass
-        return None
-
-    def convert_line_to_strings(self, line):
-        string_values = []
-        for char in line.strip():
-            cell_type = self.convert_digit_to_cell_type(char)
-            if cell_type is not None:
-                string_values.append(str(cell_type))
-            else:
-                print(f"Invalid digit: {char}")
-        return string_values
-
     def new(self):
         """
         Creation of all sprites, this is needed to initlaize all sprites given their (x, y) values and passed a state of the game object
@@ -48,12 +30,8 @@ class Game:
         self.player = pygame.sprite.LayeredUpdates()
         self.ice = pygame.sprite.LayeredUpdates()
 
-        with open('levels\\beginner\\map.txt', 'r') as file:
-            with open('levels\\beginner\\map.csv', 'w') as f:
-                for line in file:
-                    string_list = self.convert_line_to_strings(line)
-                    string_str = ','.join(string_list) + '\n'
-                    f.write(string_str)
+        #Update map.csv
+        update_map()
 
         #implementation of GameBoard to initialize screen with all sprites from map csv
         for row, cells in enumerate(self.gameboard.ReadBoard('levels\\beginner\\map.csv')):
