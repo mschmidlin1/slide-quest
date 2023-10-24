@@ -2,6 +2,7 @@ import pygame
 from modules.configs import *
 
 class Player(pygame.sprite.Sprite):
+    layer = 1
     def __init__(self, game, x, y):
         self.groups = game.all_sprites
         pygame.sprite.Sprite.__init__(self, self.groups)
@@ -27,6 +28,7 @@ class Player(pygame.sprite.Sprite):
         print(self.position)
 
 class Wall(pygame.sprite.Sprite):
+    layer = 0
     def __init__(self, game, x, y):
         self.groups = game.all_sprites
         pygame.sprite.Sprite.__init__(self, self.groups)
@@ -41,6 +43,7 @@ class Wall(pygame.sprite.Sprite):
         
 
 class Goal(pygame.sprite.Sprite):
+    layer = 0
     def __init__(self, game, x, y):
         self.groups = game.all_sprites
         pygame.sprite.Sprite.__init__(self, self.groups)
@@ -54,6 +57,7 @@ class Goal(pygame.sprite.Sprite):
         self.rect.y = y * CELLSIZE
 
 class Ice(pygame.sprite.Sprite):
+    layer = 0
     def __init__(self, game, x, y):
         self.groups = game.all_sprites
         pygame.sprite.Sprite.__init__(self, self.groups)

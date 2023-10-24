@@ -26,7 +26,9 @@ class Game:
         This is run before the run function to make sure everything is initialized
         """
 
-        self.all_sprites = pygame.sprite.Group()
+        self.all_sprites = pygame.sprite.LayeredUpdates()
+        self.player = pygame.sprite.LayeredUpdates()
+        self.ice = pygame.sprite.LayeredUpdates()
 
         #implementation of GameBoard to initialize screen with all sprites from map csv
         for row, cells in enumerate(self.gameboard.ReadBoard("test copy.csv")):
@@ -64,13 +66,17 @@ class Game:
                 self.quit()
             if event.type == pygame.KEYDOWN:
                 if event.key == Direction.LEFT.value:
-                    self.gameboard.MovePlayer(Direction.LEFT)
+                    self.player.x, self.player.y = self.gameboard.MovePlayer(Direction.LEFT)
+                    print(self.player.x, self.player.y)
                 if event.key == Direction.RIGHT.value:
-                    self.gameboard.MovePlayer(Direction.RIGHT)
+                    self.player.x, self.player.y = self.gameboard.MovePlayer(Direction.RIGHT)
+                    print(self.player.x, self.player.y)
                 if event.key == Direction.UP.value:
-                    self.gameboard.MovePlayer(Direction.UP)
+                    self.player.x, self.player.y = self.gameboard.MovePlayer(Direction.UP)
+                    print(self.player.x, self.player.y)
                 if event.key == Direction.DOWN.value:
-                    self.gameboard.MovePlayer(Direction.DOWN)
+                    self.player.x, self.player.y = self.gameboard.MovePlayer(Direction.DOWN)
+                    print(self.player.x, self.player.y)
 
     def draw_grid(self):
         """

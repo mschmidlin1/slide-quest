@@ -171,6 +171,7 @@ class GameBoard:
             self.UpdateCell(self.Find_Player_Pos(), CellType.ICE)
             self.UpdateCell(location, CellType.PLAYER)
             print("WINNER")
+            print(location)
             return location 
         else:
             raise NotImplementedError(f"Cell type of {cell_type} not implemented for 'MovePlayer' method.")
