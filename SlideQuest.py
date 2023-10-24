@@ -41,7 +41,7 @@ class Game:
                     Goal(self, col, row)
                 if cell == 'CellType.ICE':
                     Ice(self, col, row)
-                
+
 
     def run(self):
         """
@@ -65,18 +65,19 @@ class Game:
             if event.type == pygame.QUIT:
                 self.quit()
             if event.type == pygame.KEYDOWN:
-                if event.key == Direction.LEFT.value:
-                    self.player.x, self.player.y = self.gameboard.MovePlayer(Direction.LEFT)
-                    print(self.player.x, self.player.y)
-                if event.key == Direction.RIGHT.value:
-                    self.player.x, self.player.y = self.gameboard.MovePlayer(Direction.RIGHT)
-                    print(self.player.x, self.player.y)
-                if event.key == Direction.UP.value:
-                    self.player.x, self.player.y = self.gameboard.MovePlayer(Direction.UP)
-                    print(self.player.x, self.player.y)
-                if event.key == Direction.DOWN.value:
-                    self.player.x, self.player.y = self.gameboard.MovePlayer(Direction.DOWN)
-                    print(self.player.x, self.player.y)
+                if event.key == Direction.LEFT.value and not self.player.moving:
+                    # self.player.x, self.player.y = self.gameboard.MovePlayer(Direction.LEFT)
+                    self.player.set_target(self.gameboard.MovePlayer(Direction.LEFT))
+                    print(self.player.position)
+                if event.key == Direction.RIGHT.value and not self.player.moving:
+                    self.player.set_target(self.gameboard.MovePlayer(Direction.RIGHT))
+                    print(self.player.position)
+                if event.key == Direction.UP.value and not self.player.moving:
+                    self.player.set_target(self.gameboard.MovePlayer(Direction.UP))
+                    print(self.player.position)
+                if event.key == Direction.DOWN.value and not self.player.moving:
+                    self.player.set_target(self.gameboard.MovePlayer(Direction.DOWN))
+                    print(self.player.position)
 
     def draw_grid(self):
         """

@@ -1,5 +1,6 @@
 import pygame
 from modules.configs import *
+from modules.GameBoard import *
 
 class Player(pygame.sprite.Sprite):
     layer = 1
@@ -7,23 +8,38 @@ class Player(pygame.sprite.Sprite):
         self.groups = game.all_sprites
         pygame.sprite.Sprite.__init__(self, self.groups)
         self.game = game 
+        self.speed = .2
         self.image = pygame.Surface((CELLSIZE, CELLSIZE))
         self.image.fill(PLAYER_COLOR)
         self.rect = self.image.get_rect()
+        self.moving = False
         self.x = x
         self.y = y
         self.rect.x = x * CELLSIZE
         self.rect.y = y * CELLSIZE
-        self.position = (x, y)
+        self.position = pygame.Vector2(x, y)
+        self.set_target(self.position)
+
+    def set_target(self, pos) -> pygame.Vector2:
+        self.target = self.target_x, self.target_y = pygame.Vector2(pos)     
+        return self.target
 
     def update(self):
-        self.rect.x = self.x * CELLSIZE
-        self.rect.y = self.y * CELLSIZE
+        move = self.target - self.position
+        move_length = move.length()
 
-    def move(self, dx=0, dy=0):
-        self.x += dx
-        self.y += dy
-    
+        if move_length < self.speed:
+            self.position = self.target
+            self.moving = False
+        elif move_length != 0:
+            move.normalize_ip()
+            move = move * self.speed
+            self.position += move   
+            print(self.moving)
+            self.moving = True
+        
+        self.rect = list(int(v * CELLSIZE) for v in self.position)
+
     def updatePlayerPosition(self):
         print(self.position)
 
