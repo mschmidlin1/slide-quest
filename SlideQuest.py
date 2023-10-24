@@ -42,7 +42,6 @@ class Game:
                 if cell == 'CellType.ICE':
                     Ice(self, col, row)
 
-
     def run(self):
         """
         This is the main function for running all other events, updates and draw calls this is called within the main while loop
@@ -68,16 +67,12 @@ class Game:
                 if event.key == Direction.LEFT.value and not self.player.moving:
                     # self.player.x, self.player.y = self.gameboard.MovePlayer(Direction.LEFT)
                     self.player.set_target(self.gameboard.MovePlayer(Direction.LEFT))
-                    print(self.player.position)
                 if event.key == Direction.RIGHT.value and not self.player.moving:
                     self.player.set_target(self.gameboard.MovePlayer(Direction.RIGHT))
-                    print(self.player.position)
                 if event.key == Direction.UP.value and not self.player.moving:
                     self.player.set_target(self.gameboard.MovePlayer(Direction.UP))
-                    print(self.player.position)
                 if event.key == Direction.DOWN.value and not self.player.moving:
                     self.player.set_target(self.gameboard.MovePlayer(Direction.DOWN))
-                    print(self.player.position)
 
     def draw_grid(self):
         """

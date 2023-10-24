@@ -8,7 +8,7 @@ class Player(pygame.sprite.Sprite):
         self.groups = game.all_sprites
         pygame.sprite.Sprite.__init__(self, self.groups)
         self.game = game 
-        self.speed = .2
+        self.speed = PLAYER_SPEED
         self.image = pygame.Surface((CELLSIZE, CELLSIZE))
         self.image.fill(PLAYER_COLOR)
         self.rect = self.image.get_rect()
