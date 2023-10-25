@@ -42,7 +42,7 @@ class Player(pygame.sprite.Sprite):
     def updatePlayerPosition(self):
         print(self.position)
 
-class Wall(pygame.sprite.Sprite):
+class Block(pygame.sprite.Sprite):
     layer = 0
     def __init__(self, game, x, y):
         self.groups = game.all_sprites
