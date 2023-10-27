@@ -24,10 +24,16 @@ class Test__init__(unittest.TestCase):
 class Test_UpdateCell(unittest.TestCase):
     def test_UpdatePlayerLoc_0_0(self):
         my_gameboard = GameBoard((10, 10))
-        my_gameboard.UpdateCell(Point(0, 0), CellType.PLAYER)
-        self.assertEqual(my_gameboard.gameboard[0, 0], CellType.PLAYER)
+        with self.assertRaises(ValueError):
+            my_gameboard.UpdateCell(Point(0, 0), CellType.PLAYER)
         self.assertEqual(my_gameboard.gameboard[0, 1], CellType.ICE)
 
+    def test_UpdateBlock_onplayer(self):
+        my_gameboard = GameBoard((10, 10))
+        my_gameboard.SetPlayerPos(Point(0, 0))
+        with self.assertRaises(ValueError):
+            my_gameboard.UpdateCell(Point(0, 0), CellType.BLOCK)
+    
     def test_UpdateBlockedLoc_1_1(self):
         my_gameboard = GameBoard((10, 10))
         my_gameboard.UpdateCell(Point(1, 1), CellType.BLOCK)
@@ -52,7 +58,7 @@ class Test_UpdateCell(unittest.TestCase):
 class Test_playerPresent(unittest.TestCase):
     def test_playerPresent_withPlayer(self):
         my_gameboard = GameBoard((10, 10))
-        my_gameboard.UpdateCell(Point(0, 0), CellType.PLAYER)
+        my_gameboard.SetPlayerPos(Point(0, 0))
         self.assertTrue(my_gameboard.playerPresent())
 
     def test_playerPresent_withoutPlayer(self):
@@ -86,41 +92,31 @@ class Test_goalPresent(unittest.TestCase):
         my_gameboard = GameBoard((10, 10))
         self.assertFalse(my_gameboard.goalPresent())
 
-class Test_Find_Player_Pos(unittest.TestCase):
-    def test_Find_Player_Pos_0_0(self):
+class Test_SetPlayerPos(unittest.TestCase):
+    def test_SetPlayerPos_None(self):
         my_gameboard = GameBoard((10, 10))
-        my_gameboard.UpdateCell(Point(0, 0), CellType.PLAYER)
-        pos = my_gameboard.Find_Player_Pos()
-        self.assertEqual(pos, Point(0, 0))
+        self.assertEqual(my_gameboard.player_pos, None)
+    def test_SetPlayerPos_0_0(self):
+        my_gameboard = GameBoard((10, 10))
+        my_gameboard.SetPlayerPos(Point(0, 0))
+        self.assertEqual(my_gameboard.player_pos, Point(0, 0))
 
-    def test_Find_Player_Pos_1_3(self):
+    def test_SetPlayerPos_on_block(self):
         my_gameboard = GameBoard((10, 10))
-        my_gameboard.UpdateCell(Point(1, 3), CellType.PLAYER)
-        pos = my_gameboard.Find_Player_Pos()
-        self.assertEqual(pos, Point(1, 3))
-
-    def test_Find_Player_Pos_withoutPlayer(self):
-        my_gameboard = GameBoard((10, 10))
+        my_gameboard.UpdateCell(Point(0, 0), CellType.BLOCK)
         with self.assertRaises(ValueError):
-            my_gameboard.Find_Player_Pos()
-    def test_Find_Player_Pos_2_9(self):
-        my_gameboard = GameBoard((10, 10))
-        cell_dtype = np.dtype(CellType)
-        my_gameboard.gameboard = np.array([
-            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
-            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
-            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
-            [CellType.ICE, CellType.ICE, CellType.BLOCK, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
-            [CellType.BLOCK, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
-            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
-            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
-            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
-            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
-            [CellType.ICE, CellType.ICE, CellType.PLAYER, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.GOAL,],     
-        ], dtype=cell_dtype)
-        pos = my_gameboard.Find_Player_Pos()
-        self.assertEqual(pos, Point(x=2, y=9))
+            my_gameboard.SetPlayerPos(Point(0, 0))
 
+class Test_GetPlayerPos(unittest.TestCase):
+    def test_GetPlayerPos_present(self):
+        my_gameboard = GameBoard((10, 10))
+        my_gameboard.SetPlayerPos(Point(0, 0))
+        self.assertEqual(my_gameboard.GetPlayerPos(), Point(0, 0))
+    
+    def test_GetPlayerPos_NOTpresent(self):
+        my_gameboard = GameBoard((10, 10))
+        with self.assertRaises(RuntimeError):
+            my_gameboard.GetPlayerPos()
 
 class Test_Find_Goal_Pos(unittest.TestCase):
     def test_Find_Goal_Pos_0_0(self):
@@ -188,19 +184,19 @@ class Test_isGameBoardReady(unittest.TestCase):
         my_gameboard = GameBoard((10, 10))
         my_gameboard.UpdateCell(Point(0, 0), CellType.GOAL)
         my_gameboard.UpdateCell(Point(1,1), CellType.BLOCK)
-        my_gameboard.UpdateCell(Point(2,2), CellType.PLAYER)
+        my_gameboard.SetPlayerPos(Point(2,2))
         self.assertTrue(my_gameboard.isGameBoardReady())
 
     def test_isGameBoardReady_missing_goal(self):
         my_gameboard = GameBoard((10, 10))
         my_gameboard.UpdateCell(Point(1,1), CellType.BLOCK)
-        my_gameboard.UpdateCell(Point(2,2), CellType.PLAYER)
+        my_gameboard.SetPlayerPos(Point(2,2))
         self.assertFalse(my_gameboard.isGameBoardReady())
 
     def test_isGameBoardReady_missing_blocked(self):
         my_gameboard = GameBoard((10, 10))
         my_gameboard.UpdateCell(Point(1,1), CellType.GOAL)
-        my_gameboard.UpdateCell(Point(2,2), CellType.PLAYER)
+        my_gameboard.SetPlayerPos(Point(2,2))
         self.assertFalse(my_gameboard.isGameBoardReady())
     def test_isGameBoardReady_missing_player(self):
         my_gameboard = GameBoard((10, 10))
@@ -217,7 +213,7 @@ class Test_NextBlock(unittest.TestCase):
         my_gameboard = GameBoard((10, 10))
         cell_dtype = np.dtype(CellType)
         my_gameboard.gameboard = np.array([
-            [CellType.PLAYER, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
@@ -228,7 +224,7 @@ class Test_NextBlock(unittest.TestCase):
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.GOAL,],     
         ], dtype=cell_dtype)
-
+        my_gameboard.player_pos = Point(0, 0)
         cell_type, loc = my_gameboard.NextBlock(Direction.DOWN)
         self.assertEqual(cell_type, CellType.BLOCK)
         self.assertEqual(loc, Point(x=0, y=4))
@@ -247,9 +243,9 @@ class Test_NextBlock(unittest.TestCase):
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
-            [CellType.ICE, CellType.ICE, CellType.PLAYER, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.GOAL,],     
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.GOAL,],     
         ], dtype=cell_dtype)
-
+        my_gameboard.SetPlayerPos(Point(2, 9))
         cell_type, loc = my_gameboard.NextBlock(Direction.UP)
         self.assertEqual(cell_type, CellType.BLOCK)
         self.assertEqual(loc, Point(x=2, y=3))
@@ -267,9 +263,9 @@ class Test_NextBlock(unittest.TestCase):
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
-            [CellType.ICE, CellType.ICE, CellType.PLAYER, CellType.BLOCK, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.GOAL,],     
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.BLOCK, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.GOAL,],     
         ], dtype=cell_dtype)
-
+        my_gameboard.SetPlayerPos(Point(2, 9))
         cell_type, loc = my_gameboard.NextBlock(Direction.RIGHT)
         self.assertEqual(cell_type, CellType.BLOCK)
         self.assertEqual(loc, Point(x=3, y=9))
@@ -287,9 +283,9 @@ class Test_NextBlock(unittest.TestCase):
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
-            [CellType.BLOCK, CellType.ICE, CellType.PLAYER, CellType.BLOCK, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.GOAL,],     
+            [CellType.BLOCK, CellType.ICE, CellType.ICE, CellType.BLOCK, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.GOAL,],     
         ], dtype=cell_dtype)
-
+        my_gameboard.SetPlayerPos(Point(2, 9))
         cell_type, loc = my_gameboard.NextBlock(Direction.LEFT)
         self.assertEqual(cell_type, CellType.BLOCK)
         self.assertEqual(loc, Point(x=0, y=9))
@@ -303,13 +299,13 @@ class Test_NextBlock(unittest.TestCase):
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
-            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.PLAYER, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.GOAL,],     
         ], dtype=cell_dtype)
-
+        my_gameboard.SetPlayerPos(Point(4, 5))
         cell_type, loc = my_gameboard.NextBlock(Direction.UP)
         self.assertEqual(cell_type, CellType.BORDER)
         self.assertEqual(loc, Point(x=4, y=-1))
@@ -323,13 +319,13 @@ class Test_NextBlock(unittest.TestCase):
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
-            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.PLAYER, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.GOAL,],     
         ], dtype=cell_dtype)
-
+        my_gameboard.SetPlayerPos(Point(5, 5))
         cell_type, loc = my_gameboard.NextBlock(Direction.DOWN)
         self.assertEqual(cell_type, CellType.BORDER)
         self.assertEqual(loc, Point(x=5, y=10))
@@ -338,7 +334,7 @@ class Test_NextBlock(unittest.TestCase):
         my_gameboard = GameBoard((10, 10))
         cell_dtype = np.dtype(CellType)
         my_gameboard.gameboard = np.array([
-            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.PLAYER, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.BLOCK, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
@@ -349,7 +345,7 @@ class Test_NextBlock(unittest.TestCase):
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.GOAL,],     
         ], dtype=cell_dtype)
-
+        my_gameboard.SetPlayerPos(Point(5, 0))
         cell_type, loc = my_gameboard.NextBlock(Direction.LEFT)
         self.assertEqual(cell_type, CellType.BORDER)
         self.assertEqual(loc, Point(x=-1, y=0))
@@ -358,7 +354,7 @@ class Test_NextBlock(unittest.TestCase):
         my_gameboard = GameBoard((10, 10))
         cell_dtype = np.dtype(CellType)
         my_gameboard.gameboard = np.array([
-            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.PLAYER, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.BLOCK, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
@@ -369,6 +365,7 @@ class Test_NextBlock(unittest.TestCase):
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.GOAL,],     
         ], dtype=cell_dtype)
+        my_gameboard.SetPlayerPos(Point(5, 0))
         cell_type, loc = my_gameboard.NextBlock(Direction.RIGHT)
         self.assertEqual(cell_type, CellType.BORDER)
         self.assertEqual(loc, Point(x=10, y=0))
@@ -377,7 +374,7 @@ class Test_NextBlock(unittest.TestCase):
         my_gameboard = GameBoard((10, 10))
         cell_dtype = np.dtype(CellType)
         my_gameboard.gameboard = np.array([
-            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.PLAYER, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.BLOCK, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
@@ -388,6 +385,7 @@ class Test_NextBlock(unittest.TestCase):
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.GOAL,],     
         ], dtype=cell_dtype)
+        my_gameboard.SetPlayerPos(Point(5, 0))
         cell_type, loc = my_gameboard.NextBlock(Direction.RIGHT)
         self.assertEqual(cell_type, CellType.BORDER)
         self.assertEqual(loc, Point(x=10, y=0))
@@ -404,9 +402,10 @@ class Test_NextBlock(unittest.TestCase):
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
-            [CellType.PLAYER, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],     
         ], dtype=cell_dtype)
+        my_gameboard.SetPlayerPos(Point(0, 8))
         cell_type, loc = my_gameboard.NextBlock(Direction.UP)
         self.assertEqual(cell_type, CellType.GOAL)
         self.assertEqual(loc, Point(x=0, y=0))
@@ -417,7 +416,7 @@ class Test_NextBlock(unittest.TestCase):
         my_gameboard.gameboard = np.array([
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.BLOCK, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
-            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.PLAYER,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
@@ -426,6 +425,7 @@ class Test_NextBlock(unittest.TestCase):
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.GOAL,],     
         ], dtype=cell_dtype)
+        my_gameboard.SetPlayerPos(Point(9, 2))
         cell_type, loc = my_gameboard.NextBlock(Direction.DOWN)
         self.assertEqual(cell_type, CellType.GOAL)
         self.assertEqual(loc, Point(x=9, y=9))
@@ -443,8 +443,9 @@ class Test_NextBlock(unittest.TestCase):
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
-            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.PLAYER, CellType.ICE, CellType.ICE, CellType.GOAL,],     
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.GOAL,],     
         ], dtype=cell_dtype)
+        my_gameboard.SetPlayerPos(Point(6, 9))
         cell_type, loc = my_gameboard.NextBlock(Direction.RIGHT)
         self.assertEqual(cell_type, CellType.GOAL)
         self.assertEqual(loc, Point(x=9, y=9))
@@ -452,7 +453,7 @@ class Test_NextBlock(unittest.TestCase):
         my_gameboard = GameBoard((10, 10))
         cell_dtype = np.dtype(CellType)
         my_gameboard.gameboard = np.array([
-            [CellType.GOAL, CellType.PLAYER, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.GOAL, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.BLOCK, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
@@ -463,6 +464,7 @@ class Test_NextBlock(unittest.TestCase):
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],     
         ], dtype=cell_dtype)
+        my_gameboard.SetPlayerPos(Point(1, 0))
         cell_type, loc = my_gameboard.NextBlock(Direction.LEFT)
         self.assertEqual(cell_type, CellType.GOAL)
         self.assertEqual(loc, Point(x=0, y=0))
@@ -473,7 +475,7 @@ class Test_NextBlock(unittest.TestCase):
         cell_dtype = np.dtype(CellType)
         my_gameboard.gameboard = np.array([
             [CellType.GOAL, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
-            [CellType.PLAYER, CellType.BLOCK, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.BLOCK, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
@@ -483,6 +485,7 @@ class Test_NextBlock(unittest.TestCase):
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],     
         ], dtype=cell_dtype)
+        my_gameboard.SetPlayerPos(Point(0, 1))
         cell_type, loc = my_gameboard.NextBlock(Direction.UP)
         self.assertEqual(cell_type, CellType.GOAL)
         self.assertEqual(loc, Point(x=0, y=0))
@@ -493,7 +496,7 @@ class Test_MovePlayer(unittest.TestCase):
         my_gameboard = GameBoard((10, 10))
         cell_dtype = np.dtype(CellType)
         my_gameboard.gameboard = np.array([
-            [CellType.PLAYER, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
@@ -504,7 +507,7 @@ class Test_MovePlayer(unittest.TestCase):
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.GOAL,],     
         ], dtype=cell_dtype)
-
+        my_gameboard.SetPlayerPos(Point(0, 0))
         new_pos = my_gameboard.MovePlayer(Direction.RIGHT)
         self.assertEqual(new_pos, Point(9, 0))
 
@@ -513,7 +516,7 @@ class Test_MovePlayer(unittest.TestCase):
         my_gameboard = GameBoard((10, 10))
         cell_dtype = np.dtype(CellType)
         my_gameboard.gameboard = np.array([
-            [CellType.PLAYER, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
@@ -524,7 +527,7 @@ class Test_MovePlayer(unittest.TestCase):
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.GOAL,],     
         ], dtype=cell_dtype)
-
+        my_gameboard.SetPlayerPos(Point(0, 0))
         new_pos = my_gameboard.MovePlayer(Direction.DOWN)
         self.assertEqual(new_pos, Point(0, 3))
 
@@ -532,7 +535,7 @@ class Test_MovePlayer(unittest.TestCase):
         my_gameboard = GameBoard((10, 10))
         cell_dtype = np.dtype(CellType)
         my_gameboard.gameboard = np.array([
-            [CellType.PLAYER, CellType.ICE, CellType.ICE, CellType.ICE, CellType.GOAL, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.GOAL, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
@@ -543,7 +546,7 @@ class Test_MovePlayer(unittest.TestCase):
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],     
         ], dtype=cell_dtype)
-
+        my_gameboard.SetPlayerPos(Point(0, 0))
         new_pos = my_gameboard.MovePlayer(Direction.RIGHT)
         self.assertEqual(new_pos, Point(4, 0))
 
@@ -559,10 +562,10 @@ class Test_MovePlayer(unittest.TestCase):
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
-            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.BLOCK, CellType.PLAYER, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.BLOCK, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],     
         ], dtype=cell_dtype)
-
+        my_gameboard.SetPlayerPos(Point(6, 8))
         new_pos = my_gameboard.MovePlayer(Direction.LEFT)
         self.assertEqual(new_pos, Point(6, 8))
 
@@ -578,10 +581,10 @@ class Test_MovePlayer(unittest.TestCase):
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
-            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.BLOCK, CellType.PLAYER, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.BLOCK, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],     
         ], dtype=cell_dtype)
-
+        my_gameboard.SetPlayerPos(Point(6, 8))
         new_pos = my_gameboard.MovePlayer(Direction.UP)
         self.assertEqual(new_pos, Point(6, 0))
 

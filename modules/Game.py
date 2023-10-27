@@ -3,118 +3,107 @@ import pygame
 from modules.MapConverter import update_map
 from modules.Sprites import Block, Goal, Ice, Player 
 import sys
-from modules.GameEnums import Direction
+from modules.Point import Point
+from modules.GameEnums import Direction, GameDifficulty, CellType
 from modules.configs import (
     WINDOW_TITLE, 
-    GAMEBOARD_DIMENSIONS, 
+    ADVANCED_DIMENSIONS, 
     BGCOLOR,
     WHITE,
     WINDOW_HEIGHT,
     WINDOW_WIDTH, 
     CELL_HEIGHT,
-    CELL_WIDTH)
+    CELL_WIDTH,
+    WINDOW_DIMENSIONS,)
 
 
 
 
 class Game:
     """
-    Basic initialization of pygame necessary variables
+    The controlling class for each "game" or "level" of slide quest.
+    A game is born with each map and is destroyed once the player reaches the goal.
     """
-    def __init__(self):
-        self.gameboard = GameBoard(GAMEBOARD_DIMENSIONS)
-
-        pygame.init()
-        pygame.display.set_caption(WINDOW_TITLE)
-
-        self.screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
-        self.clock = pygame.time.Clock()
-
-    def new(self):
-        """
-        Creation of all sprites, this is needed to initlaize all sprites given their (x, y) values and passed a state of the game object
-        This occurs before the `Game.run()` function to make sure everything is initialized.
-        """
-
-        self.all_sprites = pygame.sprite.LayeredUpdates()
-        self.player = pygame.sprite.LayeredUpdates()
-        self.ice = pygame.sprite.LayeredUpdates()
-
+    def __init__(self, difficulty: GameDifficulty, screen):
+        self.screen = screen
+        self.difficulty = difficulty
+        if difficulty==GameDifficulty.ADVANCED:
+            self.gameboard_dimensions = ADVANCED_DIMENSIONS
+        else:
+            raise NotImplementedError("")
+        
+        self.gameboard = GameBoard(self.gameboard_dimensions)
+        self.gameboard_sprite_group = pygame.sprite.LayeredUpdates()
+        self.calculate_border()
         #Update map.csv
-        update_map()
+        # update_map()
+
+        self.gameboard.ReadBoard('levels\\beginner\\map.csv')
 
         #implementation of GameBoard to initialize screen with all sprites from map csv
-        for row, cells in enumerate(self.gameboard.ReadBoard('levels\\beginner\\map.csv')):
+        for row, cells in enumerate(self.gameboard.gameboard):
             for col, cell in enumerate(cells):
-                if cell == 'CellType.BLOCK':
-                    Block(self, col, row)
-                if cell == 'CellType.PLAYER':
-                    self.player = Player(self, col, row)
-                if cell == 'CellType.GOAL':
-                    Goal(self, col, row)
-                if cell == 'CellType.ICE':
-                    Ice(self, col, row)
+                if cell == CellType.BLOCK:
+                    self.gameboard_sprite_group.add(Block(Point(col, row), self.border_width, self.border_height))
+                if cell == CellType.GOAL:
+                    self.gameboard_sprite_group.add(Goal(Point(col, row), self.border_width, self.border_height))
+                if cell == CellType.ICE:
+                    self.gameboard_sprite_group.add(Ice(Point(col, row), self.border_width, self.border_height))
+        self.gameboard.SetPlayerPos(Point(1, 1))
+        self.player = Player(Point(1, 1), self.border_width, self.border_height)
+        self.gameboard_sprite_group.add(self.player)
 
-    def run(self):
+    def move_player(self, events: list[pygame.event.Event]):
         """
-        This is the main function for running all other events, updates and draw calls this is called within the main while loop
+        Moves the player if instructed by the user in the events argument.
         """
-
-        self.playing = True
-        #game loop - set self.playing to False to end game
-
-        while self.playing:
-            self.events()
-            self.update()
-            self.draw()
-
-    def events(self):
-        """
-        This is where we can implement player movement as well as menu interactions such as starting the game or quiting 
-        """
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                self.quit()
+        for event in events:
             if event.type == pygame.KEYDOWN:
-                if event.key == Direction.LEFT.value and not self.player.moving:
-                    self.player.set_target(self.gameboard.MovePlayer(Direction.LEFT))
-                if event.key == Direction.RIGHT.value and not self.player.moving:
-                    self.player.set_target(self.gameboard.MovePlayer(Direction.RIGHT))
-                if event.key == Direction.UP.value and not self.player.moving:
-                    self.player.set_target(self.gameboard.MovePlayer(Direction.UP))
-                if event.key == Direction.DOWN.value and not self.player.moving:
-                    self.player.set_target(self.gameboard.MovePlayer(Direction.DOWN))
+                if event.key == Direction.LEFT.value:
+                    self.player.move(self.gameboard.MovePlayer(Direction.LEFT))
+                if event.key == Direction.RIGHT.value:
+                    self.player.move(self.gameboard.MovePlayer(Direction.RIGHT))
+                if event.key == Direction.UP.value:
+                    self.player.move(self.gameboard.MovePlayer(Direction.UP))
+                if event.key == Direction.DOWN.value:
+                    self.player.move(self.gameboard.MovePlayer(Direction.DOWN))
 
-    def draw_grid(self):
+    def calculate_border(self):
         """
-        This is just temporary for showing the dimensions of the grid until we can start implementing sprites more regularly
         """
+        self.border_width = (WINDOW_DIMENSIONS[0] - (self.gameboard_dimensions[0]*CELL_WIDTH))//2
+        self.border_height = (WINDOW_DIMENSIONS[1] - (self.gameboard_dimensions[1]*CELL_HEIGHT))//2
 
-        for x in range(0, WINDOW_WIDTH, CELL_WIDTH):
-            pygame.draw.line(self.screen, WHITE, (x, 0), (x, WINDOW_HEIGHT))
-        for y in range(0, WINDOW_HEIGHT, CELL_HEIGHT):
-            pygame.draw.line(self.screen, WHITE, (0, y), (WINDOW_WIDTH, y))
+    # def draw_grid(self):
+    #     """
+    #     This is just temporary for showing the dimensions of the grid until we can start implementing sprites more regularly
+    #     """
 
-    def draw(self):
+    #     for x in range(0, WINDOW_WIDTH, CELL_WIDTH):
+    #         pygame.draw.line(self.screen, WHITE, (x, 0), (x, WINDOW_HEIGHT))
+    #     for y in range(0, WINDOW_HEIGHT, CELL_HEIGHT):
+    #         pygame.draw.line(self.screen, WHITE, (0, y), (WINDOW_WIDTH, y))
+
+    # def draw(self):
+    #     """
+    #     Draw the sprite groups to the screen as well as handle the screen updating (pygame.display.flip())
+    #     """
+
+    #     self.screen.fill(BGCOLOR)
+    #     self.all_sprites.draw(self.screen)
+    #     self.draw_grid()
+    #     #this is for updating the entire sceen instead of pygame.display.update which only updates a portion
+    #     pygame.display.flip()
+
+    def isComplete(self):
         """
-        Draw the sprite groups to the screen as well as handle the screen updating (pygame.display.flip())
+        Checks whether the game has been completed.
         """
-
-        self.screen.fill(BGCOLOR)
-        self.all_sprites.draw(self.screen)
-        self.draw_grid()
-        #this is for updating the entire sceen instead of pygame.display.update which only updates a portion
-        pygame.display.flip()
-
-    def quit(self):
-        pygame.quit()
-        sys.exit()
-
-    def update(self):
+        return self.gameboard.Find_Goal_Pos() == self.gameboard.player_pos
+    def update(self, events: list[pygame.event.Event]):
         """
-        updating sprites specifically (moreso for movement) and will handle player screen camera movement 
-        if we want to implement procedural generation like lunatics
+        The Game.update() method takes a list of pygame events. From this the game will extract the necessary movement information for the player.
         """
-
-        self.all_sprites.update()
+        self.move_player(events)
+        self.gameboard_sprite_group.update()
+        self.gameboard_sprite_group.draw(self.screen)

@@ -11,7 +11,7 @@ class Direction(Enum):
     UP = pygame.K_UP
     DOWN = pygame.K_DOWN
 
-class GameLevel(Enum):
+class GameDifficulty(Enum):
     """
     An Enum class that represents the overall game difficulty.
     """
