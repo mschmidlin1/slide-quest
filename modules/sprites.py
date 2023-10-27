@@ -23,7 +23,7 @@ class Player(Cell):
         super().__init__()
         self.border_width = border_width
         self.border_height = border_height
-        self._layer=1
+        self._layer = 1
         self.gameboard_loc = gameboard_loc
         self.image = pygame.Surface((CELLSIZE, CELLSIZE))
         self.image.fill(PLAYER_COLOR)
@@ -59,7 +59,7 @@ class Block(Cell):
         super().__init__()
         self.border_width = border_width
         self.border_height = border_height
-        self._layer=0
+        self._layer = 0
         self.gameboard_loc = gameboard_loc
         self.image = pygame.Surface((CELLSIZE, CELLSIZE))
         self.image.fill(WALL_COLOR)
@@ -71,7 +71,7 @@ class Goal(Cell):
         super().__init__()
         self.border_width = border_width
         self.border_height = border_height
-        self._layer=0
+        self._layer = 0
         self.gameboard_loc = gameboard_loc
         self.image = pygame.Surface((CELLSIZE, CELLSIZE))
         self.image.fill(GOAL_COLOR)
@@ -83,7 +83,7 @@ class Ice(Cell):
         super().__init__()
         self.border_width = border_width
         self.border_height = border_height
-        self._layer=0
+        self._layer = 0
         self.gameboard_loc = gameboard_loc
         self.image = pygame.Surface((CELLSIZE, CELLSIZE))
         self.image.fill(ICE_COLOR)
