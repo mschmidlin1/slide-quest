@@ -13,8 +13,9 @@ class Cell(pygame.sprite.Sprite):
         """
         Converts the coordinates of the Gameboard into the center pixel location of the correct cell.
         """
-        x = self.border_width + (location.x*CELL_WIDTH) + (CELL_WIDTH//2)
-        y = self.border_height + (location.y*CELL_HEIGHT) + (CELL_HEIGHT//2)
+        x = self.border_width + (location.x * CELL_WIDTH) + (CELL_WIDTH // 2)
+        y = self.border_height + (location.y * CELL_HEIGHT) + (CELL_HEIGHT // 2)
+        print(x // 32 , " " , y // 32)
         return Point(x, y)
 
 
@@ -38,15 +39,16 @@ class Player(Cell):
         """
         Set's the target position for the player as long as the player is not already moving.
         """
-        if self.moving==False:
-            self.target_pos = self.GameboardCell_To_CenterPixelCoords(location)
-            self.moving=True
+        
+        self.target_pos = self.GameboardCell_To_CenterPixelCoords(location)
+        print(self.target_pos)
+        self.moving = True
 
     def update(self):
         if self.moving:
             distance = pygame.Vector2((self.target_pos[0] - self.rect.center[0], self.target_pos[1] - self.rect.center[1]))
             if distance == pygame.Vector2(0, 0):
-                self.moving=False
+                self.moving = False
                 return
             distance.normalize_ip()
             distance = distance * self.speed
@@ -89,9 +91,6 @@ class Ice(Cell):
         self.image.fill(ICE_COLOR)
         self.rect = self.image.get_rect()
         self.rect.center = self.GameboardCell_To_CenterPixelCoords(gameboard_loc)
-
-
-
 
 class TextSprite(pygame.sprite.Sprite):
     def __init__(self, text_surface: pygame.Surface, center_location: Point):

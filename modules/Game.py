@@ -37,6 +37,7 @@ class Game:
         self.calculate_border()
         #Update map.csv
         update_map()
+        self.draw_grid()
 
         self.gameboard.ReadBoard('levels\\beginner\\map.csv')
 
@@ -49,8 +50,8 @@ class Game:
                     self.gameboard_sprite_group.add(Goal(Point(col, row), self.border_width, self.border_height))
                 if cell == CellType.ICE:
                     self.gameboard_sprite_group.add(Ice(Point(col, row), self.border_width, self.border_height))
-        self.gameboard.SetPlayerPos(Point(1, 1))
-        self.player = Player(Point(1, 1), self.border_width, self.border_height)
+        self.gameboard.SetPlayerPos(Point(0, 0))
+        self.player = Player(Point(0, 0), self.border_width, self.border_height)
         self.gameboard_sprite_group.add(self.player)
 
     def move_player(self, events: list[pygame.event.Event]):
@@ -67,6 +68,9 @@ class Game:
                     self.player.move(self.gameboard.MovePlayer(Direction.UP))
                 if event.key == Direction.DOWN.value and not self.player.moving:
                     self.player.move(self.gameboard.MovePlayer(Direction.DOWN))
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                click_pos = pygame.mouse.get_pos()
+                print(click_pos)
 
     def calculate_border(self):
         """
@@ -74,15 +78,15 @@ class Game:
         self.border_width = (WINDOW_DIMENSIONS[0] - (self.gameboard_dimensions[0]*CELL_WIDTH))//2
         self.border_height = (WINDOW_DIMENSIONS[1] - (self.gameboard_dimensions[1]*CELL_HEIGHT))//2
 
-    # def draw_grid(self):
-    #     """
-    #     This is just temporary for showing the dimensions of the grid until we can start implementing sprites more regularly
-    #     """
+    def draw_grid(self):
+        """
+        This is just temporary for showing the dimensions of the grid until we can start implementing sprites more regularly
+        """
 
-    #     for x in range(0, WINDOW_WIDTH, CELL_WIDTH):
-    #         pygame.draw.line(self.screen, WHITE, (x, 0), (x, WINDOW_HEIGHT))
-    #     for y in range(0, WINDOW_HEIGHT, CELL_HEIGHT):
-    #         pygame.draw.line(self.screen, WHITE, (0, y), (WINDOW_WIDTH, y))
+        for x in range(0, WINDOW_WIDTH, CELL_WIDTH):
+            pygame.draw.line(self.screen, WHITE, (x, 0), (x, WINDOW_HEIGHT))
+        for y in range(0, WINDOW_HEIGHT, CELL_HEIGHT):
+            pygame.draw.line(self.screen, WHITE, (0, y), (WINDOW_WIDTH, y))
 
     # def draw(self):
     #     """
