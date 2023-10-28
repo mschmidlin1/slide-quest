@@ -36,7 +36,7 @@ class Game:
         self.gameboard_sprite_group = pygame.sprite.LayeredUpdates()
         self.calculate_border()
         #Update map.csv
-        # update_map()
+        update_map()
 
         self.gameboard.ReadBoard('levels\\beginner\\map.csv')
 
@@ -59,13 +59,13 @@ class Game:
         """
         for event in events:
             if event.type == pygame.KEYDOWN:
-                if event.key == Direction.LEFT.value:
+                if event.key == Direction.LEFT.value and not self.player.moving:
                     self.player.move(self.gameboard.MovePlayer(Direction.LEFT))
-                if event.key == Direction.RIGHT.value:
+                if event.key == Direction.RIGHT.value and not self.player.moving:
                     self.player.move(self.gameboard.MovePlayer(Direction.RIGHT))
-                if event.key == Direction.UP.value:
+                if event.key == Direction.UP.value and not self.player.moving:
                     self.player.move(self.gameboard.MovePlayer(Direction.UP))
-                if event.key == Direction.DOWN.value:
+                if event.key == Direction.DOWN.value and not self.player.moving:
                     self.player.move(self.gameboard.MovePlayer(Direction.DOWN))
 
     def calculate_border(self):
