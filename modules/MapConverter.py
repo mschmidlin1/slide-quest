@@ -1,4 +1,5 @@
-from modules.GameEnums import CellType
+from modules.GameEnums import CellType, GameDifficulty
+from modules.configs import CURRENT_DIFFICULTY
 
 def convert_digit_to_cell_type(char):
         try:
@@ -19,13 +20,23 @@ def convert_line_to_strings(line):
             print(f"Invalid digit: {char}")
     return string_values
 
-def update_map():
+def update_map(difficulty):
     """
     This is called to write the map.txt file to the map.csv file in a way that is loadable by GameBoard
     """
-    with open('levels\\beginner\\map.txt', 'r') as file:
-                with open('levels\\beginner\\map.csv', 'w') as f:
-                    for line in file:
-                        string_list = convert_line_to_strings(line)
-                        string_str = ','.join(string_list) + '\n'
-                        f.write(string_str)
+    if difficulty == GameDifficulty.BEGINNER:
+        print("Beginner")
+        with open('levels\\beginner\\map.txt', 'r') as file:
+                    with open('levels\\beginner\\map.csv', 'w') as f:
+                        for line in file:
+                            string_list = convert_line_to_strings(line)
+                            string_str = ','.join(string_list) + '\n'
+                            f.write(string_str)
+    elif CURRENT_DIFFICULTY == GameDifficulty.ADVANCED:
+         print("Advanced")
+         with open('levels\\advanced\\map.txt', 'r') as file:
+                    with open('levels\\advanced\\map.csv', 'w') as f:
+                        for line in file:
+                            string_list = convert_line_to_strings(line)
+                            string_str = ','.join(string_list) + '\n'
+                            f.write(string_str)

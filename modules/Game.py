@@ -6,17 +6,14 @@ import sys
 from modules.Point import Point
 from modules.GameEnums import Direction, GameDifficulty, CellType
 from modules.configs import (
-    WINDOW_TITLE, 
+    BEGINNER_DIMENSIONS, 
     ADVANCED_DIMENSIONS, 
-    BGCOLOR,
     WHITE,
     WINDOW_HEIGHT,
     WINDOW_WIDTH, 
     CELL_HEIGHT,
     CELL_WIDTH,
     WINDOW_DIMENSIONS,)
-
-
 
 
 class Game:
@@ -26,20 +23,25 @@ class Game:
     """
     def __init__(self, difficulty: GameDifficulty, screen):
         self.screen = screen
+        self.map_path(difficulty)
+
         self.difficulty = difficulty
-        if difficulty==GameDifficulty.ADVANCED:
+        
+        if difficulty == GameDifficulty.BEGINNER:
+            self.gameboard_dimensions = BEGINNER_DIMENSIONS
+        elif difficulty == GameDifficulty.ADVANCED:
             self.gameboard_dimensions = ADVANCED_DIMENSIONS
+
         else:
             raise NotImplementedError("")
         
+        update_map(difficulty)
+
         self.gameboard = GameBoard(self.gameboard_dimensions)
         self.gameboard_sprite_group = pygame.sprite.LayeredUpdates()
         self.calculate_border()
-        #Update map.csv
-        update_map()
-        self.draw_grid()
 
-        self.gameboard.ReadBoard('levels\\beginner\\map.csv')
+        self.gameboard.ReadBoard(self.map_path(difficulty))
 
         #implementation of GameBoard to initialize screen with all sprites from map csv
         for row, cells in enumerate(self.gameboard.gameboard):
@@ -53,6 +55,14 @@ class Game:
         self.gameboard.SetPlayerPos(Point(0, 0))
         self.player = Player(Point(0, 0), self.border_width, self.border_height)
         self.gameboard_sprite_group.add(self.player)
+
+    def map_path(self, difficulty):
+        if difficulty == GameDifficulty.BEGINNER:
+            print("BEGINNER")
+            return 'levels\\beginner\\map.csv'
+        elif difficulty == GameDifficulty.ADVANCED:
+            print("ADVANCED")
+            return 'levels\\advanced\\map.csv'
 
     def move_player(self, events: list[pygame.event.Event]):
         """
@@ -88,17 +98,6 @@ class Game:
         for y in range(0, WINDOW_HEIGHT, CELL_HEIGHT):
             pygame.draw.line(self.screen, WHITE, (0, y), (WINDOW_WIDTH, y))
 
-    # def draw(self):
-    #     """
-    #     Draw the sprite groups to the screen as well as handle the screen updating (pygame.display.flip())
-    #     """
-
-    #     self.screen.fill(BGCOLOR)
-    #     self.all_sprites.draw(self.screen)
-    #     self.draw_grid()
-    #     #this is for updating the entire sceen instead of pygame.display.update which only updates a portion
-    #     pygame.display.flip()
-
     def isComplete(self):
         """
         Checks whether the game has been completed.
@@ -111,3 +110,4 @@ class Game:
         self.move_player(events)
         self.gameboard_sprite_group.update()
         self.gameboard_sprite_group.draw(self.screen)
+        self.draw_grid()

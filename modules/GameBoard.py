@@ -24,7 +24,6 @@ class GameBoard:
         """
         self.gameboard_dims = gameboard_dims
         self.gameboard = np.empty(gameboard_dims, dtype=cell_dtype)
-        print(gameboard_dims)
         self.gameboard.fill(CellType.ICE)
         self.player_pos = None
         self.goal_pos = None

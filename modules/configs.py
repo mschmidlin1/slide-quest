@@ -1,4 +1,5 @@
 import pygame
+from modules.GameEnums import GameDifficulty
 
 #game settings
 WINDOW_TITLE = "Slide Quest"
@@ -16,7 +17,8 @@ INTERMEDIATE_DIMENSIONS = (18, 18)
 HARD_DIMENSIONS = (22, 22)
 ADVANCED_DIMENSIONS = (26, 26)
 
-
+#difficulty
+CURRENT_DIFFICULTY = GameDifficulty.ADVANCED
 
 #cell information
 CELLSIZE = 32

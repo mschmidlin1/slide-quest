@@ -4,11 +4,7 @@ from modules.Game import Game
 from modules.configs import (
     WINDOW_DIMENSIONS, 
     WINDOW_TITLE, 
-    TITLE_FONT, 
-    TITLE_SCREEN_COLOR, 
-    TITLE_SCREEN_TEXT_COLOR, 
-    PLAYER_COLOR,
-    ADVANCED_DIMENSIONS
+    CURRENT_DIFFICULTY
 )
 from modules.Point import Point
 from modules.TitleScreen import TitleScreen
@@ -32,7 +28,7 @@ if __name__=="__main__":
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE and current_game==None:
-                    current_game = Game(GameDifficulty.ADVANCED, screen)
+                    current_game = Game(CURRENT_DIFFICULTY, screen)
         
         if current_game!=None:
             if current_game.isComplete():
