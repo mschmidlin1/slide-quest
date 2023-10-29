@@ -65,9 +65,10 @@ class Player(Cell):
             
             move = self.target_pos - self.starting_position
             move_distance = move.length()
-            print(move_distance)
+            
             if move_distance < self.speed:
                 self.rect.center == self.GameboardPlayer_To_CenterPixelCoords(self.target_pos)
+
             if move_distance != 0:
                 move.normalize_ip()
                 move = move * PLAYER_SPEED
