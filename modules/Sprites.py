@@ -1,6 +1,7 @@
 import pygame
-# from modules.configs import *
-# from modules.GameBoard import *
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from modules.configs import CELLSIZE, CELL_WIDTH, CELL_HEIGHT, WALL_COLOR, GOAL_COLOR, ICE_COLOR, PLAYER_COLOR, PLAYER_SPEED
 from modules.Point import Point
 
@@ -17,6 +18,7 @@ class Cell(pygame.sprite.Sprite):
         y = self.border_height + (location[1] * CELL_HEIGHT) + (CELL_HEIGHT // 2)
         return Point(round(x), round(y))
     
+    #is this doing the same thing? If so, we should probably just have one method
     def GameboardPlayer_To_CenterPixelCoords(self, location: Point) -> Point:
         """
         Converts the coordinates of the Gameboard into the center pixel location of the player cell.
@@ -46,6 +48,7 @@ class Player(Cell):
         """
         Set's the target position for the player as long as the player is not already moving.
         """
+                                                    #make sure to change 32 into cell dimensions
         self.starting_position = self.rect.centerx // 32 - self.border_width // 32, self.rect.centery // 32 - self.border_width // 32
         self.target_pos = location[0], location[1]
         
@@ -59,20 +62,22 @@ class Player(Cell):
     def update(self):
         if self.moving:
 
-            if self.rect.center == self.GameboardPlayer_To_CenterPixelCoords(self.target_pos):
+            if self.rect.center == self.GameboardPlayer_To_CenterPixelCoords(self.target_pos): 
                 self.moving = False
                 return
             
+            #shouldn't use 'move' as variable name and method name
             move = self.target_pos - self.starting_position
             move_distance = move.length()
             
             if move_distance < self.speed:
-                self.rect.center == self.GameboardPlayer_To_CenterPixelCoords(self.target_pos)
+                self.rect.center == self.GameboardPlayer_To_CenterPixelCoords(self.target_pos) #should save this as a variable since you use the value more than once
+                # I think after you do this you want to set self.moving to True and then return
 
             if move_distance != 0:
                 move.normalize_ip()
                 move = move * PLAYER_SPEED
-                self.starting_position += move
+                self.starting_position += move #why add to starting position? Shouldn't we be adding to the sprites current position?
 
             self.rect.center = self.GameboardPlayer_To_CenterPixelCoords(self.starting_position)
             
@@ -114,11 +119,14 @@ class Ice(Cell):
         self.rect.center = self.GameboardCell_To_CenterPixelCoords(gameboard_loc)
 
 class TextSprite(pygame.sprite.Sprite):
-    def __init__(self, text_surface: pygame.Surface, center_location: Point):
+    def __init__(self, text: str, font_file: str, font_size: int, center_location: Point, color: tuple):
         super().__init__()
-        self.image = text_surface
+        self.font = pygame.font.Font(font_file, font_size)
+        self.image = self.font.render(text, True, color)
         self.rect = self.image.get_rect()
         self.rect.center = center_location
+
+
 
 class TitleScreenPlayerSprite(pygame.sprite.Sprite):
     def __init__(self, center_location: Point):

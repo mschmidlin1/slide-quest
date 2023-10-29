@@ -6,39 +6,38 @@ from modules.configs import TITLE_FONT, WINDOW_DIMENSIONS, TITLE_SCREEN_COLOR, T
 from modules.Sprites import TextSprite, Player
 from modules.Point import Point
 
-class TitleScreen():
+class LevelCompleteScreen():
     def __init__(self, screen):
         
         self.screen = screen
 
 
         self.title_sprite = TextSprite(
-            "Slide Quest!", 
+            "Level completed in xxxx time", 
             TITLE_FONT, 
-            100, 
+            50, 
             Point(WINDOW_DIMENSIONS[0]//2, WINDOW_DIMENSIONS[1]//5),
             TITLE_SCREEN_TEXT_COLOR)
         
-        self.start_sprite = TextSprite(
-            "Press space to start.", 
+        self.main_menu_sprite = TextSprite(
+            "Press escape for main menu", 
             TITLE_FONT, 
             40, 
-            Point(WINDOW_DIMENSIONS[0]//2, WINDOW_DIMENSIONS[1] - WINDOW_DIMENSIONS[1]//4),
+            Point(WINDOW_DIMENSIONS[0]//2, WINDOW_DIMENSIONS[1] - WINDOW_DIMENSIONS[1]//3),
+            TITLE_SCREEN_TEXT_COLOR)
+        
+        self.next_level_sprite = TextSprite(
+            "Press space to continue to next level", 
+            TITLE_FONT, 
+            40, 
+            Point(WINDOW_DIMENSIONS[0]//2, (WINDOW_DIMENSIONS[1] - WINDOW_DIMENSIONS[1]//3)+40),
             TITLE_SCREEN_TEXT_COLOR)
 
-        self.player_sprite = Player(
-            Point(WINDOW_DIMENSIONS[0]//2, WINDOW_DIMENSIONS[1]//2),
-            0,
-            0,
-        )
-        self.player_sprite.rect.center = Point(WINDOW_DIMENSIONS[0]//2, WINDOW_DIMENSIONS[1]//2)
 
         self.title_screen_sprite_group = pygame.sprite.Group()
         self.title_screen_sprite_group.add(self.title_sprite)
-        self.title_screen_sprite_group.add(self.start_sprite)
-        self.title_screen_sprite_group.add(self.player_sprite)
-
-
+        self.title_screen_sprite_group.add(self.main_menu_sprite)
+        self.title_screen_sprite_group.add(self.next_level_sprite)
 
     def draw(self):
         self.screen.fill(TITLE_SCREEN_COLOR)
@@ -46,12 +45,14 @@ class TitleScreen():
         self.title_screen_sprite_group.draw(self.screen)
 
 
+
+
 if __name__=="__main__":
     pygame.init()
     screen = pygame.display.set_mode(WINDOW_DIMENSIONS)
     clock = pygame.time.Clock()
 
-    title_screen = TitleScreen(screen)
+    title_screen = LevelCompleteScreen(screen)
 
     while True:
         events = pygame.event.get()
