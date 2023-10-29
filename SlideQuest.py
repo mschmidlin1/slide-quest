@@ -3,7 +3,7 @@ import sys
 from modules.Game import Game
 from modules.configs import (
     WINDOW_DIMENSIONS, 
-    WINDOW_TITLE, 
+    WINDOW_TITLE,  
     CURRENT_DIFFICULTY
 )
 from modules.Point import Point
@@ -40,6 +40,5 @@ if __name__=="__main__":
             screen.blit(title_screen.startup_surface, (0,0))
             title_screen.title_screen_sprite_group.update()
             title_screen.title_screen_sprite_group.draw(screen)
-
 
         pygame.display.flip()

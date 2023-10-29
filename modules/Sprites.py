@@ -13,18 +13,17 @@ class Cell(pygame.sprite.Sprite):
         """
         Converts the coordinates of the Gameboard into the center pixel location of the correct cell.
         """
-        x = self.border_width + (location.x * CELL_WIDTH) + (CELL_WIDTH // 2)
-        y = self.border_height + (location.y * CELL_HEIGHT) + (CELL_HEIGHT // 2)
-        return Point(x, y)
+        x = self.border_width + (location[0] * CELL_WIDTH) + (CELL_WIDTH // 2)
+        y = self.border_height + (location[1] * CELL_HEIGHT) + (CELL_HEIGHT // 2)
+        return Point(round(x), round(y))
     
     def GameboardPlayer_To_CenterPixelCoords(self, location: Point) -> Point:
         """
         Converts the coordinates of the Gameboard into the center pixel location of the player cell.
         """
-        x = self.border_width + (location.x * CELL_WIDTH) + (CELL_WIDTH // 2)
-        y = self.border_height + (location.y * CELL_HEIGHT) + (CELL_HEIGHT // 2)
-        print(x // 32 , " " , y // 32)
-        return Point(x, y)
+        x = self.border_width + (location[0] * CELL_WIDTH) + (CELL_WIDTH // 2)
+        y = self.border_height + (location[1] * CELL_HEIGHT) + (CELL_HEIGHT // 2)
+        return Point(round(x), round(y))
 
 
 class Player(Cell):
@@ -38,7 +37,7 @@ class Player(Cell):
         self.image.fill(PLAYER_COLOR)
         self.rect = self.image.get_rect()
         self.rect.center = self.GameboardPlayer_To_CenterPixelCoords(gameboard_loc)
-
+        self.starting_position = self.rect.center
         self.speed = PLAYER_SPEED
         self.moving = False
 
@@ -47,23 +46,36 @@ class Player(Cell):
         """
         Set's the target position for the player as long as the player is not already moving.
         """
-        self.target_pos = self.GameboardCell_To_CenterPixelCoords(location)
+        self.starting_position = self.rect.centerx // 32 - self.border_width // 32, self.rect.centery // 32 - self.border_width // 32
+        self.target_pos = location[0], location[1]
+        
+        self.starting_position = pygame.Vector2(self.starting_position)
+        self.target_pos = pygame.Vector2(self.target_pos)
+
+        print("Starting Position: ", self.starting_position, "Target Position: ", self.target_pos)
+
         self.moving = True
 
     def update(self):
         if self.moving:
-            distance = pygame.Vector2((self.target_pos[0] - self.rect.center[0], self.target_pos[1] - self.rect.center[1]))
-            distance = distance / 32
-            print(distance)
-            if distance == pygame.Vector2(0, 0):
+
+            if self.rect.center == self.GameboardPlayer_To_CenterPixelCoords(self.target_pos):
                 self.moving = False
                 return
-            distance.normalize_ip()
-            distance = distance * self.speed
-            sprite_center = pygame.Vector2(self.rect.center)
-            new_center = sprite_center + distance
-            self.rect.center = new_center
+            
+            move = self.target_pos - self.starting_position
+            move_distance = move.length()
+            print(move_distance)
+            if move_distance < self.speed:
+                self.rect.center == self.GameboardPlayer_To_CenterPixelCoords(self.target_pos)
+            if move_distance != 0:
+                move.normalize_ip()
+                move = move * PLAYER_SPEED
+                self.starting_position += move
 
+            self.rect.center = self.GameboardPlayer_To_CenterPixelCoords(self.starting_position)
+            
+            
 class Block(Cell):
     def __init__(self, gameboard_loc: Point, border_width, border_height):
         super().__init__()

@@ -25,7 +25,6 @@ def update_map(difficulty):
     This is called to write the map.txt file to the map.csv file in a way that is loadable by GameBoard
     """
     if difficulty == GameDifficulty.BEGINNER:
-        print("Beginner")
         with open('levels\\beginner\\map.txt', 'r') as file:
                     with open('levels\\beginner\\map.csv', 'w') as f:
                         for line in file:
@@ -33,7 +32,6 @@ def update_map(difficulty):
                             string_str = ','.join(string_list) + '\n'
                             f.write(string_str)
     elif CURRENT_DIFFICULTY == GameDifficulty.ADVANCED:
-         print("Advanced")
          with open('levels\\advanced\\map.txt', 'r') as file:
                     with open('levels\\advanced\\map.csv', 'w') as f:
                         for line in file:

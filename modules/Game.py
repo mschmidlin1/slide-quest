@@ -1,7 +1,7 @@
 from modules.GameBoard import GameBoard
 import pygame
 from modules.MapConverter import update_map
-from modules.Sprites import Block, Goal, Ice, Player 
+from modules.Sprites import Block, Goal, Ice, Player
 import sys
 from modules.Point import Point
 from modules.GameEnums import Direction, GameDifficulty, CellType
@@ -52,16 +52,14 @@ class Game:
                     self.gameboard_sprite_group.add(Goal(Point(col, row), self.border_width, self.border_height))
                 if cell == CellType.ICE:
                     self.gameboard_sprite_group.add(Ice(Point(col, row), self.border_width, self.border_height))
-        self.gameboard.SetPlayerPos(Point(0, 0))
-        self.player = Player(Point(0, 0), self.border_width, self.border_height)
+        self.gameboard.SetPlayerPos(Point(1, 0))
+        self.player = Player(Point(1, 0), self.border_width, self.border_height)
         self.gameboard_sprite_group.add(self.player)
 
     def map_path(self, difficulty):
         if difficulty == GameDifficulty.BEGINNER:
-            print("BEGINNER")
             return 'levels\\beginner\\map.csv'
         elif difficulty == GameDifficulty.ADVANCED:
-            print("ADVANCED")
             return 'levels\\advanced\\map.csv'
 
     def move_player(self, events: list[pygame.event.Event]):
@@ -84,6 +82,7 @@ class Game:
 
     def calculate_border(self):
         """
+        This will store the width and height of the border for understanding the local gameboard positions
         """
         self.border_width = (WINDOW_DIMENSIONS[0] - (self.gameboard_dimensions[0]*CELL_WIDTH))//2
         self.border_height = (WINDOW_DIMENSIONS[1] - (self.gameboard_dimensions[1]*CELL_HEIGHT))//2
@@ -102,7 +101,8 @@ class Game:
         """
         Checks whether the game has been completed.
         """
-        return self.gameboard.Find_Goal_Pos() == self.gameboard.player_pos
+        return self.gameboard.Find_Goal_Pos() == self.player.starting_position
+    
     def update(self, events: list[pygame.event.Event]):
         """
         The Game.update() method takes a list of pygame events. From this the game will extract the necessary movement information for the player.
