@@ -66,12 +66,14 @@ class Window():
 
             if self.current_game != None: #if you're currently playing the game
 
-                click_pos = pygame.mouse.get_pos()
-                clicked_cells = [clicked_cell for clicked_cell in self.current_game.gameboard_sprite_group if clicked_cell.rect.collidepoint(click_pos)]
-                
+                mouse_pos = pygame.mouse.get_pos()
+                clicked_cells = [clicked_cell for clicked_cell in self.current_game.gameboard_sprite_group if clicked_cell.rect.collidepoint(mouse_pos)]
+
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         self.title_screen = TitleScreen(self.screen)
+                        self.dragging_left = False
+                        self.dragging_right = False
                         self.current_game = None
 
                 elif event.type == pygame.MOUSEBUTTONDOWN and GAME_TYPE == GameMode.DEBUG_MODE:
@@ -95,15 +97,16 @@ class Window():
                                 self.current_game.gameboard_sprite_group.add(Ice(curr_pos, self.current_game.border_width, self.current_game.border_height))
 
                 elif event.type == pygame.MOUSEMOTION:
+                    
                     if clicked_cells:
                         top_cell = clicked_cells[-1]
 
-                        if self.dragging_left and len(clicked_cells) == 1:
+                        if self.dragging_left and len(clicked_cells) == 1 and not self.dragging_right:
                             if top_cell.cellType == CellType.ICE:
                                 self.current_game.gameboard_sprite_group.remove(top_cell)
                                 self.current_game.gameboard_sprite_group.add(Block(top_cell.Get_Cell_Current_Position(top_cell.rect.center), self.current_game.border_width, self.current_game.border_height))
                                         
-                        if self.dragging_right and len(clicked_cells) == 1:
+                        if self.dragging_right and len(clicked_cells) == 1 and not self.dragging_left:
                             if top_cell.cellType == CellType.BLOCK:
                                 self.current_game.gameboard_sprite_group.remove(top_cell)
                                 self.current_game.gameboard_sprite_group.add(Ice(top_cell.Get_Cell_Current_Position(top_cell.rect.center), self.current_game.border_width, self.current_game.border_height))
