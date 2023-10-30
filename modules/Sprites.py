@@ -39,7 +39,7 @@ class Player(Cell):
         self.image.fill(PLAYER_COLOR)
         self.rect = self.image.get_rect()
         self.rect.center = self.GameboardPlayer_To_CenterPixelCoords(gameboard_loc)
-        self.starting_position = self.rect.center
+        self.current_position = self.rect.center
         self.speed = PLAYER_SPEED
         self.moving = False
 
@@ -49,37 +49,44 @@ class Player(Cell):
         Set's the target position for the player as long as the player is not already moving.
         """
                                                     #make sure to change 32 into cell dimensions
-        self.starting_position = self.rect.centerx // 32 - self.border_width // 32, self.rect.centery // 32 - self.border_width // 32
+        self.current_position = self.rect.centerx // 32 - self.border_width // 32, self.rect.centery // 32 - self.border_width // 32
         self.target_pos = location[0], location[1]
         
-        self.starting_position = pygame.Vector2(self.starting_position)
+        self.current_position = pygame.Vector2(self.current_position)
         self.target_pos = pygame.Vector2(self.target_pos)
 
-        print("Starting Position: ", self.starting_position, "Target Position: ", self.target_pos)
+        print("Starting Position: ", self.current_position, "Target Position: ", self.target_pos)
 
         self.moving = True
 
     def update(self):
         if self.moving:
+            
+            self.target_pos_pixels = self.GameboardPlayer_To_CenterPixelCoords(self.target_pos)
 
             if self.rect.center == self.GameboardPlayer_To_CenterPixelCoords(self.target_pos): 
                 self.moving = False
                 return
             
             #shouldn't use 'move' as variable name and method name
-            move = self.target_pos - self.starting_position
+            move = self.target_pos - self.current_position
             move_distance = move.length()
             
             if move_distance < self.speed:
+                print(self.target_pos_pixels)
                 self.rect.center == self.GameboardPlayer_To_CenterPixelCoords(self.target_pos) #should save this as a variable since you use the value more than once
-                # I think after you do this you want to set self.moving to True and then return
+                self.moving = False
+                return
+            
+            if self.GameboardCell_To_CenterPixelCoords(self.target_pos) != self.GameboardPlayer_To_CenterPixelCoords(self.current_position) and not self.moving:
+                print("here")
 
             if move_distance != 0:
                 move.normalize_ip()
                 move = move * PLAYER_SPEED
-                self.starting_position += move #why add to starting position? Shouldn't we be adding to the sprites current position?
+                self.current_position += move #why add to starting position? Shouldn't we be adding to the sprites current position?
 
-            self.rect.center = self.GameboardPlayer_To_CenterPixelCoords(self.starting_position)
+            self.rect.center = self.GameboardPlayer_To_CenterPixelCoords(self.current_position)
             
             
 class Block(Cell):

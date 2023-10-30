@@ -102,7 +102,7 @@ class Game:
         Checks whether the game has been completed.
         """
         #probably need to update this method to check if the player sprite is still moving
-        return self.gameboard.Find_Goal_Pos() == self.player.starting_position
+        return self.gameboard.Find_Goal_Pos() == self.player.current_position
     
     def update(self, events: list[pygame.event.Event]):
         """
