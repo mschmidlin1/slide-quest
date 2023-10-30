@@ -68,7 +68,7 @@ class Window():
 
                 click_pos = pygame.mouse.get_pos()
                 clicked_cells = [clicked_cell for clicked_cell in self.current_game.gameboard_sprite_group if clicked_cell.rect.collidepoint(click_pos)]
-
+                
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         self.title_screen = TitleScreen(self.screen)
@@ -82,7 +82,7 @@ class Window():
 
                         if event.button == 1:  # LEFT CLICK
                             self.dragging_left = True
-                            if top_cell.cellType == CellType.ICE:
+                            if top_cell.cellType == CellType.ICE and len(clicked_cells) == 1:
                                 # print(f"Cell {top_cell.cellType} clicked at: {curr_pos} ... converting to {CellType.BLOCK}")
                                 self.current_game.gameboard_sprite_group.remove(top_cell)
                                 self.current_game.gameboard_sprite_group.add(Block(curr_pos, self.current_game.border_width, self.current_game.border_height))
@@ -95,21 +95,18 @@ class Window():
                                 self.current_game.gameboard_sprite_group.add(Ice(curr_pos, self.current_game.border_width, self.current_game.border_height))
 
                 elif event.type == pygame.MOUSEMOTION:
-                    if self.dragging_left:
-                        for cell in self.current_game.gameboard_sprite_group:
-                            if cell.rect.collidepoint(event.pos):
-                                if cell.cellType != CellType.BLOCK and cell.cellType != CellType.PLAYER and cell.cellType != CellType.GOAL:
-                                    cell.rect.center = event.pos
-                                    self.current_game.gameboard_sprite_group.remove(cell)
-                                    self.current_game.gameboard_sprite_group.add(Block(cell.Get_Cell_Current_Position(cell.rect.center), self.current_game.border_width, self.current_game.border_height))
-                                    
-                    if self.dragging_right:
-                        for cell in self.current_game.gameboard_sprite_group:
-                            if cell.rect.collidepoint(event.pos):
-                                if cell.cellType != CellType.ICE and cell.cellType != CellType.PLAYER and cell.cellType != CellType.GOAL:
-                                    cell.rect.center = event.pos
-                                    self.current_game.gameboard_sprite_group.remove(cell)
-                                    self.current_game.gameboard_sprite_group.add(Ice(cell.Get_Cell_Current_Position(cell.rect.center), self.current_game.border_width, self.current_game.border_height))
+                    if clicked_cells:
+                        top_cell = clicked_cells[-1]
+
+                        if self.dragging_left and len(clicked_cells) == 1:
+                            if top_cell.cellType == CellType.ICE:
+                                self.current_game.gameboard_sprite_group.remove(top_cell)
+                                self.current_game.gameboard_sprite_group.add(Block(top_cell.Get_Cell_Current_Position(top_cell.rect.center), self.current_game.border_width, self.current_game.border_height))
+                                        
+                        if self.dragging_right and len(clicked_cells) == 1:
+                            if top_cell.cellType == CellType.BLOCK:
+                                self.current_game.gameboard_sprite_group.remove(top_cell)
+                                self.current_game.gameboard_sprite_group.add(Ice(top_cell.Get_Cell_Current_Position(top_cell.rect.center), self.current_game.border_width, self.current_game.border_height))
                                     
                 elif event.type == pygame.MOUSEBUTTONUP:
                     if self.dragging_left:
