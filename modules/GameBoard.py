@@ -188,7 +188,6 @@ class GameBoard:
         """
         Saves the current state of the gameboard to a csv file.
         """
-        print('saving')
         with open(filename, mode='w', newline='') as file:
             file.write(str(self))
     @log
@@ -196,7 +195,6 @@ class GameBoard:
         """
         Updates the current state of the gameboard to a csv file.
         """
-        print('updating')
         with open(filename, mode='w', newline='') as file:
             print(str(self))
             file.write(str(self))
@@ -205,7 +203,6 @@ class GameBoard:
         """
         Reads the celltypes from a file and loads them into the GameBoard object.
         """
-        print("reading")
         with open(filename, mode='r', newline='') as f:
             all_lines = f.readlines()
 
