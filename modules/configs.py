@@ -1,7 +1,7 @@
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from modules.GameEnums import GameDifficulty
+from modules.GameEnums import GameDifficulty, GameMode
 
 #game settings
 WINDOW_TITLE = "Slide Quest"
@@ -21,6 +21,9 @@ ADVANCED_DIMENSIONS = (26, 26)
 
 #difficulty
 CURRENT_DIFFICULTY = GameDifficulty.ADVANCED
+
+#gametype
+GAME_TYPE = GameMode.PLAYING_MODE
 
 #cell information
 CELLSIZE = 32

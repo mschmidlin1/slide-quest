@@ -33,6 +33,12 @@ class CellType(Enum):
     BORDER = 6
     GROUND = 7
 
+class GameMode(Enum):
+    """
+    This Enum will house the gametype between debugging or playing
+    """
+    DEBUG_MODE = 0,
+    PLAYING_MODE = 1
 
 Str_to_CellType = {str(enum_member): enum_member for enum_member in CellType}
 

@@ -78,7 +78,9 @@ class Game:
                     self.player.move(self.gameboard.MovePlayer(Direction.DOWN))
             if event.type == pygame.MOUSEBUTTONDOWN:
                 click_pos = pygame.mouse.get_pos()
-                print(click_pos)
+                if self.player.on_click(click_pos):
+                    print(click_pos)
+                
 
     def calculate_border(self):
         """
@@ -102,7 +104,7 @@ class Game:
         Checks whether the game has been completed.
         """
         #probably need to update this method to check if the player sprite is still moving
-        return self.gameboard.Find_Goal_Pos() == self.player.current_position
+        return self.gameboard.Find_Goal_Pos() == self.player.current_pos
     
     def update(self, events: list[pygame.event.Event]):
         """
