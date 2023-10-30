@@ -38,4 +38,4 @@ GOAL_COLOR = (22, 140, 189)
 ICE_COLOR = (173, 216, 230)
 
 #other constants
-PLAYER_SPEED = .4
+PLAYER_SPEED = .2

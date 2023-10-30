@@ -64,12 +64,6 @@ class Window():
                         self.title_screen = TitleScreen(self.screen)
                         self.current_game = None
             
-                if self.current_game.isComplete():
-                    self.level_complete_screen = LevelCompleteScreen(self.screen)
-                    self.current_game = None
-
-                
-
             if self.level_complete_screen != None: #if you're currently on the level complete screen
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
@@ -80,9 +74,14 @@ class Window():
                         self.title_screen = TitleScreen(self.screen)
                         self.level_complete_screen = None
 
-    
+        #pulled isComplete() out of the event loop as it would not check completion unless an event was detected
+        
         if self.current_game is not None:
-            self.current_game.update(events)
+            if self.current_game.isComplete():
+                    self.level_complete_screen = LevelCompleteScreen(self.screen)
+                    self.current_game = None
+            else:        
+                self.current_game.update(events)
 
 
 

@@ -64,7 +64,7 @@ class Player(Cell):
             
             self.target_pos_pixels = self.GameboardPlayer_To_CenterPixelCoords(self.target_pos)
 
-            if self.rect.center == self.GameboardPlayer_To_CenterPixelCoords(self.target_pos): 
+            if self.rect.center == self.target_pos_pixels:
                 self.moving = False
                 return
             
@@ -73,18 +73,14 @@ class Player(Cell):
             move_distance = move.length()
             
             if move_distance < self.speed:
-                print(self.target_pos_pixels)
-                self.rect.center == self.GameboardPlayer_To_CenterPixelCoords(self.target_pos) #should save this as a variable since you use the value more than once
+                self.rect.center = self.target_pos_pixels #should save this as a variable since you use the value more than once
                 self.moving = False
                 return
             
-            if self.GameboardCell_To_CenterPixelCoords(self.target_pos) != self.GameboardPlayer_To_CenterPixelCoords(self.current_position) and not self.moving:
-                print("here")
-
             if move_distance != 0:
                 move.normalize_ip()
                 move = move * PLAYER_SPEED
-                self.current_position += move #why add to starting position? Shouldn't we be adding to the sprites current position?
+                self.current_position += move 
 
             self.rect.center = self.GameboardPlayer_To_CenterPixelCoords(self.current_position)
             
