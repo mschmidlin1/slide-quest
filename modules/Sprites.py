@@ -2,6 +2,7 @@ import pygame
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from modules.GameEnums import CellType
 from modules.configs import CELLSIZE, CELL_WIDTH, CELL_HEIGHT, WALL_COLOR, GOAL_COLOR, ICE_COLOR, PLAYER_COLOR, PLAYER_SPEED
 from modules.Point import Point
 
@@ -17,10 +18,14 @@ class Cell(pygame.sprite.Sprite):
         x = self.border_width + (location[0] * CELL_WIDTH) + (CELL_WIDTH // 2)
         y = self.border_height + (location[1] * CELL_HEIGHT) + (CELL_HEIGHT // 2)
         return Point(round(x), round(y))
+    
+    def Get_Cell_Current_Position(self, location: Point) -> Point:
+        return location[0] // CELL_WIDTH - self.border_width // CELL_WIDTH, location[1] // CELL_HEIGHT - self.border_width // CELL_HEIGHT
 
 class Player(Cell):
     def __init__(self, gameboard_loc: Point, border_width, border_height):
         super().__init__()
+        self.cellType = CellType.PLAYER
         self.border_width = border_width
         self.border_height = border_height
         self._layer = 1
@@ -37,7 +42,7 @@ class Player(Cell):
         """
         Set's the target position for the player as long as the player is not already moving.
         """
-        self.current_pos = self.rect.centerx // CELL_WIDTH - self.border_width // CELL_WIDTH, self.rect.centery // CELL_HEIGHT - self.border_width // CELL_HEIGHT
+        self.current_pos = self.Get_Cell_Current_Position(self.rect.center)
         self.target_pos = location[0], location[1]
         
         self.current_pos = pygame.Vector2(self.current_pos)
@@ -74,6 +79,7 @@ class Player(Cell):
 class Block(Cell):
     def __init__(self, gameboard_loc: Point, border_width, border_height):
         super().__init__()
+        self.cellType = CellType.BLOCK
         self.border_width = border_width
         self.border_height = border_height
         self._layer = 0
@@ -86,6 +92,7 @@ class Block(Cell):
 class Goal(Cell):
     def __init__(self, gameboard_loc: Point, border_width, border_height):
         super().__init__()
+        self.cellType = CellType.GOAL
         self.border_width = border_width
         self.border_height = border_height
         self._layer = 0
@@ -98,6 +105,7 @@ class Goal(Cell):
 class Ice(Cell):
     def __init__(self, gameboard_loc: Point, border_width, border_height):
         super().__init__()
+        self.cellType = CellType.ICE
         self.border_width = border_width
         self.border_height = border_height
         self._layer = 0

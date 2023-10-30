@@ -1,5 +1,7 @@
 from modules.GameEnums import CellType, GameDifficulty
 from modules.configs import CURRENT_DIFFICULTY
+from modules.Game import *
+
 
 def convert_digit_to_cell_type(char):
         try:

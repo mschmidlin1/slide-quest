@@ -40,7 +40,6 @@ class Game:
         self.gameboard = GameBoard(self.gameboard_dimensions)
         self.gameboard_sprite_group = pygame.sprite.LayeredUpdates()
         self.calculate_border()
-
         self.gameboard.ReadBoard(self.map_path(difficulty))
 
         #implementation of GameBoard to initialize screen with all sprites from map csv
@@ -55,6 +54,17 @@ class Game:
         self.gameboard.SetPlayerPos(Point(1, 0))
         self.player = Player(Point(1, 0), self.border_width, self.border_height)
         self.gameboard_sprite_group.add(self.player)
+
+    def update_map_text(self):
+        with open('levels\\advanced\\map.txt', 'w') as file:
+            for col in range(self.gameboard.gameboard_dims[1]): 
+                for row in range(self.gameboard.gameboard_dims[0]):  
+                    curr_pos = (row, col)
+                    for sprite in self.gameboard_sprite_group:
+                        if curr_pos == sprite.Get_Cell_Current_Position(sprite.rect.center) and not sprite.cellType == CellType.PLAYER:
+                            file.write(str(sprite.cellType.value))
+                file.write('\n')
+              
 
     def map_path(self, difficulty):
         if difficulty == GameDifficulty.BEGINNER:
@@ -75,12 +85,7 @@ class Game:
                 if event.key == Direction.UP.value and not self.player.moving:
                     self.player.move(self.gameboard.MovePlayer(Direction.UP))
                 if event.key == Direction.DOWN.value and not self.player.moving:
-                    self.player.move(self.gameboard.MovePlayer(Direction.DOWN))
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                click_pos = pygame.mouse.get_pos()
-                if self.player.on_click(click_pos):
-                    print(click_pos)
-                
+                    self.player.move(self.gameboard.MovePlayer(Direction.DOWN))          
 
     def calculate_border(self):
         """
