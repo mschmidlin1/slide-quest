@@ -29,6 +29,7 @@ class Window():
         self.top_cell = None
         self.clicked_cells = None
         self.curr_pos = None
+        self.dragged_cell = None
     @log
     def new(self):
         """
@@ -109,27 +110,25 @@ class Window():
                     if self.draggingPlayer:
                         self.top_cell.rect.x = event.pos[0] + self.top_cell.offset_x
                         self.top_cell.rect.y = event.pos[1] + self.top_cell.offset_y
-                        print(self.top_cell.rect.center)
 
                     elif self.dragging_left:
                         self.clicked_cells = [clicked_cell for clicked_cell in self.current_game.gameboard_sprite_group if clicked_cell.rect.collidepoint(event.pos)]
-                        self.top_cell = self.clicked_cells[-1]
 
                         for cell in self.current_game.gameboard_sprite_group:
                             if cell.rect.collidepoint(event.pos):
+                                self.dragged_cell = self.clicked_cells[-1]
                                 if cell.cellType == CellType.ICE and len(self.clicked_cells) == 1:
-                                    self.current_game.gameboard_sprite_group.remove(self.top_cell)
-                                    self.current_game.gameboard_sprite_group.add(Block(self.top_cell.Get_Cell_Current_Position(self.top_cell.rect.center), self.current_game.border_width, self.current_game.border_height))
+                                    self.current_game.gameboard_sprite_group.remove(self.dragged_cell)
+                                    self.current_game.gameboard_sprite_group.add(Block(self.dragged_cell.Get_Cell_Current_Position(self.dragged_cell.rect.center), self.current_game.border_width, self.current_game.border_height))
 
                     elif self.dragging_right:
                         self.clicked_cells = [clicked_cell for clicked_cell in self.current_game.gameboard_sprite_group if clicked_cell.rect.collidepoint(event.pos)]
-                        self.top_cell = self.clicked_cells[-1]
-
                         for cell in self.current_game.gameboard_sprite_group:
                             if cell.rect.collidepoint(event.pos):
+                                self.dragged_cell = self.clicked_cells[-1]
                                 if cell.cellType == CellType.BLOCK:
-                                    self.current_game.gameboard_sprite_group.remove(self.top_cell)
-                                    self.current_game.gameboard_sprite_group.add(Ice(self.top_cell.Get_Cell_Current_Position(self.top_cell.rect.center), self.current_game.border_width, self.current_game.border_height))
+                                    self.current_game.gameboard_sprite_group.remove(self.dragged_cell)
+                                    self.current_game.gameboard_sprite_group.add(Ice(self.dragged_cell.Get_Cell_Current_Position(self.dragged_cell.rect.center), self.current_game.border_width, self.current_game.border_height))
                                     
                 elif event.type == pygame.MOUSEBUTTONUP:
                     if self.draggingPlayer:
