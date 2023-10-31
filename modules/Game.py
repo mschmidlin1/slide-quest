@@ -3,8 +3,9 @@ import pygame
 from modules.MapConverter import update_map
 from modules.Sprites import Block, Goal, Ice, Player
 import sys
+from modules.LevelEditor import LevelEditor
 from modules.Point import Point
-from modules.GameEnums import Direction, GameDifficulty, CellType
+from modules.GameEnums import Direction, GameDifficulty, CellType, GameMode
 from modules.configs import (
     BEGINNER_DIMENSIONS, 
     ADVANCED_DIMENSIONS, 
@@ -13,8 +14,8 @@ from modules.configs import (
     WINDOW_WIDTH, 
     CELL_HEIGHT,
     CELL_WIDTH,
-    WINDOW_DIMENSIONS,)
-
+    WINDOW_DIMENSIONS,
+    GAME_TYPE,)
 
 class Game:
     """
@@ -25,6 +26,7 @@ class Game:
         self.screen = screen
         self.map_path(difficulty)
 
+        self.debugging = GAME_TYPE.value
         self.difficulty = difficulty
         
         if difficulty == GameDifficulty.BEGINNER:
@@ -64,8 +66,7 @@ class Game:
                         if curr_pos == sprite.Get_Cell_Current_Position(sprite.rect.center) and not sprite.cellType == CellType.PLAYER:
                             file.write(str(sprite.cellType.value))
                 file.write('\n')
-              
-
+    
     def map_path(self, difficulty):
         if difficulty == GameDifficulty.BEGINNER:
             return 'levels\\beginner\\map.csv'
@@ -94,15 +95,16 @@ class Game:
         self.border_width = (WINDOW_DIMENSIONS[0] - (self.gameboard_dimensions[0]*CELL_WIDTH))//2
         self.border_height = (WINDOW_DIMENSIONS[1] - (self.gameboard_dimensions[1]*CELL_HEIGHT))//2
 
-    def draw_grid(self):
+    def draw_grid(self, debugging):
         """
         This is just temporary for showing the dimensions of the grid until we can start implementing sprites more regularly
         """
+        if debugging:
+            for x in range(0, WINDOW_WIDTH, CELL_WIDTH):
+                pygame.draw.line(self.screen, WHITE, (x, 0), (x, WINDOW_HEIGHT))
+            for y in range(0, WINDOW_HEIGHT, CELL_HEIGHT):
+                pygame.draw.line(self.screen, WHITE, (0, y), (WINDOW_WIDTH, y))
 
-        for x in range(0, WINDOW_WIDTH, CELL_WIDTH):
-            pygame.draw.line(self.screen, WHITE, (x, 0), (x, WINDOW_HEIGHT))
-        for y in range(0, WINDOW_HEIGHT, CELL_HEIGHT):
-            pygame.draw.line(self.screen, WHITE, (0, y), (WINDOW_WIDTH, y))
 
     def isComplete(self):
         """
@@ -116,6 +118,5 @@ class Game:
         The Game.update() method takes a list of pygame events. From this the game will extract the necessary movement information for the player.
         """
         self.move_player(events)
-        self.gameboard_sprite_group.update()
         self.gameboard_sprite_group.draw(self.screen)
-        self.draw_grid()
+        self.draw_grid(self.debugging)
