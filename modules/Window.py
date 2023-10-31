@@ -3,11 +3,12 @@ import pygame
 from modules.TitleScreen import TitleScreen
 from modules.LevelCompleteScreen import LevelCompleteScreen
 from modules.Game import Game
-from modules.configs import CURRENT_DIFFICULTY, WINDOW_DIMENSIONS, WINDOW_TITLE
+from modules.configs import CURRENT_DIFFICULTY, WINDOW_DIMENSIONS, WINDOW_TITLE, GAME_TYPE
 from modules.my_logging import set_logger, log
 from modules.LevelEditor import LevelEditor
 
 set_logger()
+
 
 class Window():
     """
@@ -20,7 +21,7 @@ class Window():
         self.current_game: Game = None
         self.level_complete_screen: LevelCompleteScreen = None
         self.levelEditor: LevelEditor = None
-
+        self.debugging = GAME_TYPE.value
     @log
     def new(self):
         """
@@ -54,12 +55,13 @@ class Window():
             
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_F1:
-                    self.current_game.debugging = not self.current_game.debugging
+                    self.debugging = not self.debugging
+                    self.current_game.debugging_toggle()
 
             if self.title_screen != None: #if you're currently on the title screen
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
-                        self.current_game = Game(CURRENT_DIFFICULTY, self.screen)
+                        self.current_game = Game(CURRENT_DIFFICULTY, self.screen, self.debugging)
                         self.levelEditor = LevelEditor(self)
                         self.title_screen = None
 
@@ -67,13 +69,13 @@ class Window():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         self.title_screen = TitleScreen(self.screen)
-                if self.current_game.debugging:
+                if self.debugging:
                     self.levelEditor.debugging(events)
 
             if self.level_complete_screen != None: #if you're currently on the level complete screen
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
-                        self.current_game = Game(CURRENT_DIFFICULTY, self.screen)
+                        self.current_game = Game(CURRENT_DIFFICULTY, self.screen, self.debugging)
                         self.levelEditor = LevelEditor(self)
                         self.level_complete_screen = None
 

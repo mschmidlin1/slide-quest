@@ -12,20 +12,19 @@ from modules.configs import (
     WINDOW_WIDTH, 
     CELL_HEIGHT,
     CELL_WIDTH,
-    WINDOW_DIMENSIONS,
-    GAME_TYPE,)
+    WINDOW_DIMENSIONS,)
 
 class Game:
     """
     The controlling class for each "game" or "level" of slide quest.
     A game is born with each map and is destroyed once the player reaches the goal.
     """
-    def __init__(self, difficulty: GameDifficulty, screen):
+    def __init__(self, difficulty: GameDifficulty, screen, debugging):
         self.screen = screen
         self.map_path(difficulty)
 
         self.difficulty = difficulty
-        self.debugging = GAME_TYPE.value
+        self.debugging = debugging
         
         if difficulty == GameDifficulty.BEGINNER:
             self.gameboard_dimensions = BEGINNER_DIMENSIONS
@@ -54,6 +53,7 @@ class Game:
         self.player = Player(Point(1, 0), self.border_width, self.border_height)
         self.gameboard_sprite_group.add(self.player)
 
+
     def update_map_text(self):
         with open('levels\\advanced\\map.txt', 'w') as file:
             for col in range(self.gameboard.gameboard_dims[1]): 
@@ -69,6 +69,9 @@ class Game:
             return 'levels\\beginner\\map.csv'
         elif difficulty == GameDifficulty.ADVANCED:
             return 'levels\\advanced\\map.csv'
+        
+    def debugging_toggle(self):
+        self.debugging = not self.debugging
 
     def move_player(self, events: list[pygame.event.Event]):
         """
@@ -92,16 +95,15 @@ class Game:
         self.border_width = (WINDOW_DIMENSIONS[0] - (self.gameboard_dimensions[0]*CELL_WIDTH))//2
         self.border_height = (WINDOW_DIMENSIONS[1] - (self.gameboard_dimensions[1]*CELL_HEIGHT))//2
 
-    def draw_grid(self, debugging):
+    def draw_grid(self, debug):
         """
         This is just temporary for showing the dimensions of the grid until we can start implementing sprites more regularly
         """
-        if debugging:
+        if debug:
             for x in range(0, WINDOW_WIDTH, CELL_WIDTH):
                 pygame.draw.line(self.screen, WHITE, (x, 0), (x, WINDOW_HEIGHT))
             for y in range(0, WINDOW_HEIGHT, CELL_HEIGHT):
                 pygame.draw.line(self.screen, WHITE, (0, y), (WINDOW_WIDTH, y))
-
 
     def isComplete(self):
         """
