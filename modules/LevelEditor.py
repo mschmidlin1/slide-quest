@@ -17,6 +17,7 @@ class LevelEditor():
         self.dragged_cell = None
         self.curr_pos = None
         self.current_game = window.current_game
+        self.player = self.current_game.player
 
     def debugging(self, events):
         for event in events:
@@ -30,19 +31,20 @@ class LevelEditor():
 
                     if event.button == 1:  # LEFT CLICK
 
-                        if self.top_cell.cellType == CellType.PLAYER:
+                        self.dragging_left = True
+
+                        if self.top_cell.cellType == CellType.ICE:
+                            # print(f"Cell {top_cell.cellType} clicked at: {curr_pos} ... converting to {CellType.BLOCK}")
+                            self.current_game.gameboard_sprite_group.remove(self.top_cell)
+                            self.current_game.gameboard_sprite_group.add(Block(self.curr_pos, self.current_game.border_width, self.current_game.border_height))
+
+                        elif self.top_cell.cellType == CellType.PLAYER:
                             self.draggingPlayer = True
                             self.top_cell.offset_x, self.top_cell.offset_y = self.top_cell.rect.x - event.pos[0], self.top_cell.rect.y - event.pos[1]
 
                         elif self.top_cell.cellType == CellType.GOAL:
                             self.draggingGoal = True
                             self.top_cell.offset_x, self.top_cell.offset_y = self.top_cell.rect.x - event.pos[0], self.top_cell.rect.y - event.pos[1]
-
-                        elif self.top_cell.cellType == CellType.ICE:
-                            self.dragging_left = True
-                            # print(f"Cell {top_cell.cellType} clicked at: {curr_pos} ... converting to {CellType.BLOCK}")
-                            self.current_game.gameboard_sprite_group.remove(self.top_cell)
-                            self.current_game.gameboard_sprite_group.add(Block(self.curr_pos, self.current_game.border_width, self.current_game.border_height))
 
                     if event.button == 3:  # RIGHT CLICK
                         self.dragging_right = True
@@ -72,6 +74,7 @@ class LevelEditor():
 
                 elif self.dragging_right:
                     self.clicked_cells = [clicked_cell for clicked_cell in self.current_game.gameboard_sprite_group if clicked_cell.rect.collidepoint(event.pos)]
+                    
                     for cell in self.current_game.gameboard_sprite_group:
                         if cell.rect.collidepoint(event.pos):
                             self.dragged_cell = self.clicked_cells[-1]
@@ -89,9 +92,9 @@ class LevelEditor():
                         self.top_cell.rect.center = self.top_cell.GameboardCell_To_CenterPixelCoords(self.curr_pos)
                     elif cell_beneath_player.cellType == CellType.ICE: # or ground
                         self.current_game.gameboard_sprite_group.remove(self.top_cell)
-                        self.current_game.gameboard.SetPlayerPos(Point(self.top_cell.Get_Cell_Current_Position(self.top_cell.rect.center)[0], self.top_cell.Get_Cell_Current_Position(self.top_cell.rect.center)[1]))
-                        player = Player((self.top_cell.Get_Cell_Current_Position(self.top_cell.rect.center)), self.current_game.border_width, self.current_game.border_height)
-                        self.current_game.gameboard_sprite_group.add(player)
+                        self.current_game.gameboard.player_pos = Point(cell_beneath_player.Get_Cell_Current_Position(cell_beneath_player.rect.center)[0], cell_beneath_player.Get_Cell_Current_Position(cell_beneath_player.rect.center)[1])
+                        self.current_game.player.rect.center = cell_beneath_player.rect.center
+                        self.current_game.gameboard_sprite_group.add(self.player)
                     else:
                         self.top_cell.rect.center = self.top_cell.GameboardCell_To_CenterPixelCoords(self.curr_pos)
                         
@@ -113,7 +116,7 @@ class LevelEditor():
                     self.dragging_left = False
                 if self.dragging_right:
                     self.dragging_right = False
-                
+
                 self.current_game.update_map_text()
                 update_map(CURRENT_DIFFICULTY)
                 self.current_game.gameboard.ReadBoard('levels\\advanced\\map.csv')

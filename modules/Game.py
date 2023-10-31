@@ -61,9 +61,9 @@ class Game:
         with open('levels\\advanced\\map.txt', 'w') as file:
             for col in range(self.gameboard.gameboard_dims[1]): 
                 for row in range(self.gameboard.gameboard_dims[0]):  
-                    curr_pos = (row, col)
+                    current_cell = (row, col)
                     for sprite in self.gameboard_sprite_group:
-                        if curr_pos == sprite.Get_Cell_Current_Position(sprite.rect.center) and not sprite.cellType == CellType.PLAYER:
+                        if current_cell == sprite.Get_Cell_Current_Position(sprite.rect.center) and not sprite.cellType == CellType.PLAYER:
                             file.write(str(sprite.cellType.value))
                 file.write('\n')
     
@@ -110,13 +110,14 @@ class Game:
         """
         Checks whether the game has been completed.
         """
-        #probably need to update this method to check if the player sprite is still moving
-        return self.gameboard.Find_Goal_Pos() == self.player.current_pos
+        if not self.player.moving:
+            return self.gameboard.Find_Goal_Pos() == self.gameboard.GetPlayerPos()
     
     def update(self, events: list[pygame.event.Event]):
         """
         The Game.update() method takes a list of pygame events. From this the game will extract the necessary movement information for the player.
         """
         self.move_player(events)
+        self.gameboard_sprite_group.update()
         self.gameboard_sprite_group.draw(self.screen)
         self.draw_grid(self.debugging)

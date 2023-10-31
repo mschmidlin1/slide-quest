@@ -72,11 +72,11 @@ class Window():
                 if self.debugging:
                     self.levelEditor.debugging(events)
 
-
             if self.level_complete_screen != None: #if you're currently on the level complete screen
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
                         self.current_game = Game(CURRENT_DIFFICULTY, self.screen)
+                        self.levelEditor = LevelEditor(self)
                         self.level_complete_screen = None
 
                     elif event.key == pygame.K_ESCAPE:
