@@ -16,8 +16,15 @@ class LevelEditor():
         self.clicked_cells = None
         self.dragged_cell = None
         self.curr_pos = None
+        self.window  = window
         self.current_game = window.current_game
         self.player = self.current_game.player
+        print("Here")
+
+    def update_gameboard(self):
+        self.current_game.update_map_text()
+        update_map(CURRENT_DIFFICULTY)
+        self.current_game.gameboard.ReadBoard('levels\\advanced\\map.csv')
 
     def debugging(self, events):
         for event in events:
@@ -59,6 +66,7 @@ class LevelEditor():
                     self.top_cell.rect.y = event.pos[1] + self.top_cell.offset_y
 
                 if self.draggingGoal:
+                    
                     self.top_cell.rect.x = event.pos[0] + self.top_cell.offset_x
                     self.top_cell.rect.y = event.pos[1] + self.top_cell.offset_y
 
@@ -112,11 +120,6 @@ class LevelEditor():
                     else:
                         self.top_cell.rect.center = self.top_cell.GameboardCell_To_CenterPixelCoords(self.curr_pos)
                             
-                if self.dragging_left:
-                    self.dragging_left = False
-                if self.dragging_right:
-                    self.dragging_right = False
+                self.__init__(self.window)
 
-                self.current_game.update_map_text()
-                update_map(CURRENT_DIFFICULTY)
-                self.current_game.gameboard.ReadBoard('levels\\advanced\\map.csv')
+                self.update_gameboard()

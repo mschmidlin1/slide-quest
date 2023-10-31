@@ -123,8 +123,6 @@ class TextSprite(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = center_location
 
-
-
 class TitleScreenPlayerSprite(pygame.sprite.Sprite):
     def __init__(self, center_location: Point):
         super().__init__()
