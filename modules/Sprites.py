@@ -28,7 +28,7 @@ class Player(Cell):
         self.cellType = CellType.PLAYER
         self.border_width = border_width
         self.border_height = border_height
-        self._layer = 1
+        self._layer = 2
         self.gameboard_loc = gameboard_loc
         self.image = pygame.Surface((CELLSIZE, CELLSIZE))
         self.image.fill(PLAYER_COLOR)
@@ -95,7 +95,7 @@ class Goal(Cell):
         self.cellType = CellType.GOAL
         self.border_width = border_width
         self.border_height = border_height
-        self._layer = 0
+        self._layer = 1
         self.gameboard_loc = gameboard_loc
         self.image = pygame.Surface((CELLSIZE, CELLSIZE))
         self.image.fill(GOAL_COLOR)

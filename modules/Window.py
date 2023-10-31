@@ -5,7 +5,7 @@ from modules.GameEnums import GameMode, CellType
 from modules.TitleScreen import TitleScreen
 from modules.LevelCompleteScreen import LevelCompleteScreen
 from modules.Point import Point
-from modules.Sprites import Block, Ice, Player
+from modules.Sprites import Block, Ice, Player, Goal
 from modules.Game import Game
 from modules.configs import CURRENT_DIFFICULTY, WINDOW_DIMENSIONS, WINDOW_TITLE, GAME_TYPE
 from modules.my_logging import set_logger, log
@@ -26,6 +26,7 @@ class Window():
         self.dragging_left = False
         self.dragging_right = False  
         self.draggingPlayer = False
+        self.draggingGoal = False
         self.top_cell = None
         self.clicked_cells = None
         self.curr_pos = None
@@ -85,11 +86,14 @@ class Window():
                     if self.clicked_cells:
                         self.top_cell = self.clicked_cells[-1]
                         self.curr_pos = self.top_cell.Get_Cell_Current_Position(self.top_cell.rect.center)
-                        
                         if event.button == 1:  # LEFT CLICK
 
                             if self.top_cell.cellType == CellType.PLAYER:
                                 self.draggingPlayer = True
+                                self.top_cell.offset_x, self.top_cell.offset_y = self.top_cell.rect.x - event.pos[0], self.top_cell.rect.y - event.pos[1]
+
+                            elif self.top_cell.cellType == CellType.GOAL:
+                                self.draggingGoal = True
                                 self.top_cell.offset_x, self.top_cell.offset_y = self.top_cell.rect.x - event.pos[0], self.top_cell.rect.y - event.pos[1]
 
                             elif self.top_cell.cellType == CellType.ICE:
@@ -106,8 +110,11 @@ class Window():
                                 self.current_game.gameboard_sprite_group.add(Ice(self.curr_pos, self.current_game.border_width, self.current_game.border_height))
 
                 elif event.type == pygame.MOUSEMOTION:
-                    
                     if self.draggingPlayer:
+                        self.top_cell.rect.x = event.pos[0] + self.top_cell.offset_x
+                        self.top_cell.rect.y = event.pos[1] + self.top_cell.offset_y
+
+                    if self.draggingGoal:
                         self.top_cell.rect.x = event.pos[0] + self.top_cell.offset_x
                         self.top_cell.rect.y = event.pos[1] + self.top_cell.offset_y
 
@@ -133,25 +140,38 @@ class Window():
                 elif event.type == pygame.MOUSEBUTTONUP:
                     if self.draggingPlayer:
                         self.draggingPlayer = False
-                        self.clicked_cells = [clicked_cell for clicked_cell in self.current_game.gameboard_sprite_group if clicked_cell.rect.collidepoint(event.pos)]
-                        cell_beneath_player = self.clicked_cells[0]
-
-                        if cell_beneath_player.cellType == CellType.BLOCK:
+                        self.dragged_cells = [clicked_cell for clicked_cell in self.current_game.gameboard_sprite_group if clicked_cell.rect.collidepoint(event.pos)]
+                        cell_beneath_player = self.dragged_cells[0]
+                        if cell_beneath_player.cellType == CellType.BLOCK or cell_beneath_player.cellType == CellType.GOAL:
                             self.top_cell.rect.center = self.top_cell.GameboardCell_To_CenterPixelCoords(self.curr_pos)
-                            return
                         elif cell_beneath_player.cellType == CellType.ICE: # or ground
                             self.current_game.gameboard_sprite_group.remove(self.top_cell)
-                            
                             self.current_game.gameboard.SetPlayerPos(Point(self.top_cell.Get_Cell_Current_Position(self.top_cell.rect.center)[0], self.top_cell.Get_Cell_Current_Position(self.top_cell.rect.center)[1]))
                             player = Player((self.top_cell.Get_Cell_Current_Position(self.top_cell.rect.center)), self.current_game.border_width, self.current_game.border_height)
                             self.current_game.gameboard_sprite_group.add(player)
-                            return
+                        else:
+                            self.top_cell.rect.center = self.top_cell.GameboardCell_To_CenterPixelCoords(self.curr_pos)
+                            
+                    if self.draggingGoal:
+                        self.draggingGoal = False
+                        self.dragged_cells = [clicked_cell for clicked_cell in self.current_game.gameboard_sprite_group if clicked_cell.rect.collidepoint(event.pos)]
+                        cell_beneath_goal = self.dragged_cells[0]
+                        if cell_beneath_goal.cellType == CellType.BLOCK or cell_beneath_goal.cellType == CellType.PLAYER:
+                            self.top_cell.rect.center = self.top_cell.GameboardCell_To_CenterPixelCoords(self.curr_pos)
+                        elif cell_beneath_goal.cellType == CellType.ICE and not len(self.dragged_cells) == 3: # or ground
+                            self.current_game.gameboard_sprite_group.remove(self.clicked_cells[-1])
+                            self.current_game.gameboard_sprite_group.remove(self.dragged_cells[0])
+                            self.current_game.gameboard_sprite_group.add(Ice(self.curr_pos, self.current_game.border_width, self.top_cell.border_height))
+                            self.current_game.gameboard_sprite_group.add(Goal(self.top_cell.Get_Cell_Current_Position(self.top_cell.rect.center), self.current_game.border_width, self.current_game.border_height))
+                        else:
+                            self.top_cell.rect.center = self.top_cell.GameboardCell_To_CenterPixelCoords(self.curr_pos)
+                            
                         
                     if self.dragging_left:
                         self.dragging_left = False
                     if self.dragging_right:
                         self.dragging_right = False
-                        
+
                     self.current_game.update_map_text()
                     update_map(CURRENT_DIFFICULTY)
                     self.current_game.gameboard.ReadBoard('levels\\advanced\\map.csv')
@@ -173,6 +193,3 @@ class Window():
                     self.current_game = None
             else:        
                 self.current_game.update(events)
-
-
-
