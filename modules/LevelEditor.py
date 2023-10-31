@@ -19,7 +19,6 @@ class LevelEditor():
         self.window  = window
         self.current_game = window.current_game
         self.player = self.current_game.player
-        print("Here")
 
     def update_gameboard(self):
         self.current_game.update_map_text()
