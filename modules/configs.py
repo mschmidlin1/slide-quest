@@ -23,7 +23,7 @@ ADVANCED_DIMENSIONS = (26, 26)
 CURRENT_DIFFICULTY = GameDifficulty.ADVANCED
 
 #gametype
-GAME_TYPE = GameMode.DEBUG_MODE
+GAME_TYPE = GameMode.PLAYING_MODE
 
 #cell information
 CELLSIZE = 32

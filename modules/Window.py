@@ -3,7 +3,7 @@ import pygame
 from modules.TitleScreen import TitleScreen
 from modules.LevelCompleteScreen import LevelCompleteScreen
 from modules.Game import Game
-from modules.configs import CURRENT_DIFFICULTY, WINDOW_DIMENSIONS, WINDOW_TITLE, GAME_TYPE
+from modules.configs import CURRENT_DIFFICULTY, WINDOW_DIMENSIONS, WINDOW_TITLE
 from modules.my_logging import set_logger, log
 from modules.LevelEditor import LevelEditor
 
@@ -19,7 +19,6 @@ class Window():
         self.title_screen: TitleScreen = TitleScreen(self.screen)
         self.current_game: Game = None
         self.level_complete_screen: LevelCompleteScreen = None
-        self.debugging = GAME_TYPE.value
         self.levelEditor: LevelEditor = None
 
     @log
@@ -45,7 +44,6 @@ class Window():
             self.title_screen.draw()
         elif self.level_complete_screen is not None:
             self.level_complete_screen.draw()
-
     @log
     def handle_events(self, events):
         for event in events:
@@ -56,7 +54,7 @@ class Window():
             
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_F1:
-                    self.debugging = not self.debugging
+                    self.current_game.debugging = not self.current_game.debugging
 
             if self.title_screen != None: #if you're currently on the title screen
                 if event.type == pygame.KEYDOWN:
@@ -69,7 +67,7 @@ class Window():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         self.title_screen = TitleScreen(self.screen)
-                if self.debugging:
+                if self.current_game.debugging:
                     self.levelEditor.debugging(events)
 
             if self.level_complete_screen != None: #if you're currently on the level complete screen

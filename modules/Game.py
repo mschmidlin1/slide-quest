@@ -1,11 +1,9 @@
-from modules.GameBoard import GameBoard
 import pygame
+from modules.GameBoard import GameBoard
 from modules.MapConverter import update_map
 from modules.Sprites import Block, Goal, Ice, Player
-import sys
-from modules.LevelEditor import LevelEditor
 from modules.Point import Point
-from modules.GameEnums import Direction, GameDifficulty, CellType, GameMode
+from modules.GameEnums import Direction, GameDifficulty, CellType
 from modules.configs import (
     BEGINNER_DIMENSIONS, 
     ADVANCED_DIMENSIONS, 
@@ -26,14 +24,13 @@ class Game:
         self.screen = screen
         self.map_path(difficulty)
 
-        self.debugging = GAME_TYPE.value
         self.difficulty = difficulty
+        self.debugging = GAME_TYPE.value
         
         if difficulty == GameDifficulty.BEGINNER:
             self.gameboard_dimensions = BEGINNER_DIMENSIONS
         elif difficulty == GameDifficulty.ADVANCED:
             self.gameboard_dimensions = ADVANCED_DIMENSIONS
-
         else:
             raise NotImplementedError("")
         
