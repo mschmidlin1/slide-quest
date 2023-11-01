@@ -53,7 +53,6 @@ class Game:
         self.player = Player(Point(1, 0), self.border_width, self.border_height)
         self.gameboard_sprite_group.add(self.player)
 
-
     def update_map_text(self):
         with open('levels\\advanced\\map.txt', 'w') as file:
             for col in range(self.gameboard.gameboard_dims[1]): 

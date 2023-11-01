@@ -23,7 +23,7 @@ ADVANCED_DIMENSIONS = (26, 26)
 CURRENT_DIFFICULTY = GameDifficulty.ADVANCED
 
 #gametype
-GAME_TYPE = GameMode.PLAYING_MODE
+GAME_TYPE = GameMode.DEBUG_MODE
 
 #cell information
 CELLSIZE = 32
@@ -42,3 +42,7 @@ ICE_COLOR = (173, 216, 230)
 
 #other constants
 PLAYER_SPEED = .3
+
+#settings
+LEFT_CLICK = 1
+RIGHT_CLICK = 3
