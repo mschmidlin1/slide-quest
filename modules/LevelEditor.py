@@ -17,7 +17,6 @@ class ClickedCell():
         self.cell = cell
         self.cell_type = self.cell.cellType
         self.cell_starting_position = self.cell.rect.center
-        # self.gamebard_cell_Point = self.cell.Get_Cell_Current_Position(self.cell_starting_position)
 
         self.cell.offset_x = self.cell.rect.x - event.pos[0] if self.is_draggable() == True else None
         self.cell.offset_y = self.cell.rect.y - event.pos[1] if self.is_draggable() == True else None
@@ -262,11 +261,12 @@ class LevelEditor():
 
         updated_cell = self.update_current_cell(event)
 
-        if self.click_type == LEFT_CLICK:
-            self.replace_cell(updated_cell.cell, CellType.BLOCK, event)
+        if updated_cell:
+            if self.click_type == LEFT_CLICK:
+                self.replace_cell(updated_cell.cell, CellType.BLOCK, event)
 
-        elif self.click_type == RIGHT_CLICK:
-                self.replace_cell(updated_cell.cell, CellType.ICE, event)
+            elif self.click_type == RIGHT_CLICK:
+                    self.replace_cell(updated_cell.cell, CellType.ICE, event)
 
     def handle_mouse_up(self, clicked_cell, click_type, event):
         """
