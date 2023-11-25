@@ -1,5 +1,6 @@
 import sys
 import pygame
+from modules.LevelIO import LevelIO
 from modules.TitleScreen import TitleScreen
 from modules.LevelCompleteScreen import LevelCompleteScreen
 from modules.Game import Game
@@ -22,6 +23,7 @@ class Window():
         self.level_complete_screen: LevelCompleteScreen = None
         self.levelEditor: LevelEditor = None
         self.debugging = GAME_TYPE.value
+        self.level_manager = LevelIO()
     @log
     def new(self):
         """
@@ -61,7 +63,7 @@ class Window():
             if self.title_screen != None: #if you're currently on the title screen
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
-                        self.current_game = Game(CURRENT_DIFFICULTY, self.screen, self.debugging)
+                        self.current_game = Game(self.screen, self.level_manager, self.debugging)
                         self.levelEditor = LevelEditor(self)
                         self.title_screen = None
 
@@ -73,7 +75,7 @@ class Window():
             if self.level_complete_screen != None: #if you're currently on the level complete screen
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
-                        self.current_game = Game(CURRENT_DIFFICULTY, self.screen, self.debugging)
+                        self.current_game = Game(self.screen, self.level_manager, self.debugging)
                         self.levelEditor = LevelEditor(self)
                         self.level_complete_screen = None
 
@@ -87,6 +89,7 @@ class Window():
             if self.current_game.isComplete():
                     self.level_complete_screen = LevelCompleteScreen(self.screen)
                     self.current_game = None
+                    self.level_manager.next_level()
             else:        
                 if self.debugging:
                     self.levelEditor.debugging(events)
