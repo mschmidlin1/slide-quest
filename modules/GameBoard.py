@@ -27,7 +27,6 @@ class GameBoard:
         self.goal_pos = self.Find_Goal_Pos()
         self.player_pos = player_pos
 
-
     @log
     def UpdateCell(self, location: Point, cell_type: CellType) -> None:
         """

@@ -8,7 +8,7 @@ from modules.GameBoard import GameBoard
 from modules.LevelIO import LevelIO
 from modules.configs import CURRENT_DIFFICULTY, LEFT_CLICK, RIGHT_CLICK
 
-class ClickedCell():
+class ClickedCell:
     def __init__(self, cell, event):
         """
         Initialize a ClickedCell object.
@@ -65,11 +65,13 @@ class ClickedCell():
         else:
             return False
 
-class LevelEditor():
-    def __init__(self, curr_game):
+class LevelEditor:
+    def __init__(self, curr_game, level_manager):
         print("LevelEditor Init")
         self.current_game  = curr_game
         self.player = self.current_game.player
+        self.level_manager = level_manager
+        self.gameboard, self.player_pos = self.level_manager.Read()
 
         self.clickedcell = None
         self.click_type = None
@@ -78,6 +80,8 @@ class LevelEditor():
 
     def update_gameboard(self):
         print("Updating Board...")
+        #self.level_manager
+
         # self.current_game.update_map_text()
         # update_map(CURRENT_DIFFICULTY)
         # self.current_game.gameboard.ReadBoard('levels\\advanced\\map.csv')
@@ -302,7 +306,7 @@ class LevelEditor():
         if clicked_cell.handle_dragging(event):
             self.update_cell_after_dragging(clicked_cell, underneath_cell, underneath_goal)
 
-        self.__init__(self.current_game)
+        self.__init__(self.current_game, self.level_manager)
         self.update_gameboard()
 
     def update_current_cell(self, event, checkingUnderneath=False):

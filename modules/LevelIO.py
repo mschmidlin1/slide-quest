@@ -14,8 +14,6 @@ cell_dtype = np.dtype(CellType)
 set_logger()
 
 
-
-
 class LevelIO:
     """
     Class for managing levels and completed levels in a SlideQuest.
@@ -33,8 +31,7 @@ class LevelIO:
     """
     def __init__(self):
         self.levels_root_dir = "levels"
-        self.completed_levels_file = "levels/#_completed.txt"
-
+        self.completed_levels_file = "levels/#_completed.txt" 
 
         self.level_file_pattern = r'^(\d_\d{4}-\d{2}-\d{2} \d{2}\.\d{2}\.\d{2}\.\d{6}\.csv)$'
 
@@ -145,7 +142,7 @@ class LevelIO:
         map_file = level_str + str_dttm + ".csv"
         player_file = os.path.join(self.levels_root_dir, player_file)
         map_file = os.path.join(self.levels_root_dir, map_file)
-        self.SavePlayerPos(gameboard.player_pos, player_file)
+        #self.SavePlayerPos(gameboard.player_pos, player_file)
         self.SaveBoard(gameboard, map_file)
     @log
     def ReadBoard(self, filename: str = None) -> np.ndarray:
