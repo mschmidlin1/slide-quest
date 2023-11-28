@@ -4,9 +4,8 @@ from modules.LevelIO import LevelIO
 from modules.TitleScreen import TitleScreen
 from modules.LevelCompleteScreen import LevelCompleteScreen
 from modules.Game import Game
-from modules.configs import CURRENT_DIFFICULTY, WINDOW_DIMENSIONS, WINDOW_TITLE, GAME_TYPE
+from modules.configs import WINDOW_DIMENSIONS, WINDOW_TITLE, GAME_TYPE
 from modules.my_logging import set_logger, log
-from modules.LevelEditor import LevelEditor
 
 set_logger()
 
@@ -20,9 +19,8 @@ class Window():
         self.new()
         self.title_screen: TitleScreen = TitleScreen(self.screen)
         self.current_game: Game = None
-        self.level_complete_screen: LevelCompleteScreen = None
-        self.levelEditor: LevelEditor = None
         self.debugging = GAME_TYPE.value
+        self.level_complete_screen: LevelCompleteScreen = None
         self.level_manager = LevelIO()
     @log
     def new(self):
@@ -64,7 +62,6 @@ class Window():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
                         self.current_game = Game(self.screen, self.level_manager, self.debugging)
-                        self.levelEditor = LevelEditor(self)
                         self.title_screen = None
 
             if self.current_game != None: #if you're currently playing the game
@@ -76,7 +73,6 @@ class Window():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
                         self.current_game = Game(self.screen, self.level_manager, self.debugging)
-                        self.levelEditor = LevelEditor(self)
                         self.level_complete_screen = None
 
                     elif event.key == pygame.K_ESCAPE:
@@ -91,7 +87,4 @@ class Window():
                     self.current_game = None
                     self.level_manager.next_level()
             else:        
-                if self.debugging:
-                    self.levelEditor.debugging(events)
-
                 self.current_game.update(events)

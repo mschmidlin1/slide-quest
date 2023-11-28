@@ -4,6 +4,8 @@ from modules.Sprites import Block, Ice, Goal
 from modules.Point import Point
 from modules.GameEnums import CellType
 from modules.MapConverter import update_map
+from modules.GameBoard import GameBoard
+from modules.LevelIO import LevelIO
 from modules.configs import CURRENT_DIFFICULTY, LEFT_CLICK, RIGHT_CLICK
 
 class ClickedCell():
@@ -64,9 +66,9 @@ class ClickedCell():
             return False
 
 class LevelEditor():
-    def __init__(self, window):
-        self.window  = window
-        self.current_game = window.current_game
+    def __init__(self, curr_game):
+        print("LevelEditor Init")
+        self.current_game  = curr_game
         self.player = self.current_game.player
 
         self.clickedcell = None
@@ -75,9 +77,10 @@ class LevelEditor():
         self.replaced_cells = set()
 
     def update_gameboard(self):
-        self.current_game.update_map_text()
-        update_map(CURRENT_DIFFICULTY)
-        self.current_game.gameboard.ReadBoard('levels\\advanced\\map.csv')
+        print("Updating Board...")
+        # self.current_game.update_map_text()
+        # update_map(CURRENT_DIFFICULTY)
+        # self.current_game.gameboard.ReadBoard('levels\\advanced\\map.csv')
 
     def replace_cell(self, old_cell, new_cell_type, event):
         """
@@ -299,7 +302,7 @@ class LevelEditor():
         if clicked_cell.handle_dragging(event):
             self.update_cell_after_dragging(clicked_cell, underneath_cell, underneath_goal)
 
-        self.__init__(self.window)
+        self.__init__(self.current_game)
         self.update_gameboard()
 
     def update_current_cell(self, event, checkingUnderneath=False):

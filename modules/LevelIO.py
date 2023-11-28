@@ -186,9 +186,9 @@ class LevelIO:
         return Point(int(x), int(y))
     @log
     def Read(self) -> tuple[np.ndarray, Point]:
-        gamebaord = self.ReadBoard(self.current_level)
+        gameboard = self.ReadBoard(self.current_level)
         player_pos = self.ReadPlayerPos(self.get_player_file())
-        return gamebaord, player_pos
+        return gameboard, player_pos
     @log
     def str_dttm(self) -> str:
         """

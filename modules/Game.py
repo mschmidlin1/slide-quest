@@ -3,6 +3,7 @@ from modules.GameBoard import GameBoard
 from modules.MapConverter import update_map
 from modules.Sprites import Block, Goal, Ice, Player
 from modules.Point import Point
+from modules.LevelEditor import LevelEditor
 from modules.LevelIO import LevelIO
 from modules.GameEnums import Direction, GameDifficulty, CellType
 from modules.configs import (
@@ -22,6 +23,7 @@ class Game:
     """
     def __init__(self, screen: pygame.Surface, level_manager: LevelIO, debugging):
         
+        print("New game")
 
         self.screen = screen
         # self.map_path(difficulty)
@@ -38,11 +40,7 @@ class Game:
         
         # update_map(difficulty)
 
-
         gameboard, player_pos = level_manager.Read()
-
-
-
 
         self.gameboard = GameBoard(gameboard, player_pos)
         self.gameboard_sprite_group = pygame.sprite.LayeredUpdates()
@@ -60,6 +58,8 @@ class Game:
 
         self.player = Player(Point(1, 0), self.border_width, self.border_height)
         self.gameboard_sprite_group.add(self.player)
+
+        self.levelEditor = LevelEditor(self)
 
     # def update_map_text(self):
     #     with open('levels\\advanced\\map.txt', 'w') as file:
@@ -126,4 +126,7 @@ class Game:
         self.move_player(events)
         self.gameboard_sprite_group.update()
         self.gameboard_sprite_group.draw(self.screen)
-        self.draw_grid(self.debugging)
+
+        if(self.debugging):
+            self.levelEditor.debugging(events)
+            self.draw_grid(self.debugging)
