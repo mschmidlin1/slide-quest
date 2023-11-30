@@ -17,6 +17,7 @@ from modules.configs import (
     WINDOW_DIMENSIONS,
     GAME_TYPE)
 
+
 class Game:
     """
     The controlling class for each "game" or "level" of slide quest.
