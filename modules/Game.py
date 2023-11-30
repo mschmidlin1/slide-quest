@@ -35,13 +35,13 @@ class Game:
         for row, cells in enumerate(self.gameboard.gameboard):
             for col, cell in enumerate(cells):
                 if cell == CellType.BLOCK:
-                    self.gameboard_sprite_group.add(Block(Point(col, row), self.border_size.width, self.border_size.height))
+                    self.gameboard_sprite_group.add(Block(Point(col, row), self.border_size))
                 if cell == CellType.GOAL:
-                    self.gameboard_sprite_group.add(Goal(Point(col, row), self.border_size.width, self.border_size.height))
+                    self.gameboard_sprite_group.add(Goal(Point(col, row), self.border_size))
                 if cell == CellType.ICE:
-                    self.gameboard_sprite_group.add(Ice(Point(col, row), self.border_size.width, self.border_size.height))
+                    self.gameboard_sprite_group.add(Ice(Point(col, row), self.border_size))
 
-        self.player = Player(Point(1, 0), self.border_size.width, self.border_size.height)
+        self.player = Player(Point(1, 0), self.border_size)
         self.gameboard_sprite_group.add(self.player)
         self.levelEditor = LevelEditor(self, level_manager)
     @log

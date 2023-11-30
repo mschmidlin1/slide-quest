@@ -40,8 +40,8 @@ class LevelIO:
         self.incomplete_levels = self.filter_by_completed(self.all_levels, self.completed_levels)
         if len(self.incomplete_levels)<1:
             self.clear_completed()
-        else:
-            self.current_level = self.incomplete_levels.pop(0)
+
+        self.current_level = self.incomplete_levels.pop(0)
         
         self.current_difficulty: GameDifficulty = Game_Difficult_Str_Map[os.path.basename(self.current_level)[0]]
 
@@ -118,7 +118,6 @@ class LevelIO:
         self.all_levels = self.list_levels(self.levels_root_dir)
         self.completed_levels = self.read_completed(self.completed_levels_file)
         self.incomplete_levels = self.filter_by_completed(self.all_levels, self.completed_levels)
-        self.current_level = self.incomplete_levels.pop(0)
     @log
     def SaveBoard(self, gameboard: GameBoard, filename: str) -> None:
         """

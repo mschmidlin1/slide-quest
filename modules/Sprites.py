@@ -4,7 +4,7 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from modules.GameEnums import CellType
 from modules.configs import CELL_DIMENSIONS, WALL_COLOR, GOAL_COLOR, ICE_COLOR, PLAYER_COLOR, PLAYER_SPEED
-from modules.DataTypes import Point
+from modules.DataTypes import Point, Size
 
 
 
@@ -15,19 +15,18 @@ class Cell(pygame.sprite.Sprite):
         """
         Converts the coordinates of the Gameboard into the center pixel location of the correct cell.
         """
-        x = self.border_width + (location[0] * CELL_DIMENSIONS.width) + (CELL_DIMENSIONS.width // 2)
-        y = self.border_height + (location[1] * CELL_DIMENSIONS.height) + (CELL_DIMENSIONS.height // 2)
+        x = self.border_size.width + (location[0] * CELL_DIMENSIONS.width) + (CELL_DIMENSIONS.width // 2)
+        y = self.border_size.height + (location[1] * CELL_DIMENSIONS.height) + (CELL_DIMENSIONS.height // 2)
         return Point(round(x), round(y))
     
     def Get_Cell_Current_Position(self, location: Point) -> Point:
-        return location[0] // CELL_DIMENSIONS.width - self.border_width // CELL_DIMENSIONS.width, location[1] // CELL_DIMENSIONS.height - self.border_width // CELL_DIMENSIONS.height
+        return location[0] // CELL_DIMENSIONS.width - self.border_size.width // CELL_DIMENSIONS.width, location[1] // CELL_DIMENSIONS.height - self.border_size.height // CELL_DIMENSIONS.height
 
 class Player(Cell):
-    def __init__(self, gameboard_loc: Point, border_width, border_height):
+    def __init__(self, gameboard_loc: Point, border_size: Size):
         super().__init__()
         self.cellType = CellType.PLAYER
-        self.border_width = border_width
-        self.border_height = border_height
+        self.border_size = border_size
         self._layer = 2
         self.gameboard_loc = gameboard_loc
         self.image = pygame.Surface(CELL_DIMENSIONS)
@@ -77,11 +76,10 @@ class Player(Cell):
             self.rect.center = self.GameboardCell_To_CenterPixelCoords(self.current_pos)
             
 class Block(Cell):
-    def __init__(self, gameboard_loc: Point, border_width, border_height):
+    def __init__(self, gameboard_loc: Point, border_size: Size):
         super().__init__()
         self.cellType = CellType.BLOCK
-        self.border_width = border_width
-        self.border_height = border_height
+        self.border_size = border_size
         self._layer = 0
         self.gameboard_loc = gameboard_loc
         self.image = pygame.Surface(CELL_DIMENSIONS)
@@ -90,11 +88,10 @@ class Block(Cell):
         self.rect.center = self.GameboardCell_To_CenterPixelCoords(gameboard_loc)
         
 class Goal(Cell):
-    def __init__(self, gameboard_loc: Point, border_width, border_height):
+    def __init__(self, gameboard_loc: Point, border_size: Size):
         super().__init__()
         self.cellType = CellType.GOAL
-        self.border_width = border_width
-        self.border_height = border_height
+        self.border_size = border_size
         self._layer = 1
         self.gameboard_loc = gameboard_loc
         self.image = pygame.Surface(CELL_DIMENSIONS)
@@ -103,11 +100,10 @@ class Goal(Cell):
         self.rect.center = self.GameboardCell_To_CenterPixelCoords(gameboard_loc)
 
 class Ice(Cell):
-    def __init__(self, gameboard_loc: Point, border_width, border_height):
+    def __init__(self, gameboard_loc: Point, border_size: Size):
         super().__init__()
         self.cellType = CellType.ICE
-        self.border_width = border_width
-        self.border_height = border_height
+        self.border_size = border_size
         self._layer = 0
         self.gameboard_loc = gameboard_loc
         self.image = pygame.Surface(CELL_DIMENSIONS)
