@@ -1,12 +1,11 @@
 import pygame
 from modules.GameEnums import CellType
 from modules.Sprites import Block, Ice, Goal
-from modules.Point import Point
+from modules.DataTypes import Point
 from modules.GameEnums import CellType
-from modules.MapConverter import update_map
 from modules.GameBoard import GameBoard
 from modules.LevelIO import LevelIO
-from modules.configs import CURRENT_DIFFICULTY, LEFT_CLICK, RIGHT_CLICK
+from modules.configs import LEFT_CLICK, RIGHT_CLICK
 
 class ClickedCell:
     def __init__(self, cell, event):
@@ -110,9 +109,9 @@ class LevelEditor:
             return
 
         if new_cell_type == CellType.BLOCK:
-            self.new_cell = Block(old_cell.Get_Cell_Current_Position(event.pos), self.current_game.border_width, self.current_game.border_height)
+            self.new_cell = Block(old_cell.Get_Cell_Current_Position(event.pos), self.current_game.border_size.width, self.current_game.border_size.height)
         elif new_cell_type == CellType.ICE:
-            self.new_cell = Ice(old_cell.Get_Cell_Current_Position(event.pos), self.current_game.border_width, self.current_game.border_height)
+            self.new_cell = Ice(old_cell.Get_Cell_Current_Position(event.pos), self.current_game.border_size.width, self.current_game.border_size.height)
         
         temp_pos = Point(*old_cell.Get_Cell_Current_Position(event.pos))
         self.current_game.gameboard.UpdateCell(temp_pos, new_cell_type)
@@ -146,9 +145,9 @@ class LevelEditor:
         if old_cell.cell_type != CellType.GOAL:
             return
         self.current_game.gameboard_sprite_group.remove(new_cell.cell)
-        self.current_game.gameboard_sprite_group.add(Goal(old_cell.cell.Get_Cell_Current_Position(new_cell.cell.rect.center), self.current_game.border_width, self.current_game.border_height))
+        self.current_game.gameboard_sprite_group.add(Goal(old_cell.cell.Get_Cell_Current_Position(new_cell.cell.rect.center), self.current_game.border_size.width, self.current_game.border_size.height))
         self.current_game.gameboard_sprite_group.remove(old_cell.cell)
-        self.current_game.gameboard_sprite_group.add(Ice(new_cell.cell.Get_Cell_Current_Position(old_cell.cell_starting_position), self.current_game.border_width, self.current_game.border_height))
+        self.current_game.gameboard_sprite_group.add(Ice(new_cell.cell.Get_Cell_Current_Position(old_cell.cell_starting_position), self.current_game.border_size.width, self.current_game.border_size.height))
 
         #update the gameboard with the new goal position
         #fill the cell under the old goal position with Ice

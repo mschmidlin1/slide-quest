@@ -33,7 +33,7 @@ def update_map(difficulty):
                             string_list = convert_line_to_strings(line)
                             string_str = ','.join(string_list) + '\n'
                             f.write(string_str)
-    elif CURRENT_DIFFICULTY == GameDifficulty.ADVANCED:
+    elif CURRENT_DIFFICULTY == GameDifficulty.EXPERT:
          with open('levels\\advanced\\map.txt', 'r') as file:
                     with open('levels\\advanced\\map.csv', 'w') as f:
                         for line in file:

@@ -4,7 +4,7 @@ from modules.LevelIO import LevelIO
 from modules.TitleScreen import TitleScreen
 from modules.LevelCompleteScreen import LevelCompleteScreen
 from modules.Game import Game
-from modules.configs import WINDOW_DIMENSIONS, WINDOW_TITLE, GAME_TYPE
+from modules.configs import WINDOW_DIMENSIONS, WINDOW_TITLE, EDIT_ON
 from modules.my_logging import set_logger, log
 
 set_logger()

@@ -7,8 +7,8 @@ import re
 sys.path.append(os.getcwd())
 from modules.GameBoard import GameBoard
 from modules.my_logging import set_logger, log
-from modules.GameEnums import CellType, Str_to_CellType_vector_func
-from modules.Point import Point
+from modules.GameEnums import CellType, Str_to_CellType_vector_func, GameDifficulty, Game_Difficult_Str_Map
+from modules.DataTypes import Point
 import numpy as np
 cell_dtype = np.dtype(CellType)
 set_logger()
@@ -42,6 +42,8 @@ class LevelIO:
             self.clear_completed()
         else:
             self.current_level = self.incomplete_levels.pop(0)
+        
+        self.current_difficulty: GameDifficulty = Game_Difficult_Str_Map[os.path.basename(self.current_level)[0]]
 
     @log
     def check_completed_file(self) -> None:
@@ -104,7 +106,8 @@ class LevelIO:
         self.append_completed_to_file(self.current_level)
         if len(self.incomplete_levels)<1:
             self.clear_completed()
-        self.current_level = self.incomplete_levels.pop()
+        self.current_level = self.incomplete_levels.pop(0)
+        self.current_difficulty: GameDifficulty = Game_Difficult_Str_Map[os.path.basename(self.current_level)[0]]
     @log    
     def clear_completed(self) -> None:
         """
@@ -115,7 +118,7 @@ class LevelIO:
         self.all_levels = self.list_levels(self.levels_root_dir)
         self.completed_levels = self.read_completed(self.completed_levels_file)
         self.incomplete_levels = self.filter_by_completed(self.all_levels, self.completed_levels)
-        self.current_level = self.incomplete_levels.pop()
+        self.current_level = self.incomplete_levels.pop(0)
     @log
     def SaveBoard(self, gameboard: GameBoard, filename: str) -> None:
         """

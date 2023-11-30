@@ -18,7 +18,14 @@ class GameDifficulty(Enum):
     BEGINNER = 0
     INTERMEDIATE = 1
     HARD = 2
-    ADVANCED = 3
+    EXPERT = 3
+
+Game_Difficult_Str_Map = {
+    "1": GameDifficulty.BEGINNER,
+    "2": GameDifficulty.INTERMEDIATE,
+    "3": GameDifficulty.HARD,
+    "4": GameDifficulty.EXPERT
+}
 
 class CellType(Enum):
     """
@@ -33,12 +40,12 @@ class CellType(Enum):
     BORDER = 6
     GROUND = 7
 
-class GameMode(Enum):
-    """
-    This Enum will house the gametype between debugging or playing
-    """
-    PLAYING_MODE = 0
-    DEBUG_MODE = 1
+# class GameMode(Enum):   -Mike changed to bool instead of Enum
+#     """
+#     This Enum will house the gametype between debugging or playing
+#     """
+#     EDIT_OFF = 0
+#     EDIT_ON = 1
 
 Str_to_CellType = {str(enum_member): enum_member for enum_member in CellType}
 

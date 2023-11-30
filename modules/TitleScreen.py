@@ -4,7 +4,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import pygame
 from modules.configs import TITLE_FONT, WINDOW_DIMENSIONS, TITLE_SCREEN_COLOR, TITLE_SCREEN_TEXT_COLOR
 from modules.Sprites import TextSprite, Player
-from modules.Point import Point
+from modules.DataTypes import Point
 
 class TitleScreen():
     def __init__(self, screen):

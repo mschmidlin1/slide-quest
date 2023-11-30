@@ -6,7 +6,7 @@ sys.path.append(os.getcwd())
 
 from modules.GameEnums import CellType, Direction, Str_to_CellType_vector_func
 import numpy as np
-from modules.Point import Point
+from modules.DataTypes import Point
 
 cell_dtype = np.dtype(CellType)
 from modules.my_logging import set_logger, log
