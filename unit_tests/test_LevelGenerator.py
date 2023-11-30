@@ -12,9 +12,40 @@ class Test_Constructor(unittest.TestCase):
         generator = LevelGenerator(difficulty=GameDifficulty.BEGINNER)
         self.assertTrue(True)
 
+    def test_calculate_block_probability_0(self):
+        generator = LevelGenerator(difficulty=GameDifficulty.BEGINNER)
+        generator.block_probability = 0.1
+        generator.probability_increase_ratio = 1.8
+        prob = generator.calculate_block_probability(0)
+        self.assertEqual(prob, 0.1)
 
+    def test_calculate_block_probability_1(self):
+        generator = LevelGenerator(difficulty=GameDifficulty.BEGINNER)
+        generator.block_probability = 0.1
+        generator.probability_increase_ratio = 1.8
+        prob = generator.calculate_block_probability(1)
+        self.assertEqual(prob, 0.6)
 
+    
+    def test_calculate_block_probability_2(self):
+        generator = LevelGenerator(difficulty=GameDifficulty.BEGINNER)
+        generator.block_probability = 0.1
+        generator.probability_increase_ratio = 1.8
+        prob = generator.calculate_block_probability(2)
+        self.assertEqual(prob, 0.8222222222222222222)
 
+    def test_calculate_block_probability_7(self):
+        generator = LevelGenerator(difficulty=GameDifficulty.BEGINNER)
+        generator.block_probability = 0.1
+        generator.probability_increase_ratio = 1.8
+        prob = generator.calculate_block_probability(7)
+        self.assertEqual(prob, 0.9969170613482965)
+    def test_calculate_block_probability_100(self):
+        generator = LevelGenerator(difficulty=GameDifficulty.BEGINNER)
+        generator.block_probability = 0.1
+        generator.probability_increase_ratio = 1.8
+        prob = generator.calculate_block_probability(100)
+        self.assertEqual(prob, 1)
 
 if __name__ == '__main__':
     unittest.main()

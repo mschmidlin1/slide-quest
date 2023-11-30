@@ -3,6 +3,7 @@ from modules.configs import Board_Size_Lookup
 from modules.GameBoard import GameBoard
 from modules.LevelIO import LevelIO
 import numpy as np
+from modules.DataTypes import Point
 
 cell_dtype = np.dtype(CellType)
 
@@ -26,17 +27,28 @@ class LevelGenerator:
     def __init__(self, difficulty: GameDifficulty):
         self.difficulty = difficulty
         self.board_dimensions = Board_Size_Lookup[difficulty]
-        self.block_probability = 0.05
-        self.probability_increase_ratio = 1.65
+        self.block_probability = 0.05 #increase this number to increase number of blobs
+        self.probability_increase_ratio = 1.65 #decrease this number to increase size of blobs
         self.empty_board = np.empty(self.board_dimensions, dtype=cell_dtype)
         self.empty_board.fill(CellType.ICE)
 
 
     def calculate_block_probability(self, num_adjacent_blocks: int):
+        """
+        Given the number of neighbors that as cell has of the same type, calculate the probability that that cell will also be that type.
+        """
         probability = self.block_probability
         for i in range(num_adjacent_blocks):
             probability += (1-probability)/self.probability_increase_ratio
-        return probability
+        return min(probability, 1.0)
+    
+    def count_neighbors(self, board: np.ndarray, location: Point, cell_type: CellType):
+        """
+        This method counts the number of neighbors that have the same cell type as the given `cell_type`. 
+        """
+        # num_neighbors = 0
+        # [location.y, location.x]
+        pass
 
 
     def generate(self, random_seed: int = None) -> GameBoard:
