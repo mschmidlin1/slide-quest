@@ -56,10 +56,14 @@ class LevelGenerator:
                     num_neighbors += 1
         return num_neighbors
 
-
-
     def generate(self, random_seed: int = None) -> GameBoard:
-        pass
+        
+        board = self.empty_board.copy()
+        
+
+
+        player_pos = Point(x=1, y=1)
+        return GameBoard(board, player_pos)
 
 
 
