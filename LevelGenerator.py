@@ -33,7 +33,7 @@ class LevelGenerator:
         self.empty_board.fill(CellType.ICE)
 
 
-    def calculate_block_probability(self, num_adjacent_blocks: int):
+    def calculate_block_probability(self, num_adjacent_blocks: int) -> float:
         """
         Given the number of neighbors that as cell has of the same type, calculate the probability that that cell will also be that type.
         """
@@ -42,13 +42,20 @@ class LevelGenerator:
             probability += (1-probability)/self.probability_increase_ratio
         return min(probability, 1.0)
     
-    def count_neighbors(self, board: np.ndarray, location: Point, cell_type: CellType):
+    def count_neighbors(self, board: np.ndarray, location: Point, cell_type: CellType) -> int:
         """
         This method counts the number of neighbors that have the same cell type as the given `cell_type`. 
         """
-        # num_neighbors = 0
-        # [location.y, location.x]
-        pass
+        num_neighbors = 0
+
+        for i in [-1, 0, 1]:
+            for j in [-1, 0, 1]:
+                if i==0 and j==0:
+                    continue
+                if board[location.y+i, location.x+j] == cell_type:
+                    num_neighbors += 1
+        return num_neighbors
+
 
 
     def generate(self, random_seed: int = None) -> GameBoard:
