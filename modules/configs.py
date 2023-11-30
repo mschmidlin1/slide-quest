@@ -40,6 +40,13 @@ Border_Size_Lookup = {
         GameDifficulty.EXPERT: EXPERT_BORDER
 }
 
+Board_Size_Lookup = {
+        GameDifficulty.BEGINNER: BEGINNER_DIMENSIONS,
+        GameDifficulty.INTERMEDIATE: INTERMEDIATE_DIMENSIONS,
+        GameDifficulty.HARD: HARD_DIMENSIONS,
+        GameDifficulty.EXPERT: EXPERT_DIMENSIONS
+}
+
 #gametype
 EDIT_ON = False # --> Mike changed to bool instead of an Enum. Not necessary to have Enum since there can only ever be true and false
 
