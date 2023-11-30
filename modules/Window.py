@@ -19,7 +19,6 @@ class Window():
         self.new()
         self.title_screen: TitleScreen = TitleScreen(self.screen)
         self.current_game: Game = None
-        self.debugging = GAME_TYPE.value
         self.level_complete_screen: LevelCompleteScreen = None
         self.level_manager = LevelIO()
     @log
@@ -35,7 +34,7 @@ class Window():
     def run(self):
         while True:
             events = pygame.event.get()
-            self.handle_events(events)
+            self.update(events)
             self.draw()
             pygame.display.flip()
             self.clock.tick(60)
@@ -46,22 +45,18 @@ class Window():
         elif self.level_complete_screen is not None:
             self.level_complete_screen.draw()
     @log
-    def handle_events(self, events):
+    def update(self, events):
         for event in events:
 
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_F1:
-                    self.debugging = not self.debugging
-                    self.current_game.debugging_toggle()
+
 
             if self.title_screen != None: #if you're currently on the title screen
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
-                        self.current_game = Game(self.screen, self.level_manager, self.debugging)
+                        self.current_game = Game(self.screen, self.level_manager)
                         self.title_screen = None
 
             if self.current_game != None: #if you're currently playing the game
@@ -72,7 +67,7 @@ class Window():
             if self.level_complete_screen != None: #if you're currently on the level complete screen
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
-                        self.current_game = Game(self.screen, self.level_manager, self.debugging)
+                        self.current_game = Game(self.screen, self.level_manager)
                         self.level_complete_screen = None
 
                     elif event.key == pygame.K_ESCAPE:

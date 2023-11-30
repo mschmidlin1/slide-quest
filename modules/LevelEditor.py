@@ -66,7 +66,7 @@ class ClickedCell:
             return False
 
 class LevelEditor:
-    def __init__(self, curr_game, level_manager):
+    def __init__(self, curr_game, level_manager: LevelIO):
         print("LevelEditor Init")
         self.current_game  = curr_game
         self.player = self.current_game.player
@@ -81,7 +81,8 @@ class LevelEditor:
     def update_gameboard(self):
         print("Updating Board...")
         #self.level_manager
-
+        # self.current_game.gameboard.UpdateCell()
+        # self.current_game.gameboard.player_pos = Point()
         # self.current_game.update_map_text()
         # update_map(CURRENT_DIFFICULTY)
         # self.current_game.gameboard.ReadBoard('levels\\advanced\\map.csv')
@@ -112,8 +113,11 @@ class LevelEditor:
             self.new_cell = Block(old_cell.Get_Cell_Current_Position(event.pos), self.current_game.border_width, self.current_game.border_height)
         elif new_cell_type == CellType.ICE:
             self.new_cell = Ice(old_cell.Get_Cell_Current_Position(event.pos), self.current_game.border_width, self.current_game.border_height)
-        elif new_cell_type == CellType.GOAL:
-            self.new_cell = Goal(old_cell.Get_Cell_Current_Position(event.pos), self.current_game.border_width, self.current_game.border_height)
+        
+        temp_pos = Point(*old_cell.Get_Cell_Current_Position(event.pos))
+        self.current_game.gameboard.UpdateCell(temp_pos, new_cell_type)
+        # elif new_cell_type == CellType.GOAL:
+        #     self.new_cell = Goal(old_cell.Get_Cell_Current_Position(event.pos), self.current_game.border_width, self.current_game.border_height)
 
         if self.new_cell:
             self.current_game.gameboard_sprite_group.remove(old_cell)
@@ -146,7 +150,13 @@ class LevelEditor:
         self.current_game.gameboard_sprite_group.remove(old_cell.cell)
         self.current_game.gameboard_sprite_group.add(Ice(new_cell.cell.Get_Cell_Current_Position(old_cell.cell_starting_position), self.current_game.border_width, self.current_game.border_height))
 
-    
+        #update the gameboard with the new goal position
+        #fill the cell under the old goal position with Ice
+        current_goal_pos: Point = self.current_game.gameboard.Find_Goal_Pos()
+        self.current_game.gameboard.UpdateCell(current_goal_pos, CellType.ICE)
+        new_goal_pos = Point(*old_cell.cell.Get_Cell_Current_Position(new_cell.cell.rect.center))
+        self.current_game.gameboard.UpdateCell(new_goal_pos, CellType.GOAL)
+
     def update_cell_after_dragging(self, dragging_cell, underneath_cell, underneath_goal):
         """
         Update cell positions and interactions after a cell is dragged and released.
@@ -184,6 +194,7 @@ class LevelEditor:
         elif dragging_cell.cell_type == CellType.GOAL:
             if underneath_cell.cell_type == CellType.ICE and underneath_goal.cell_type != CellType.PLAYER:
                 self.move_goal(dragging_cell, underneath_cell)
+
             else:
                 self.place_cell_at_starting_position(dragging_cell)
 
@@ -341,7 +352,7 @@ class LevelEditor:
                     break 
             return target_cell
 
-    def debugging(self, events):
+    def update(self, events):
         for event in events:
             
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -349,6 +360,7 @@ class LevelEditor:
 
                 if self.clickedcell:
                     self.handle_mouse_click(self.clickedcell, event.button, event)
+                
 
             elif event.type == pygame.MOUSEMOTION:
                 if self.clickedcell:
@@ -357,3 +369,10 @@ class LevelEditor:
             elif event.type == pygame.MOUSEBUTTONUP:
                 if self.clickedcell:
                     self.handle_mouse_up(self.clickedcell, self.click_type, event)
+
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_s:
+                    self.level_manager.Save(self.current_game.gameboard)
+
+
+            

@@ -136,13 +136,13 @@ class LevelIO:
         """
         Saves the board and the player pos to an appropriate file.
         """
-        level_str = os.path.basename(self.current_level)[0] + 'str'
+        level_str = os.path.basename(self.current_level)[0] + '_'
         str_dttm = self.str_dttm()
         player_file = level_str + str_dttm + "-player.txt"
         map_file = level_str + str_dttm + ".csv"
         player_file = os.path.join(self.levels_root_dir, player_file)
         map_file = os.path.join(self.levels_root_dir, map_file)
-        #self.SavePlayerPos(gameboard.player_pos, player_file)
+        self.SavePlayerPos(gameboard.player_pos, player_file)
         self.SaveBoard(gameboard, map_file)
     @log
     def ReadBoard(self, filename: str = None) -> np.ndarray:
