@@ -27,6 +27,13 @@ Game_Difficult_Str_Map = {
     "4": GameDifficulty.EXPERT
 }
 
+Game_Difficult_Str_Map_Reverse = {
+    GameDifficulty.BEGINNER: "1",
+    GameDifficulty.INTERMEDIATE: "2",
+    GameDifficulty.HARD: "3",
+    GameDifficulty.EXPERT: "4"
+}
+
 class CellType(Enum):
     """
     An Enum class that represents the type of cell to fill the grid.

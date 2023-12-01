@@ -41,7 +41,7 @@ class Game:
                 if cell == CellType.ICE:
                     self.gameboard_sprite_group.add(Ice(Point(col, row), self.border_size))
 
-        self.player = Player(Point(1, 0), self.border_size)
+        self.player = Player(self.gameboard.player_pos, self.border_size)
         self.gameboard_sprite_group.add(self.player)
         self.levelEditor = LevelEditor(self, level_manager)
     @log

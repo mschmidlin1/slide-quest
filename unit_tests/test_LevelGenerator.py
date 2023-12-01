@@ -116,5 +116,92 @@ class Test_Constructor(unittest.TestCase):
         num = generator.count_neighbors(gameboard, Point(x=1, y=1), CellType.BLOCK)
         self.assertEqual(num, 8)
 
+    def test_count_neighboors_top_left(self):
+        generator = LevelGenerator(difficulty=GameDifficulty.BEGINNER)
+        gameboard = np.array([
+            [CellType.ICE, CellType.BLOCK, CellType.BLOCK, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.BLOCK,],
+            [CellType.BLOCK, CellType.ICE, CellType.BLOCK, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],     
+        ], dtype=cell_dtype)
+        num = generator.count_neighbors(gameboard, Point(x=0, y=0), CellType.BLOCK)
+        self.assertEqual(num, 2)
+
+    def test_count_neighboors_bottom_right(self):
+        generator = LevelGenerator(difficulty=GameDifficulty.BEGINNER)
+        gameboard = np.array([
+            [CellType.ICE, CellType.BLOCK, CellType.BLOCK, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.BLOCK,],
+            [CellType.BLOCK, CellType.ICE, CellType.BLOCK, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.BLOCK, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],     
+        ], dtype=cell_dtype)
+        num = generator.count_neighbors(gameboard, Point(x=9, y=9), CellType.BLOCK)
+        self.assertEqual(num, 1)
+
+
+    def test_random_goal_pos(self):
+        generator = LevelGenerator(difficulty=GameDifficulty.BEGINNER)
+        gameboard = np.array([
+            [CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK,],
+            [CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK,],
+            [CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK,],
+            [CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK,],
+            [CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK,],
+            [CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK,],
+            [CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK,],
+            [CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK,],
+            [CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK,],
+            [CellType.BLOCK, CellType.ICE, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK,],     
+        ], dtype=cell_dtype)
+        goal_pos = generator.random_goal_pos(gameboard)
+        self.assertEqual(goal_pos, Point(1, 9))
+
+
+    def test_random_goal_pos_33(self):
+        generator = LevelGenerator(difficulty=GameDifficulty.BEGINNER)
+        gameboard = np.array([
+            [CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK,],
+            [CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK,],
+            [CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK,],
+            [CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.ICE, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK,],
+            [CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK,],
+            [CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK,],
+            [CellType.BLOCK, CellType.BLOCK, CellType.GOAL, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK,],
+            [CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK,],
+            [CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK,],
+            [CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK,],     
+        ], dtype=cell_dtype)
+        goal_pos = generator.random_goal_pos(gameboard)
+        self.assertEqual(goal_pos, Point(3, 3))
+
+    def test_random_player_pos_33(self):
+        generator = LevelGenerator(difficulty=GameDifficulty.BEGINNER)
+        gameboard = np.array([
+            [CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK,],
+            [CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK,],
+            [CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK,],
+            [CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.ICE, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK,],
+            [CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK,],
+            [CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK,],
+            [CellType.BLOCK, CellType.BLOCK, CellType.GOAL, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK,],
+            [CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK,],
+            [CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK,],
+            [CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK,],     
+        ], dtype=cell_dtype)
+        player_pos = generator.random_player_pos(gameboard)
+        self.assertEqual(player_pos, Point(3, 3))
+
 if __name__ == '__main__':
     unittest.main()

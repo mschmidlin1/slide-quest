@@ -134,9 +134,9 @@ class LevelIO:
         with open(filename, mode='w', newline='') as file:
             file.write(pos_str)
     @log
-    def Save(self, gameboard: GameBoard) -> None:
+    def SaveNew(self, gameboard: GameBoard) -> None:
         """
-        Saves the board and the player pos to an appropriate file.
+        Saves the board and the player pos to an new level file.
         """
         level_str = os.path.basename(self.current_level)[0] + '_'
         str_dttm = self.str_dttm()
@@ -146,6 +146,13 @@ class LevelIO:
         map_file = os.path.join(self.levels_root_dir, map_file)
         self.SavePlayerPos(gameboard.player_pos, player_file)
         self.SaveBoard(gameboard, map_file)
+    @log
+    def SaveInPlace(self, gameboard: GameBoard) -> None:
+        """
+        Overwrite the map you are currently on.
+        """
+        self.SavePlayerPos(gameboard.player_pos, self.get_player_file())
+        self.SaveBoard(gameboard, self.current_level)
     @log
     def ReadBoard(self, filename: str = None) -> np.ndarray:
         """

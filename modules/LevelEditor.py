@@ -109,9 +109,9 @@ class LevelEditor:
             return
 
         if new_cell_type == CellType.BLOCK:
-            self.new_cell = Block(old_cell.Get_Cell_Current_Position(event.pos), self.current_game.border_size.width, self.current_game.border_size.height)
+            self.new_cell = Block(old_cell.Get_Cell_Current_Position(event.pos), self.current_game.border_size)
         elif new_cell_type == CellType.ICE:
-            self.new_cell = Ice(old_cell.Get_Cell_Current_Position(event.pos), self.current_game.border_size.width, self.current_game.border_size.height)
+            self.new_cell = Ice(old_cell.Get_Cell_Current_Position(event.pos), self.current_game.border_size)
         
         temp_pos = Point(*old_cell.Get_Cell_Current_Position(event.pos))
         self.current_game.gameboard.UpdateCell(temp_pos, new_cell_type)
@@ -145,9 +145,9 @@ class LevelEditor:
         if old_cell.cell_type != CellType.GOAL:
             return
         self.current_game.gameboard_sprite_group.remove(new_cell.cell)
-        self.current_game.gameboard_sprite_group.add(Goal(old_cell.cell.Get_Cell_Current_Position(new_cell.cell.rect.center), self.current_game.border_size.width, self.current_game.border_size.height))
+        self.current_game.gameboard_sprite_group.add(Goal(old_cell.cell.Get_Cell_Current_Position(new_cell.cell.rect.center), self.current_game.border_size))
         self.current_game.gameboard_sprite_group.remove(old_cell.cell)
-        self.current_game.gameboard_sprite_group.add(Ice(new_cell.cell.Get_Cell_Current_Position(old_cell.cell_starting_position), self.current_game.border_size.width, self.current_game.border_size.height))
+        self.current_game.gameboard_sprite_group.add(Ice(new_cell.cell.Get_Cell_Current_Position(old_cell.cell_starting_position), self.current_game.border_size))
 
         #update the gameboard with the new goal position
         #fill the cell under the old goal position with Ice
@@ -370,8 +370,10 @@ class LevelEditor:
                     self.handle_mouse_up(self.clickedcell, self.click_type, event)
 
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_s:
-                    self.level_manager.Save(self.current_game.gameboard)
+                if event.key == pygame.K_s and pygame.key.get_mods() & pygame.KMOD_SHIFT:
+                    self.level_manager.SaveInPlace(self.current_game.gameboard)
+                elif event.key == pygame.K_s:
+                    self.level_manager.SaveNew(self.current_game.gameboard)
 
 
             
