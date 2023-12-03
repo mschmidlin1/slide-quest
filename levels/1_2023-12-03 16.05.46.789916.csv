@@ -1,0 +1,12 @@
+CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.BLOCK
+CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.BLOCK,CellType.BLOCK
+CellType.ICE,CellType.BLOCK,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.BLOCK,CellType.ICE
+CellType.ICE,CellType.BLOCK,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.BLOCK
+CellType.BLOCK,CellType.BLOCK,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE
+CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE
+CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE
+CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.BLOCK,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE
+CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.BLOCK,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE
+CellType.ICE,CellType.ICE,CellType.BLOCK,CellType.BLOCK,CellType.BLOCK,CellType.BLOCK,CellType.BLOCK,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE
+CellType.ICE,CellType.ICE,CellType.ICE,CellType.BLOCK,CellType.BLOCK,CellType.BLOCK,CellType.ICE,CellType.BLOCK,CellType.ICE,CellType.ICE,CellType.BLOCK,CellType.GOAL
+CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.ICE,CellType.BLOCK,CellType.BLOCK,CellType.BLOCK,CellType.BLOCK,CellType.ICE,CellType.ICE

@@ -6,7 +6,7 @@ import numpy as np
 from modules.DataTypes import Point
 import random
 from modules.queue import MyQueue
-
+import copy
 cell_dtype = np.dtype(CellType)
 
 
@@ -32,7 +32,7 @@ def DoesPathExist(gameboard: np.ndarray, player_pos: Point) -> bool:
 
 def IsMapPossible(gameboard: GameBoard) -> bool:
     """
-    This function checks if a map is possible. Meaning, it answers the question, can the player get to the goal using standard game movement.
+    This function checks if a map is possible. Meaning, it answers the question, "can the player get to the goal using standard game movement?"
 
     This function uses Breadth First Search Algorithm (BFS). Here is a summary of the algorithm:
 
@@ -123,23 +123,25 @@ class LevelGenerator:
 
     def random_goal_pos(self, board: np.ndarray) -> Point:
         width, height = board.shape
-        possible_positions = []
+        possible_goal_positions = []
         for col in range(width):
             for row in range(height):
                 if board[col, row] == CellType.ICE:
-                    possible_positions.append(Point(row, col))
-        idx = np.random.randint(0, len(possible_positions))
-        return possible_positions[idx]
+                    possible_goal_positions.append(Point(row, col))
+        idx = np.random.randint(0, len(possible_goal_positions))
+        return possible_goal_positions[idx]
 
     def random_player_pos(self, board: np.ndarray) -> Point:
         width, height = board.shape
-        possible_positions = []
+        possible_player_positions = []
         for col in range(width):
             for row in range(height):
                 if board[col, row] == CellType.ICE:
-                    possible_positions.append(Point(row, col))
-        idx = np.random.randint(0, len(possible_positions))
-        return possible_positions[idx]
+                    possible_player_positions.append(Point(row, col))
+        idx = np.random.randint(0, len(possible_player_positions))
+        if possible_player_positions[idx]==self.goal_pos:
+            print()
+        return possible_player_positions[idx]
 
     def generate(self, random_seed: int = None) -> GameBoard:
         np.random.seed(random_seed)
@@ -157,9 +159,15 @@ class LevelGenerator:
                 board[loc.y, loc.x] = CellType.BLOCK
 
         goal_pos = self.random_goal_pos(board)
+        self.goal_pos = goal_pos
         board[goal_pos.y, goal_pos.x] = CellType.GOAL
         player_pos = self.random_player_pos(board)
-        return GameBoard(board, player_pos)
+        if player_pos == goal_pos:
+            print()
+        gameboard = GameBoard(board, player_pos)
+        if gameboard.player_pos == gameboard.Find_Goal_Pos():
+            print()
+        return gameboard
 
 
 
@@ -170,8 +178,17 @@ if __name__=="__main__":
     generator.probability_increase_ratio = 2
     level_manager = LevelIO()
     level_manager.current_level = Game_Difficult_Str_Map_Reverse[difficulty]
-
-    for i in range(3):
+    maps_created = 0
+    while maps_created<4:
         level = generator.generate()
-        level_manager.SaveNew(level)
+        if level.player_pos == level.Find_Goal_Pos():
+            print()
+        if IsMapPossible(copy.copy(level)):
+            if level.player_pos == level.Find_Goal_Pos():
+                print()
+            level_manager.SaveNew(level)
+            maps_created+=1
+            print("Created Map")
+        else:
+            print("Failed Map")
 
