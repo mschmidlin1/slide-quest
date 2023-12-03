@@ -61,9 +61,9 @@ class GameBoard:
             raise RuntimeError("Player position hasn't been set yet!")
         return self.player_pos
     @log
-    def NextBlock(self, direction: Direction) -> tuple:
+    def NextBlock(self, direction: Direction) -> tuple[CellType, Point]:
         """
-        Based on where the player is in the gameboard, it uses the `direction` and returns the type of non empty block you encounter next.
+        Based on where the player is in the gameboard, it uses the `direction` and returns the type of non ice block you encounter next.
         Returns (CellType, Point) where the type is the next type and Point is it's location.
         """
         if not self.isGameBoardReady():
@@ -102,7 +102,7 @@ class GameBoard:
     @log
     def _next_occupied_cell(self, array, start: int) -> (CellType, int):
         """
-        Takes in an array and iterates through the array until the next non empty cell.
+        Takes in an array and iterates through the array until the next non ice cell.
 
         Starts at the index `start`. This should generally refer to the player location+1. 
 

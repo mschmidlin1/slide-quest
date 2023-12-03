@@ -1,12 +1,73 @@
-from modules.GameEnums import GameDifficulty, CellType, Game_Difficult_Str_Map_Reverse
+from modules.GameEnums import GameDifficulty, CellType, Game_Difficult_Str_Map_Reverse, Direction
 from modules.configs import Board_Size_Lookup
 from modules.GameBoard import GameBoard
 from modules.LevelIO import LevelIO
 import numpy as np
 from modules.DataTypes import Point
 import random
+from modules.queue import MyQueue
 
 cell_dtype = np.dtype(CellType)
+
+
+def DoesPathExist(gameboard: np.ndarray, player_pos: Point) -> bool:
+    """
+    This function checks if there exists a path through the blocks from the goal to where the player is.
+    If a path exists from the goal to the player position then the function return true.
+
+    This funciton uses the Breadth First Search Algorithm (BFS). Here is a summary of the algorithm:
+
+
+
+    - find all non block neighboring cells of the goal cell (4 directions)
+    - while queue is not empty: 
+        - if player pos is in queue, return True
+        - take first item from queue
+        - find all non-block neighbor cells of the current location
+        - add them to queue, if they are not in the queue or the visited list
+        - add current value to visited
+    - return False
+    """
+    pass
+
+def IsMapPossible(gameboard: GameBoard) -> bool:
+    """
+    This function checks if a map is possible. Meaning, it answers the question, can the player get to the goal using standard game movement.
+
+    This function uses Breadth First Search Algorithm (BFS). Here is a summary of the algorithm:
+
+    - add the player position to the queue
+
+    while the queue is not empty:
+        - take the first element from the queue
+        - Find positions you can get to from your current position
+        - If goal position is in these positions:
+            return `True`
+        - if those positions are not in the queue, the visited list, or equal to your current position:
+            - Add to queue
+        - Add current location to visited
+    return `False`
+    """
+    queue = MyQueue()
+    queue.enqueue(gameboard.player_pos)
+    goal_pos = gameboard.Find_Goal_Pos()
+    visited = set()
+    while not queue.empty():
+        current_element = queue.dequeue()
+        
+        for direction in Direction:
+            gameboard.player_pos = current_element
+            location = gameboard.MovePlayer(direction)
+            if location == goal_pos:
+                return True
+            if (not queue.contains(location)) and (location not in visited) and (location!=current_element):
+                queue.enqueue(location)
+        visited.add(current_element)
+    return False
+        
+            
+
+
 
 class LevelGenerator:
     """
