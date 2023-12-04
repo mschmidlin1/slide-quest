@@ -372,8 +372,10 @@ class LevelEditor:
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_s and pygame.key.get_mods() & pygame.KMOD_SHIFT:
                     self.level_manager.SaveInPlace(self.current_game.gameboard)
+                    print("Saved in place.")
                 elif event.key == pygame.K_s:
                     self.level_manager.SaveNew(self.current_game.gameboard)
+                    print("Saved new map.")
 
 
             

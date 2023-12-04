@@ -30,7 +30,7 @@ def DoesPathExist(gameboard: np.ndarray, player_pos: Point) -> bool:
     """
     pass
 
-def IsMapPossible(gameboard: GameBoard) -> bool:
+def IsMapPossible(input_gameboard: GameBoard) -> bool:
     """
     This function checks if a map is possible. Meaning, it answers the question, "can the player get to the goal using standard game movement?"
 
@@ -48,6 +48,7 @@ def IsMapPossible(gameboard: GameBoard) -> bool:
         - Add current location to visited
     return `False`
     """
+    gameboard = copy.copy(input_gameboard)
     queue = MyQueue()
     queue.enqueue(gameboard.player_pos)
     goal_pos = gameboard.Find_Goal_Pos()
@@ -183,7 +184,7 @@ if __name__=="__main__":
         level = generator.generate()
         if level.player_pos == level.Find_Goal_Pos():
             print()
-        if IsMapPossible(copy.copy(level)):
+        if IsMapPossible(level):
             if level.player_pos == level.Find_Goal_Pos():
                 print()
             level_manager.SaveNew(level)
