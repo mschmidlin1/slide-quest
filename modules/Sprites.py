@@ -115,9 +115,13 @@ class TextSprite(pygame.sprite.Sprite):
     def __init__(self, text: str, font_file: str, font_size: int, center_location: Point, color: tuple):
         super().__init__()
         self.font = pygame.font.Font(font_file, font_size)
+        self.color = color
         self.image = self.font.render(text, True, color)
         self.rect = self.image.get_rect()
         self.rect.center = center_location
+    
+    def update_text(self, text: str):
+        self.image = self.font.render(text, True, self.color)
 
 class TitleScreenPlayerSprite(pygame.sprite.Sprite):
     def __init__(self, center_location: Point):

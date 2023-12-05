@@ -6,6 +6,7 @@ from modules.LevelCompleteScreen import LevelCompleteScreen
 from modules.Game import Game
 from modules.configs import WINDOW_DIMENSIONS, WINDOW_TITLE, EDIT_ON
 from modules.my_logging import set_logger, log
+from modules.LevelBackground import LevelBackground
 
 set_logger()
 

@@ -6,6 +6,7 @@ from modules.LevelEditor import LevelEditor
 from modules.LevelIO import LevelIO
 from modules.GameEnums import Direction, GameDifficulty, CellType
 from modules.my_logging import set_logger, log
+from modules.LevelBackground import LevelBackground
 from modules.configs import ( 
     WHITE,
     WINDOW_DIMENSIONS,
@@ -44,6 +45,7 @@ class Game:
         self.player = Player(self.gameboard.player_pos, self.border_size)
         self.gameboard_sprite_group.add(self.player)
         self.levelEditor = LevelEditor(self, level_manager)
+        self.level_background = LevelBackground(self.screen, level_manager.current_level)
     @log
     def move_player(self, events: list[pygame.event.Event]):
         """
@@ -81,8 +83,10 @@ class Game:
         The Game.update() method takes a list of pygame events. From this the game will extract the necessary movement information for the player.
         """
         self.move_player(events)
+        self.level_background.draw()
         self.gameboard_sprite_group.update()
         self.gameboard_sprite_group.draw(self.screen)
+        
 
         if(self.isEditActive):
             self.levelEditor.update(events)
