@@ -118,6 +118,8 @@ class TextSprite(pygame.sprite.Sprite):
         self.color = color
         self.image = self.font.render(text, True, color)
         self.rect = self.image.get_rect()
+        self.anchor = anchor
+        self.location = location
         if anchor == 'center':
             self.rect.center = location
         elif anchor == 'topleft':
@@ -133,6 +135,19 @@ class TextSprite(pygame.sprite.Sprite):
         
     def update_text(self, text: str):
         self.image = self.font.render(text, True, self.color)
+        self.rect = self.image.get_rect()
+        if self.anchor == 'center':
+            self.rect.center = self.location
+        elif self.anchor == 'topleft':
+            self.rect.topleft = self.location
+        elif self.anchor == 'topright':
+            self.rect.topright = self.location
+        elif self.anchor == 'bottomleft':
+            self.rect.bottomleft = self.location
+        elif self.anchor == 'bottomright':
+            self.rect.bottomright = self.location
+        else:
+            raise ValueError("Invalid anchor point")
 
 class TitleScreenPlayerSprite(pygame.sprite.Sprite):
     def __init__(self, center_location: Point):

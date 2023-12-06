@@ -31,7 +31,7 @@ class LevelBackground():
             "", 
             TITLE_FONT,
             15,
-            Point(WINDOW_DIMENSIONS.width-40, 10),
+            Point(WINDOW_DIMENSIONS.width-10, 10),
             TITLE_SCREEN_TEXT_COLOR,
             anchor='topright')
 
