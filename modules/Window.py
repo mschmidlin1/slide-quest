@@ -79,7 +79,7 @@ class Window():
         if self.current_game is not None:
             
             if self.current_game.isComplete():
-                    self.level_complete_screen = LevelCompleteScreen(self.screen)
+                    self.level_complete_screen = LevelCompleteScreen(self.screen, self.current_game.num_moves, self.current_game.totalTime())
                     self.current_game = None
                     self.level_manager.next_level()
             else:        

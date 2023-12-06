@@ -11,20 +11,39 @@ class LevelBackground():
         
         self.screen = screen
 
+        self.main_menu_sprite = TextSprite(
+            "Press (Esc) for main menu", 
+            TITLE_FONT, 
+            15, 
+            Point(10, 10),
+            TITLE_SCREEN_TEXT_COLOR,
+            anchor='topleft')
 
         self.current_level_sprite = TextSprite(
             f"{text}", 
             TITLE_FONT,
             15,
             Point(WINDOW_DIMENSIONS.width//2, 10),
-            TITLE_SCREEN_TEXT_COLOR)
+            TITLE_SCREEN_TEXT_COLOR, 
+            anchor='center')
+        
+        self.time_sprite = TextSprite(
+            "", 
+            TITLE_FONT,
+            15,
+            Point(WINDOW_DIMENSIONS.width-40, 10),
+            TITLE_SCREEN_TEXT_COLOR,
+            anchor='topright')
 
 
         self.sprite_group = pygame.sprite.Group()
         self.sprite_group.add(self.current_level_sprite)
+        self.sprite_group.add(self.time_sprite)
+        self.sprite_group.add(self.main_menu_sprite)
 
-    def draw(self):
+    def draw(self, time_str: str):
         self.screen.fill(TITLE_SCREEN_COLOR)
+        self.time_sprite.update_text(time_str)
         self.sprite_group.update()
         self.sprite_group.draw(self.screen)
 

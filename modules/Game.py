@@ -14,6 +14,9 @@ from modules.configs import (
     EDIT_ON,
     Border_Size_Lookup)
 
+import time
+
+
 set_logger()
 
 class Game:
@@ -46,6 +49,8 @@ class Game:
         self.gameboard_sprite_group.add(self.player)
         self.levelEditor = LevelEditor(self, level_manager)
         self.level_background = LevelBackground(self.screen, level_manager.current_level)
+        self.num_moves = 0
+        self.start_time = time.time()
     @log
     def move_player(self, events: list[pygame.event.Event]):
         """
@@ -55,12 +60,16 @@ class Game:
             if event.type == pygame.KEYDOWN:
                 if event.key == Direction.LEFT.value and not self.player.moving:
                     self.player.move(self.gameboard.MovePlayer(Direction.LEFT))
+                    self.num_moves += 1
                 if event.key == Direction.RIGHT.value and not self.player.moving:
                     self.player.move(self.gameboard.MovePlayer(Direction.RIGHT))
+                    self.num_moves += 1
                 if event.key == Direction.UP.value and not self.player.moving:
                     self.player.move(self.gameboard.MovePlayer(Direction.UP))
+                    self.num_moves += 1
                 if event.key == Direction.DOWN.value and not self.player.moving:
-                    self.player.move(self.gameboard.MovePlayer(Direction.DOWN))          
+                    self.player.move(self.gameboard.MovePlayer(Direction.DOWN))
+                    self.num_moves += 1          
     @log
     def draw_grid(self):
         """
@@ -78,12 +87,21 @@ class Game:
         if not self.player.moving:
             return self.gameboard.Find_Goal_Pos() == self.gameboard.GetPlayerPos()
     @log
+    def totalTime(self) -> str:
+        """
+        Gets the total time the level has taken so far to complete. 
+        """
+        total_time = time.time() - self.start_time
+        minutes, seconds = divmod(total_time, 60)
+        return f"{int(minutes):02}:{int(seconds):02}"
+    @log
     def update(self, events: list[pygame.event.Event]):
         """
         The Game.update() method takes a list of pygame events. From this the game will extract the necessary movement information for the player.
         """
         self.move_player(events)
-        self.level_background.draw()
+
+        self.level_background.draw(self.totalTime())
         self.gameboard_sprite_group.update()
         self.gameboard_sprite_group.draw(self.screen)
         

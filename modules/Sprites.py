@@ -112,14 +112,25 @@ class Ice(Cell):
         self.rect.center = self.GameboardCell_To_CenterPixelCoords(gameboard_loc)
 
 class TextSprite(pygame.sprite.Sprite):
-    def __init__(self, text: str, font_file: str, font_size: int, center_location: Point, color: tuple):
+    def __init__(self, text: str, font_file: str, font_size: int, location: Point, color: tuple, anchor: str = 'center'):
         super().__init__()
         self.font = pygame.font.Font(font_file, font_size)
         self.color = color
         self.image = self.font.render(text, True, color)
         self.rect = self.image.get_rect()
-        self.rect.center = center_location
-    
+        if anchor == 'center':
+            self.rect.center = location
+        elif anchor == 'topleft':
+            self.rect.topleft = location
+        elif anchor == 'topright':
+            self.rect.topright = location
+        elif anchor == 'bottomleft':
+            self.rect.bottomleft = location
+        elif anchor == 'bottomright':
+            self.rect.bottomright = location
+        else:
+            raise ValueError("Invalid anchor point")
+        
     def update_text(self, text: str):
         self.image = self.font.render(text, True, self.color)
 
