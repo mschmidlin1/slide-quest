@@ -65,6 +65,8 @@ class Window():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         self.title_screen = TitleScreen(self.screen)
+                    if event.key == pygame.K_r:
+                        self.current_game = Game(self.screen, self.level_manager)
 
             if self.level_complete_screen != None: #if you're currently on the level complete screen
                 if event.type == pygame.KEYDOWN:

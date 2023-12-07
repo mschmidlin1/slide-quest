@@ -154,9 +154,9 @@ class LevelGenerator:
                 all_board_locations.append(Point(row, col))
         random.shuffle(all_board_locations)
         for loc in all_board_locations:
-            num_neighbors = self.count_neighbors(board, loc, CellType.BLOCK)
-            prob = self.calculate_block_probability(num_neighbors)
-            if np.random.binomial(1, prob):
+            # num_neighbors = self.count_neighbors(board, loc, CellType.BLOCK)
+            # prob = self.calculate_block_probability(num_neighbors)
+            if np.random.binomial(1, self.block_probability):
                 board[loc.y, loc.x] = CellType.BLOCK
 
         goal_pos = self.random_goal_pos(board)
@@ -173,9 +173,9 @@ class LevelGenerator:
 
 
 if __name__=="__main__":
-    difficulty = GameDifficulty.BEGINNER
+    difficulty = GameDifficulty.HARD
     generator = LevelGenerator(difficulty)
-    generator.block_probability = 0.05
+    generator.block_probability = 0.25
     generator.probability_increase_ratio = 2
     level_manager = LevelIO()
     level_manager.current_level = Game_Difficult_Str_Map_Reverse[difficulty]
