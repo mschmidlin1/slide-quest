@@ -75,9 +75,9 @@ class Game:
         """
         This is just temporary for showing the dimensions of the grid until we can start implementing sprites more regularly
         """
-        for x in range(0, WINDOW_DIMENSIONS.width, WINDOW_DIMENSIONS.width):
+        for x in range(0, WINDOW_DIMENSIONS.width, CELL_DIMENSIONS.width):
             pygame.draw.line(self.screen, WHITE, (x, 0), (x, WINDOW_DIMENSIONS.height))
-        for y in range(0, WINDOW_DIMENSIONS.height, WINDOW_DIMENSIONS.height):
+        for y in range(0, WINDOW_DIMENSIONS.height, CELL_DIMENSIONS.height):
             pygame.draw.line(self.screen, WHITE, (0, y), (WINDOW_DIMENSIONS.width, y))
     @log
     def isComplete(self):
@@ -100,15 +100,15 @@ class Game:
         The Game.update() method takes a list of pygame events. From this the game will extract the necessary movement information for the player.
         """
         self.move_player(events)
-
         self.level_background.draw(self.totalTime())
         self.gameboard_sprite_group.update()
         self.gameboard_sprite_group.draw(self.screen)
         
 
         if(self.isEditActive):
-            self.levelEditor.update(events)
             self.draw_grid()
+            self.levelEditor.update(events)
+            
 
         for event in events:
             if event.type == pygame.KEYDOWN:
