@@ -10,25 +10,71 @@ import copy
 cell_dtype = np.dtype(CellType)
 
 
-def DoesPathExist(gameboard: np.ndarray, player_pos: Point) -> bool:
+
+class Node:
+
+    def __init__(self, coordinate: Point):
+        self.coordinate = coordinate
+        self.shortest_distance = float("inf")
+        self.child_nodes = set()
+
+    def __hash__(self) -> int:
+        return hash(self.coordinate)
+
+
+class Graph:
+    Nodes = set()
+
+def CreateGameboardGraph(input_gameboard: GameBoard, player_pos: Point) -> dict:
     """
-    This function checks if there exists a path through the blocks from the goal to where the player is.
-    If a path exists from the goal to the player position then the function return true.
-
-    This funciton uses the Breadth First Search Algorithm (BFS). Here is a summary of the algorithm:
-
-
-
-    - find all non block neighboring cells of the goal cell (4 directions)
-    - while queue is not empty: 
-        - if player pos is in queue, return True
-        - take first item from queue
-        - find all non-block neighbor cells of the current location
-        - add them to queue, if they are not in the queue or the visited list
-        - add current value to visited
-    - return False
+    Creates a graph from the gameboard.
     """
-    pass
+    graph = {}
+    gameboard = copy.copy(input_gameboard)
+    for col in range(gameboard.gameboard.shape[0]):
+        for row in range(gameboard.gameboard.shape[1]):
+            graph[Point(row, col)] = []
+
+    for node in graph.Nodes:
+        for direction in Direction:
+            gameboard.player_pos = node.coordinate
+            location = gameboard.MovePlayer(direction)
+            if node not in graph[location]:
+                graph[location].append(node)
+
+def ShortestPath(input_gameboard: np.ndarray, player_pos: Point) -> int:
+    """
+    This function takes in the gameboard and player position and will tell you
+    the minimum number of moves required to beat the level.
+
+    This function uses Breadth First Search Algorithm (BFS). Here is a summary of the algorithm:
+
+    - add the player position to the queue
+
+    while the queue is not empty:
+        - take the first element from the queue
+        - Find positions you can get to from your current position
+        - If goal position is in these positions:
+            return `True`
+        - if those positions are not in the queue, the visited list, or equal to your current position:
+            - Add to queue
+        - Add current location to visited
+    return `False`
+
+    """
+    gameboard = copy.copy(input_gameboard)
+    graph = CreateGameboardGraph(gameboard, player_pos)
+    goal_pos = gameboard.Find_Goal_Pos()
+
+
+    graph[goal_pos]
+
+    queue = MyQueue()
+    queue.enqueue(Node(gameboard.player_pos))
+    
+    visited = set()
+    
+
 
 def IsMapPossible(input_gameboard: GameBoard) -> bool:
     """
