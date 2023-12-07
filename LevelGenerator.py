@@ -66,14 +66,34 @@ def ShortestPath(input_gameboard: np.ndarray, player_pos: Point) -> int:
     graph = CreateGameboardGraph(gameboard, player_pos)
     goal_pos = gameboard.Find_Goal_Pos()
 
+    distances = {}
+    for col in range(gameboard.gameboard.shape[0]):
+        for row in range(gameboard.gameboard.shape[1]):
+            distances[Point(row, col)] = float('inf')
 
-    graph[goal_pos]
 
-    queue = MyQueue()
-    queue.enqueue(Node(gameboard.player_pos))
+
+    distance = 1
+    current_layer = graph[goal_pos]
+    visited = []
     
-    visited = set()
-    
+
+    while True:
+        if player_pos in current_layer:
+            break
+
+        next_layer = []
+        for node in current_layer:
+            for child_node in graph[node]:
+                if child_node not in visited:
+                    next_layer.append(child_node)
+
+        visited.extend(current_layer)
+        current_layer = next_layer
+        distance += 1
+
+    return distance
+
 
 
 def IsMapPossible(input_gameboard: GameBoard) -> bool:
