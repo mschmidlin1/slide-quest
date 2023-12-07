@@ -4,7 +4,7 @@ from modules.LevelIO import LevelIO
 from modules.TitleScreen import TitleScreen
 from modules.LevelCompleteScreen import LevelCompleteScreen
 from modules.Game import Game
-from modules.configs import WINDOW_DIMENSIONS, WINDOW_TITLE, EDIT_ON
+from modules.configs import WINDOW_DIMENSIONS, WINDOW_TITLE, EDIT_ON, ICON
 from modules.my_logging import set_logger, log
 from modules.LevelBackground import LevelBackground
 
@@ -30,6 +30,7 @@ class Window():
         pygame.init()
         self.screen = pygame.display.set_mode(WINDOW_DIMENSIONS)
         pygame.display.set_caption(WINDOW_TITLE)
+        pygame.display.set_icon(ICON)
         self.clock = pygame.time.Clock()
     @log
     def run(self):

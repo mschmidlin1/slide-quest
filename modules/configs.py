@@ -3,10 +3,11 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from modules.GameEnums import GameDifficulty
 from modules.DataTypes import Size
+import pygame
 
 #game settings
 WINDOW_TITLE = "Slide Quest"
-
+ICON = pygame.image.load('resources\images\Icy-Q-nobackground64x64.png')
 TITLE_FONT = "resources/fonts/Chunk Five Print.otf"
 
 #window information
