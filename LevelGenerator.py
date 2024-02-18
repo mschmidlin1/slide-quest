@@ -7,6 +7,7 @@ from modules.DataTypes import Point
 import random
 from modules.queue import MyQueue
 import copy
+import collections
 cell_dtype = np.dtype(CellType)
 
 
@@ -25,75 +26,86 @@ class Node:
 class Graph:
     Nodes = set()
 
-def CreateGameboardGraph(input_gameboard: GameBoard, player_pos: Point) -> dict:
+def get_lowest_value_key(input_dict: dict, exempt_keys: list = None):
+    """
+    This function finds the key with the lowest value in a dictionary, excluding certain keys.
+    
+    Parameters:
+    input_dict (dict): A dictionary with values that can be compared.
+    exempt_keys (list): A list of keys to be exempted from the minimum detection.
+
+    Returns:
+    key: The key of the element with the lowest value, not including exempted keys.
+    """
+    if not input_dict:
+        return None
+
+    if not exempt_keys:
+        exempt_keys = []
+
+    # Create a new dictionary excluding the exempted keys
+    filtered_dict = {k: v for k, v in input_dict.items() if k not in exempt_keys}
+
+    if not filtered_dict:
+        return None
+
+    return min(filtered_dict, key=filtered_dict.get)
+
+def CreateGameboardGraph(input_gameboard: GameBoard) -> dict:
     """
     Creates a graph from the gameboard.
+    Returns a dictionary of each node on the board and all of it's child nodes. Each child node is a node that can reach the target node in one move.
     """
     graph = {}
     gameboard = copy.copy(input_gameboard)
     for col in range(gameboard.gameboard.shape[0]):
         for row in range(gameboard.gameboard.shape[1]):
-            graph[Point(row, col)] = []
+            if gameboard.gameboard[row, col] in  [CellType.ICE, CellType.GROUND, CellType.GOAL]:
+                graph[Point(col, row)] = []
 
-    for node in graph.Nodes:
+    for node in graph.keys():
         for direction in Direction:
-            gameboard.player_pos = node.coordinate
+            gameboard.player_pos = node
             location = gameboard.MovePlayer(direction)
             if node not in graph[location]:
                 graph[location].append(node)
+    return graph
 
-def ShortestPath(input_gameboard: np.ndarray, player_pos: Point) -> int:
+def ShortestPath(input_gameboard: GameBoard) -> list[Direction]:
     """
     This function takes in the gameboard and player position and will tell you
-    the minimum number of moves required to beat the level.
+    the exact sequence of moves to complete the level in the minimum number of moves.
 
-    This function uses Breadth First Search Algorithm (BFS). Here is a summary of the algorithm:
-
-    - add the player position to the queue
-
-    while the queue is not empty:
-        - take the first element from the queue
-        - Find positions you can get to from your current position
-        - If goal position is in these positions:
-            return `True`
-        - if those positions are not in the queue, the visited list, or equal to your current position:
-            - Add to queue
-        - Add current location to visited
-    return `False`
-
+    If there is no possible path to the goal, and empty list is returned.
     """
-    gameboard = copy.copy(input_gameboard)
-    graph = CreateGameboardGraph(gameboard, player_pos)
+
+    gameboard = copy.deepcopy(input_gameboard)  # Use deepcopy if gameboard has nested objects
+    queue = collections.deque()  # Use deque for efficient pops from the left
+    queue.append((gameboard.player_pos, []))  # Start with the player position and an empty path
     goal_pos = gameboard.Find_Goal_Pos()
-
-    distances = {}
-    for col in range(gameboard.gameboard.shape[0]):
-        for row in range(gameboard.gameboard.shape[1]):
-            distances[Point(row, col)] = float('inf')
-
-
-
-    distance = 1
-    current_layer = graph[goal_pos]
-    visited = []
+    visited = set()
     
-
-    while True:
-        if player_pos in current_layer:
-            break
-
-        next_layer = []
-        for node in current_layer:
-            for child_node in graph[node]:
-                if child_node not in visited:
-                    next_layer.append(child_node)
-
-        visited.extend(current_layer)
-        current_layer = next_layer
-        distance += 1
-
-    return distance
-
+    while queue:
+        current_pos, path = queue.popleft()
+        
+        if current_pos == goal_pos:
+            return path  # Return the path that led to the goal
+        
+        if current_pos in visited:
+            continue
+        
+        visited.add(current_pos)
+        
+        for direction in Direction:
+            gameboard.player_pos = current_pos
+            next_pos = gameboard.MovePlayer(direction)
+            
+            # Check if next_pos is valid (not out of bounds or blocked)
+            if next_pos!=current_pos and next_pos not in visited:
+                # Append the current direction to the path and enqueue
+                queue.append((next_pos, path + [direction]))
+    
+    return []  # Return an empty list if there's no path to the goal
 
 
 def IsMapPossible(input_gameboard: GameBoard) -> bool:
@@ -199,6 +211,7 @@ class LevelGenerator:
         return possible_goal_positions[idx]
 
     def random_player_pos(self, board: np.ndarray) -> Point:
+        temp_gameboard = GameBoard(board, Point(0, 0))
         width, height = board.shape
         possible_player_positions = []
         for col in range(width):
@@ -206,8 +219,8 @@ class LevelGenerator:
                 if board[col, row] == CellType.ICE:
                     possible_player_positions.append(Point(row, col))
         idx = np.random.randint(0, len(possible_player_positions))
-        if possible_player_positions[idx]==self.goal_pos:
-            print()
+        if possible_player_positions[idx]==temp_gameboard.goal_pos:
+            raise ValueError("player position was found to be goal position.")
         return possible_player_positions[idx]
 
     def generate(self, random_seed: int = None) -> GameBoard:
