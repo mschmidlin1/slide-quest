@@ -8,7 +8,8 @@ import pygame
 #game settings
 WINDOW_TITLE = "Slide Quest"
 ICON = pygame.image.load('resources/images/Icy-Q-nobackground64x64.png')
-TITLE_FONT = "resources/fonts/Chunk Five Print.otf"
+TITLE_FONT = "resources/fonts/m5x7.otf"
+PLAYER_SPRITE_SHEET = 'resources/sprites/player/adventurer-grey-scarf-Sheet.png'
 
 #window information
 
@@ -56,7 +57,7 @@ EDIT_ON = False # --> Mike changed to bool instead of an Enum. Not necessary to 
 
 #define colors
 TITLE_SCREEN_COLOR = (37, 150, 190)
-TITLE_SCREEN_TEXT_COLOR = (226, 135, 67)
+TITLE_SCREEN_TEXT_COLOR = (255, 255, 255)
 BGCOLOR = (140, 140, 140)
 WHITE = (255, 255, 255)
 PLAYER_COLOR = (123, 5, 75)

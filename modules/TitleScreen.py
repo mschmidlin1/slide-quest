@@ -2,7 +2,7 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import pygame
-from modules.configs import TITLE_FONT, WINDOW_DIMENSIONS, TITLE_SCREEN_COLOR, TITLE_SCREEN_TEXT_COLOR
+from modules.configs import TITLE_FONT, WINDOW_DIMENSIONS, TITLE_SCREEN_COLOR, TITLE_SCREEN_TEXT_COLOR, PLAYER_SPRITE_SHEET
 from modules.Sprites import TextSprite, Player
 from modules.DataTypes import Point, Size
 
@@ -11,24 +11,35 @@ class TitleScreen():
         
         self.screen = screen
 
+        self.background_image = pygame.transform.scale(
+            pygame.image.load('resources/images/mainmenu.png').convert(),
+            (WINDOW_DIMENSIONS[0], WINDOW_DIMENSIONS[1])  # Replace with your actual screen dimensions
+        )
 
         self.title_sprite = TextSprite(
             "Slide Quest!", 
             TITLE_FONT, 
             100, 
             Point(WINDOW_DIMENSIONS[0]//2, WINDOW_DIMENSIONS[1]//5),
-            TITLE_SCREEN_TEXT_COLOR)
+            TITLE_SCREEN_TEXT_COLOR,
+            outline_color=(0,0,0),
+            outline_width=1
+            )
         
         self.start_sprite = TextSprite(
             "Press space to start.", 
             TITLE_FONT, 
             40, 
             Point(WINDOW_DIMENSIONS[0]//2, WINDOW_DIMENSIONS[1] - WINDOW_DIMENSIONS[1]//4),
-            TITLE_SCREEN_TEXT_COLOR)
+            TITLE_SCREEN_TEXT_COLOR,
+            outline_color=(0,0,0),
+            outline_width=1
+            )
 
         self.player_sprite = Player(
             Point(WINDOW_DIMENSIONS[0]//2, WINDOW_DIMENSIONS[1]//2),
-            Size(0,0)
+            Size(32,32),
+            sprite_sheet_path=PLAYER_SPRITE_SHEET
         )
         self.player_sprite.rect.center = Point(WINDOW_DIMENSIONS[0]//2, WINDOW_DIMENSIONS[1]//2)
 
@@ -40,7 +51,7 @@ class TitleScreen():
 
 
     def draw(self):
-        self.screen.fill(TITLE_SCREEN_COLOR)
+        self.screen.blit(self.background_image, (0, 0))
         self.title_screen_sprite_group.update()
         self.title_screen_sprite_group.draw(self.screen)
 

@@ -13,6 +13,7 @@ from modules.configs import (
     WINDOW_DIMENSIONS,
     CELL_DIMENSIONS,
     EDIT_ON,
+    PLAYER_SPRITE_SHEET,
     Border_Size_Lookup)
 
 import time
@@ -48,7 +49,7 @@ class Game:
                 if cell == CellType.ICE:
                     self.gameboard_sprite_group.add(Ice(Point(col, row), self.border_size))
 
-        self.player = Player(self.gameboard.player_pos, self.border_size)
+        self.player = Player(self.gameboard, self.border_size, PLAYER_SPRITE_SHEET)
         self.gameboard_sprite_group.add(self.player)
         self.levelEditor = LevelEditor(self.gameboard, self.gameboard_sprite_group, self.border_size, self.player, level_manager)
         self.level_background = LevelBackground(self.screen, level_manager.current_level)

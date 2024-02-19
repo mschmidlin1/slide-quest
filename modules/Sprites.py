@@ -23,19 +23,34 @@ class Cell(pygame.sprite.Sprite):
         return location[0] // CELL_DIMENSIONS.width - self.border_size.width // CELL_DIMENSIONS.width, location[1] // CELL_DIMENSIONS.height - self.border_size.height // CELL_DIMENSIONS.height
 
 class Player(Cell):
-    def __init__(self, gameboard_loc: Point, border_size: Size):
+    def __init__(self, gameboard_loc: Point, border_size: Size, sprite_sheet_path: str):
         super().__init__()
         self.cellType = CellType.PLAYER
         self.border_size = border_size
         self._layer = 2
         self.gameboard_loc = gameboard_loc
-        self.image = pygame.Surface(CELL_DIMENSIONS)
-        self.image.fill(PLAYER_COLOR)
+        self.sprite_sheet = pygame.image.load(sprite_sheet_path).convert_alpha()  # Load the sprite sheet
+        self.sprite_size = (32, 32)  # The size of a single sprite
+        self.idle_frames = self.load_frames(1)  # Load the first four frames for idle animation
+        self.current_frame = 0
+        self.image = self.idle_frames[self.current_frame]  # Start with the first frame
         self.rect = self.image.get_rect()
         self.rect.center = self.GameboardCell_To_CenterPixelCoords(gameboard_loc)
         self.current_pos = self.rect.center
         self.speed = PLAYER_SPEED
         self.moving = False
+        self.last_update = pygame.time.get_ticks()
+        self.frame_rate = 100  # Milliseconds per frame
+
+    def load_frames(self, number_of_frames: int):
+        """
+        Slices the sprite sheet into individual frames.
+        """
+        frames = []
+        for i in range(number_of_frames):
+            frame = self.sprite_sheet.subsurface((i * self.sprite_size[0], 0, self.sprite_size[0], self.sprite_size[1]))
+            frames.append(frame)
+        return frames
 
     def move(self, location: Point):
         """
@@ -52,6 +67,9 @@ class Player(Cell):
         self.moving = True
 
     def update(self):
+
+        current_time = pygame.time.get_ticks()
+
         if self.moving:
             
             self.target_pos_pixels = self.GameboardCell_To_CenterPixelCoords(self.target_pos)
@@ -74,6 +92,14 @@ class Player(Cell):
                 self.current_pos += distance_to_target 
 
             self.rect.center = self.GameboardCell_To_CenterPixelCoords(self.current_pos)
+        else:
+            # Update the frame if it's time
+            if current_time - self.last_update > self.frame_rate:
+                self.last_update = current_time
+                self.current_frame = (self.current_frame + 1) % len(self.idle_frames)
+                self.image = self.idle_frames[self.current_frame]
+                
+        self.rect.center = self.GameboardCell_To_CenterPixelCoords(self.current_pos)
             
 class Block(Cell):
     def __init__(self, gameboard_loc: Point, border_size: Size):
@@ -112,29 +138,38 @@ class Ice(Cell):
         self.rect.center = self.GameboardCell_To_CenterPixelCoords(gameboard_loc)
 
 class TextSprite(pygame.sprite.Sprite):
-    def __init__(self, text: str, font_file: str, font_size: int, location: Point, color: tuple, anchor: str = 'center'):
+    def __init__(self, text: str, font_file: str, font_size: int, location: Point, color: tuple = (0,0,0), anchor: str = 'center', outline_color: tuple = None, outline_width: int = 2):
         super().__init__()
         self.font = pygame.font.Font(font_file, font_size)
         self.color = color
         self.image = self.font.render(text, True, color)
         self.rect = self.image.get_rect()
+        self.outline_color = outline_color
+        self.outline_width = outline_width
         self.anchor = anchor
         self.location = location
-        if anchor == 'center':
-            self.rect.center = location
-        elif anchor == 'topleft':
-            self.rect.topleft = location
-        elif anchor == 'topright':
-            self.rect.topright = location
-        elif anchor == 'bottomleft':
-            self.rect.bottomleft = location
-        elif anchor == 'bottomright':
-            self.rect.bottomright = location
-        else:
-            raise ValueError("Invalid anchor point")
+        self.update_text(text)
         
+    def render_text_with_outline(self, text: str):
+        # Render the base text
+        base_text = self.font.render(text, True, self.color)
+        if not self.outline_color:
+            return base_text
+        
+        # Create a surface to hold the text with an outline
+        outline_surface = pygame.Surface(base_text.get_rect().inflate(self.outline_width*2, self.outline_width*2).size, pygame.SRCALPHA)
+        
+        # Render the outline by blitting the base text multiple times with an offset
+        outline_rect = base_text.get_rect()
+        for dx, dy in [(-1, -1), (-1, 1), (1, -1), (1, 1)]:  # You can add more directions for a thicker outline
+            outline_surface.blit(self.font.render(text, True, self.outline_color), (outline_rect.x + dx*self.outline_width, outline_rect.y + dy*self.outline_width))
+        
+        # Blit the base text onto the outline surface
+        outline_surface.blit(base_text, (self.outline_width, self.outline_width))
+        return outline_surface
+
     def update_text(self, text: str):
-        self.image = self.font.render(text, True, self.color)
+        self.image = self.render_text_with_outline(text)
         self.rect = self.image.get_rect()
         if self.anchor == 'center':
             self.rect.center = self.location
