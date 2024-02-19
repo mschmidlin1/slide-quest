@@ -349,7 +349,7 @@ class LevelEditor:
                     break
             return target_cell
     @log
-    def update(self, events):
+    def update(self, events: list[pygame.event.Event]):
         for event in events:
             
             if event.type == pygame.MOUSEBUTTONDOWN:
