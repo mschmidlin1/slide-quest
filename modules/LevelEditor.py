@@ -40,7 +40,7 @@ class ClickedCell:
         """
         return self.cell_type is not None and self.cell_starting_position is not None
 
-    def handle_dragging(self, event):
+    def handle_dragging(self, event): 
         """
         Handle dragging the cell when it is draggable.
 
