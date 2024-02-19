@@ -7,7 +7,7 @@ import pygame
 
 #game settings
 WINDOW_TITLE = "Slide Quest"
-ICON = pygame.image.load('resources\images\Icy-Q-nobackground64x64.png')
+ICON = pygame.image.load('resources/images/Icy-Q-nobackground64x64.png')
 TITLE_FONT = "resources/fonts/Chunk Five Print.otf"
 
 #window information
