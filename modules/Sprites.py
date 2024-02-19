@@ -30,8 +30,8 @@ class Player(Cell):
         self._layer = 2
         self.gameboard_loc = gameboard_loc
         self.sprite_sheet = pygame.image.load(sprite_sheet_path).convert_alpha()  # Load the sprite sheet
-        self.sprite_size = (32, 32)  # The size of a single sprite
-        self.idle_frames = self.load_frames(1)  # Load the first four frames for idle animation
+        self.sprite_size = (50, 37)  # The size of a single sprite
+        self.idle_frames = self.load_frames(4)  # Load the first four frames for idle animation
         self.current_frame = 0
         self.image = self.idle_frames[self.current_frame]  # Start with the first frame
         self.rect = self.image.get_rect()
@@ -40,7 +40,7 @@ class Player(Cell):
         self.speed = PLAYER_SPEED
         self.moving = False
         self.last_update = pygame.time.get_ticks()
-        self.frame_rate = 100  # Milliseconds per frame
+        self.frame_rate = 1000  # Milliseconds per frame
 
     def load_frames(self, number_of_frames: int):
         """
@@ -48,8 +48,8 @@ class Player(Cell):
         """
         frames = []
         for i in range(number_of_frames):
-            frame = self.sprite_sheet.subsurface((i * self.sprite_size[0], 0, self.sprite_size[0], self.sprite_size[1]))
-            frames.append(frame)
+          frame = self.sprite_sheet.subsurface((i * self.sprite_size[0], 0, self.sprite_size[0], self.sprite_size[1]))
+          frames.append(frame)
         return frames
 
     def move(self, location: Point):
@@ -92,6 +92,7 @@ class Player(Cell):
                 self.current_pos += distance_to_target 
 
             self.rect.center = self.GameboardCell_To_CenterPixelCoords(self.current_pos)
+
         else:
             # Update the frame if it's time
             if current_time - self.last_update > self.frame_rate:
@@ -99,7 +100,6 @@ class Player(Cell):
                 self.current_frame = (self.current_frame + 1) % len(self.idle_frames)
                 self.image = self.idle_frames[self.current_frame]
                 
-        self.rect.center = self.GameboardCell_To_CenterPixelCoords(self.current_pos)
             
 class Block(Cell):
     def __init__(self, gameboard_loc: Point, border_size: Size):

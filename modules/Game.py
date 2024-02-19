@@ -40,6 +40,7 @@ class Game:
         self.solution_moves = ShortestPath(self.gameboard)
         self.least_moves = len(self.solution_moves)
         self.gameboard_sprite_group = pygame.sprite.LayeredUpdates()
+        
         for row, cells in enumerate(self.gameboard.gameboard):
             for col, cell in enumerate(cells):
                 if cell == CellType.BLOCK:
@@ -48,9 +49,10 @@ class Game:
                     self.gameboard_sprite_group.add(Goal(Point(col, row), self.border_size))
                 if cell == CellType.ICE:
                     self.gameboard_sprite_group.add(Ice(Point(col, row), self.border_size))
-
-        self.player = Player(self.gameboard, self.border_size, PLAYER_SPRITE_SHEET)
+                    
+        self.player = Player(self.gameboard.player_pos, self.border_size, PLAYER_SPRITE_SHEET)
         self.gameboard_sprite_group.add(self.player)
+
         self.levelEditor = LevelEditor(self.gameboard, self.gameboard_sprite_group, self.border_size, self.player, level_manager)
         self.level_background = LevelBackground(self.screen, level_manager.current_level)
         self.num_moves = 0

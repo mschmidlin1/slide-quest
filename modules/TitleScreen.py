@@ -36,17 +36,17 @@ class TitleScreen():
             outline_width=1
             )
 
-        self.player_sprite = Player(
-            Point(WINDOW_DIMENSIONS[0]//2, WINDOW_DIMENSIONS[1]//2),
-            Size(32,32),
-            sprite_sheet_path=PLAYER_SPRITE_SHEET
-        )
-        self.player_sprite.rect.center = Point(WINDOW_DIMENSIONS[0]//2, WINDOW_DIMENSIONS[1]//2)
+        # self.player_sprite = Player(
+        #     Point(WINDOW_DIMENSIONS[0]//2, WINDOW_DIMENSIONS[1]//2),
+        #     Size(0,0),
+        #     sprite_sheet_path=PLAYER_SPRITE_SHEET
+        # )
+        # self.player_sprite.rect.center = Point(WINDOW_DIMENSIONS[0]//2, WINDOW_DIMENSIONS[1]//2)
 
         self.title_screen_sprite_group = pygame.sprite.Group()
         self.title_screen_sprite_group.add(self.title_sprite)
         self.title_screen_sprite_group.add(self.start_sprite)
-        self.title_screen_sprite_group.add(self.player_sprite)
+        # self.title_screen_sprite_group.add(self.player_sprite)
 
 
 
