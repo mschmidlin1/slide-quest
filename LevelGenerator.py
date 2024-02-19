@@ -77,6 +77,8 @@ def ShortestPath(input_gameboard: GameBoard) -> list[Direction]:
     the exact sequence of moves to complete the level in the minimum number of moves.
 
     If there is no possible path to the goal, and empty list is returned.
+
+    This function deep copys the input gamebaord as to not manipulate it's state.
     """
 
     gameboard = copy.deepcopy(input_gameboard)  # Use deepcopy if gameboard has nested objects
@@ -144,7 +146,7 @@ def IsMapPossible(input_gameboard: GameBoard) -> bool:
         visited.add(current_element)
     return False
         
-            
+           
 
 
 

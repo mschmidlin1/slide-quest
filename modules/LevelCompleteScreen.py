@@ -7,7 +7,7 @@ from modules.Sprites import TextSprite, Player
 from modules.DataTypes import Point
 
 class LevelCompleteScreen():
-    def __init__(self, screen, num_moves: int, time_str: str):
+    def __init__(self, screen, num_moves: int, time_str: str, least_possible_moves: int):
         
         self.screen = screen
 
@@ -35,6 +35,13 @@ class LevelCompleteScreen():
             Point(WINDOW_DIMENSIONS[0]//2, WINDOW_DIMENSIONS[1] - WINDOW_DIMENSIONS[1]//3-300),
             TITLE_SCREEN_TEXT_COLOR)
         
+        self.best_possible_sprite = TextSprite(
+            f"Best possible is {least_possible_moves} moves to complete", 
+            TITLE_FONT, 
+            40, 
+            Point(WINDOW_DIMENSIONS[0]//2, WINDOW_DIMENSIONS[1] - WINDOW_DIMENSIONS[1]//3-200),
+            TITLE_SCREEN_TEXT_COLOR)
+        
         self.next_level_sprite = TextSprite(
             "Press (Space) to continue to next level", 
             TITLE_FONT, 
@@ -48,6 +55,7 @@ class LevelCompleteScreen():
         self.title_screen_sprite_group.add(self.main_menu_sprite)
         self.title_screen_sprite_group.add(self.next_level_sprite)
         self.title_screen_sprite_group.add(self.time_sprite)
+        self.title_screen_sprite_group.add(self.best_possible_sprite)
 
     def draw(self):
         self.screen.fill(TITLE_SCREEN_COLOR)
