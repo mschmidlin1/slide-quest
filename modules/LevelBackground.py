@@ -34,16 +34,26 @@ class LevelBackground():
             Point(WINDOW_DIMENSIONS.width-10, 10),
             TITLE_SCREEN_TEXT_COLOR,
             anchor='topright')
+        
+        self.solution_sprite = TextSprite(
+            "",
+            TITLE_FONT,
+            15,
+            Point(WINDOW_DIMENSIONS.width-10, WINDOW_DIMENSIONS.height-10),
+            TITLE_SCREEN_TEXT_COLOR,
+            anchor='bottomright')
 
 
         self.sprite_group = pygame.sprite.Group()
         self.sprite_group.add(self.current_level_sprite)
         self.sprite_group.add(self.time_sprite)
         self.sprite_group.add(self.main_menu_sprite)
+        self.sprite_group.add(self.solution_sprite)
 
-    def draw(self, time_str: str):
+    def draw(self, time_str: str, solution: str):
         self.screen.fill(TITLE_SCREEN_COLOR)
         self.time_sprite.update_text(time_str)
+        self.solution_sprite.update_text(solution)
         self.sprite_group.update()
         self.sprite_group.draw(self.screen)
 

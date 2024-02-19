@@ -42,12 +42,20 @@ class Window():
             self.clock.tick(60)
     @log
     def draw(self):
+        """
+        Draw window elements onto the screen.
+        """
         if self.title_screen is not None:
             self.title_screen.draw()
         elif self.level_complete_screen is not None:
             self.level_complete_screen.draw()
+        elif self.current_game is not None:
+            self.current_game.draw()
     @log
     def update(self, events):
+        """
+        Check for user input events and handle them.
+        """
         for event in events:
 
             if event.type == pygame.QUIT:
@@ -82,7 +90,7 @@ class Window():
         if self.current_game is not None:
             
             if self.current_game.isComplete():
-                    self.level_complete_screen = LevelCompleteScreen(self.screen, self.current_game.num_moves, self.current_game.totalTime())
+                    self.level_complete_screen = LevelCompleteScreen(self.screen, self.current_game.num_moves, self.current_game.totalTime(), self.current_game.least_moves)
                     self.current_game = None
                     self.level_manager.next_level()
             else:        

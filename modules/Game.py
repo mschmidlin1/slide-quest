@@ -7,6 +7,7 @@ from modules.LevelIO import LevelIO
 from modules.GameEnums import Direction, GameDifficulty, CellType
 from modules.my_logging import set_logger, log
 from modules.LevelBackground import LevelBackground
+from LevelGenerator import ShortestPath
 from modules.configs import ( 
     WHITE,
     WINDOW_DIMENSIONS,
@@ -33,8 +34,10 @@ class Game:
         self.isEditActive = EDIT_ON
         self.difficulty: GameDifficulty = level_manager.current_difficulty
         self.border_size: Size = Border_Size_Lookup[self.difficulty]
-        gameboard, player_pos = level_manager.Read()
-        self.gameboard = GameBoard(gameboard, player_pos)
+        gameboard_array, player_pos = level_manager.Read()
+        self.gameboard = GameBoard(gameboard_array, player_pos)
+        self.solution_moves = ShortestPath(self.gameboard)
+        self.least_moves = len(self.solution_moves)
         self.gameboard_sprite_group = pygame.sprite.LayeredUpdates()
         for row, cells in enumerate(self.gameboard.gameboard):
             for col, cell in enumerate(cells):
@@ -47,7 +50,7 @@ class Game:
 
         self.player = Player(self.gameboard.player_pos, self.border_size)
         self.gameboard_sprite_group.add(self.player)
-        self.levelEditor = LevelEditor(self, level_manager)
+        self.levelEditor = LevelEditor(self.gameboard, self.gameboard_sprite_group, self.border_size, self.player, level_manager)
         self.level_background = LevelBackground(self.screen, level_manager.current_level)
         self.num_moves = 0
         self.start_time = time.time()
@@ -69,7 +72,8 @@ class Game:
                     self.num_moves += 1
                 if event.key == Direction.DOWN.value and not self.player.moving:
                     self.player.move(self.gameboard.MovePlayer(Direction.DOWN))
-                    self.num_moves += 1          
+                    self.num_moves += 1
+        self.solution_moves = ShortestPath(self.gameboard)          
     @log
     def draw_grid(self):
         """
@@ -95,18 +99,32 @@ class Game:
         minutes, seconds = divmod(total_time, 60)
         return f"{int(minutes):02}:{int(seconds):02}"
     @log
+    def draw(self):
+        """
+        Draw the necessary game elements on the screen. Draws all child elements of the game.
+        """
+        #draw background first
+        if(self.isEditActive):
+            self.level_background.draw(self.totalTime(), self.solution_str())
+        else:
+            self.level_background.draw(self.totalTime(), "") # the solutions string won't be display if not in edit mode.
+        
+        #draw sprite second
+        self.gameboard_sprite_group.draw(self.screen)
+
+        #draw grid last
+        if(self.isEditActive):
+            self.draw_grid()
+
+    @log
     def update(self, events: list[pygame.event.Event]):
         """
         The Game.update() method takes a list of pygame events. From this the game will extract the necessary movement information for the player.
         """
         self.move_player(events)
-        self.level_background.draw(self.totalTime())
         self.gameboard_sprite_group.update()
-        self.gameboard_sprite_group.draw(self.screen)
-        
 
         if(self.isEditActive):
-            self.draw_grid()
             self.levelEditor.update(events)
             
 
@@ -116,4 +134,16 @@ class Game:
                     self.isEditActive = not self.isEditActive
             
 
-            
+    @log
+    def solution_str(self) -> str:
+        """
+        Turns the self.solution_moves list into a human readable list for display.
+        """
+
+        return ",".join([self.move_str(dir) for dir in self.solution_moves])
+    @log
+    def move_str(self, move: Direction) -> str:
+        """
+        Turns the Direction.MOVE enum into just a string of "MOVE".
+        """
+        return str(move).split('.')[1]
