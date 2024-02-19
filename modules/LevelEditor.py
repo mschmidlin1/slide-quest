@@ -6,8 +6,12 @@ from modules.GameEnums import CellType
 from modules.GameBoard import GameBoard
 from modules.LevelIO import LevelIO
 from modules.configs import LEFT_CLICK, RIGHT_CLICK
+from modules.my_logging import set_logger, log
+set_logger()
 
+@log
 class ClickedCell:
+    @log
     def __init__(self, cell: pygame.sprite.Sprite, event: pygame.event.Event):
         """
         Initialize a ClickedCell object.
@@ -21,7 +25,7 @@ class ClickedCell:
 
         self.cell.offset_x = self.cell.rect.x - event.pos[0] if self.is_draggable() == True else None
         self.cell.offset_y = self.cell.rect.y - event.pos[1] if self.is_draggable() == True else None
-        
+    @log
     def is_draggable(self) -> bool:
         """
         Check if the cell is draggable (PLAYER or GOAL).
@@ -30,7 +34,7 @@ class ClickedCell:
             bool: True if the cell is draggable; otherwise, False.
         """
         return self.cell_type in {CellType.PLAYER, CellType.GOAL}
-    
+    @log
     def is_cell(self) -> bool: #is this redundant with is_draggable()? Can this just be built into is_draggable()?
         """
         Check if the object represents a valid cell (not None or missing position).
@@ -39,8 +43,8 @@ class ClickedCell:
             bool: True if the object represents a valid cell; otherwise, False.
         """
         return self.cell_type is not None and self.cell_starting_position is not None
-
-    def handle_dragging(self, event):
+    @log
+    def handle_dragging(self, event): 
         """
         Handle dragging the cell when it is draggable.
 
@@ -63,8 +67,9 @@ class ClickedCell:
             return True
         else:
             return False
-
+@log
 class LevelEditor:
+    @log
     def __init__(self, gameboard: GameBoard, gameboard_sprite_group: pygame.sprite.LayeredUpdates, border_size: Size, player: Player, level_manager: LevelIO): #need from game, player, border_size, gameboard_sprite_group, gameboard, 
         print("LevelEditor Init")
         self.gameboard = gameboard
@@ -78,16 +83,7 @@ class LevelEditor:
         self.click_type = None
         self.new_cell = None
         self.replaced_cells = set()
-
-    def update_gameboard(self):
-        print("Updating Board...")
-        #self.level_manager
-        # self.current_game.gameboard.UpdateCell()
-        # self.current_game.gameboard.player_pos = Point()
-        # self.current_game.update_map_text()
-        # update_map(CURRENT_DIFFICULTY)
-        # self.current_game.gameboard.ReadBoard('levels\\advanced\\map.csv')
-
+    @log
     def replace_cell(self, old_cell, new_cell_type, event):
         """
         Replace a cell with a new cell of the specified type.
@@ -124,7 +120,7 @@ class LevelEditor:
             self.gameboard_sprite_group.remove(old_cell)
             self.gameboard_sprite_group.add(self.new_cell)
             self.replaced_cells.add(old_cell)
-
+    @log
     def move_goal(self, old_cell, new_cell):
         """
         Move a goal cell from an old position to a new position on the gameboard.
@@ -157,7 +153,7 @@ class LevelEditor:
         self.gameboard.UpdateCell(current_goal_pos, CellType.ICE)
         new_goal_pos = Point(*old_cell.cell.Get_Cell_Current_Position(new_cell.cell.rect.center))
         self.gameboard.UpdateCell(new_goal_pos, CellType.GOAL)
-
+    @log
     def update_cell_after_dragging(self, dragging_cell, underneath_cell, underneath_goal):
         """
         Update cell positions and interactions after a cell is dragged and released.
@@ -198,7 +194,7 @@ class LevelEditor:
 
             else:
                 self.place_cell_at_starting_position(dragging_cell)
-
+    @log
     def place_cell_at_starting_position(self, dragging_cell):
         """
         Place a cell back to its starting position.
@@ -214,7 +210,7 @@ class LevelEditor:
             dragging_cell (ClickedCell): The ClickedCell representing the cell being dragged.
         """
         dragging_cell.cell.rect.center = dragging_cell.cell_starting_position
-
+    @log
     def handle_mouse_click(self, clicked_cell, click_type, event):
         """
         Handle mouse clicks on cells in the gameboard.
@@ -251,7 +247,7 @@ class LevelEditor:
         if self.click_type == RIGHT_CLICK:  # RIGHT CLICK
             if clicked_cell.cell_type == CellType.BLOCK:
                 self.replace_cell(clicked_cell.cell, CellType.ICE, event)
-
+    @log
     def handle_mouse_moving(self, clicked_cell, click_type, event):
         """
         Handle mouse movement during cell dragging.
@@ -286,7 +282,7 @@ class LevelEditor:
 
             elif self.click_type == RIGHT_CLICK:
                     self.replace_cell(updated_cell.cell, CellType.ICE, event)
-
+    @log
     def handle_mouse_up(self, clicked_cell, click_type, event):
         """
         Handle mouse release event after dragging a cell.
@@ -320,7 +316,7 @@ class LevelEditor:
 
         self.__init__(self.gameboard, self.gameboard_sprite_group, self.border_size, self.player, self.level_manager)
         self.update_gameboard()
-
+    @log
     def update_current_cell(self, event, checkingUnderneath=False):
         """
         Update the top-most clicked cell.
@@ -352,8 +348,8 @@ class LevelEditor:
                     target_cell = ClickedCell(clicked_cell, event)
                     break
             return target_cell
-
-    def update(self, events):
+    @log
+    def update(self, events: list[pygame.event.Event]):
         for event in events:
             
             if event.type == pygame.MOUSEBUTTONDOWN:
