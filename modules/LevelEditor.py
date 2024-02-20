@@ -371,6 +371,15 @@ class LevelEditor:
                 elif event.key == pygame.K_s:
                     self.level_manager.SaveNew(self.gameboard)
                     print("Saved new map.")
+    @log
+    def draw(self):
+        """
+        Need to move the pallet sprite group into this class.
 
+        In update check for collision with any of the pallet sprites.
+
+        
+        """
+        pass
 
             

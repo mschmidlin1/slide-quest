@@ -116,6 +116,7 @@ class Game:
         #draw grid last
         if(self.isEditActive):
             self.draw_grid()
+            self.levelEditor.draw()
 
     @log
     def update(self, events: list[pygame.event.Event]):
