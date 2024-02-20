@@ -211,7 +211,7 @@ class LevelEditor:
         """
         dragging_cell.cell.rect.center = dragging_cell.cell_starting_position
     @log
-    def handle_mouse_click(self, clicked_cell: pygame.sprite.Sprite, click_type, event):
+    def handle_mouse_click(self, clicked_cell: pygame.sprite.Sprite, click_type: int, event: pygame.event.Event):
         """
         Handle mouse clicks on cells in the gameboard.
 
@@ -315,9 +315,8 @@ class LevelEditor:
             self.update_cell_after_dragging(clicked_cell, underneath_cell, underneath_goal)
 
         self.__init__(self.gameboard, self.gameboard_sprite_group, self.border_size, self.player, self.level_manager)
-        self.update_gameboard()
     @log
-    def update_current_cell(self, event, checkingUnderneath=False) -> pygame.sprite.Sprite:
+    def update_current_cell(self, event: pygame.event.Event, checkingUnderneath: bool = False) -> pygame.sprite.Sprite:
         """
         Update the top-most clicked cell.
 
@@ -327,27 +326,25 @@ class LevelEditor:
         created for the top cell, encapsulating its information, and returned.
 
         Args:
-            event (pygame.Event): The mouse event containing the position of the click.
+            event (pygame.event.Event): The mouse event containing the position of the click.
+            checkingUnderneath (bool): Default False. 
 
         Returns:
             ClickedCell or None: The top-most clicked cell if found, or None if no cell
             collides with the event's position.
         """
-        target_cell: pygame.sprite.Sprite = None
-
         if not checkingUnderneath:
 
             for clicked_cell in reversed(list(self.gameboard_sprite_group)):
                 if clicked_cell.rect.collidepoint(event.pos):
-                    target_cell = ClickedCell(clicked_cell, event)
-                    break
-            return target_cell
+                    return  ClickedCell(clicked_cell, event)
+                    
         else:
             for clicked_cell in (self.gameboard_sprite_group):
                 if clicked_cell.rect.collidepoint(event.pos):
-                    target_cell = ClickedCell(clicked_cell, event)
-                    break
-            return target_cell
+                    return ClickedCell(clicked_cell, event)
+                    
+        return None
     @log
     def update(self, events: list[pygame.event.Event]):
         for event in events:
