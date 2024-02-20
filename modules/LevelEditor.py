@@ -211,7 +211,7 @@ class LevelEditor:
         """
         dragging_cell.cell.rect.center = dragging_cell.cell_starting_position
     @log
-    def handle_mouse_click(self, clicked_cell, click_type, event):
+    def handle_mouse_click(self, clicked_cell: pygame.sprite.Sprite, click_type, event):
         """
         Handle mouse clicks on cells in the gameboard.
 
@@ -317,7 +317,7 @@ class LevelEditor:
         self.__init__(self.gameboard, self.gameboard_sprite_group, self.border_size, self.player, self.level_manager)
         self.update_gameboard()
     @log
-    def update_current_cell(self, event, checkingUnderneath=False):
+    def update_current_cell(self, event, checkingUnderneath=False) -> pygame.sprite.Sprite:
         """
         Update the top-most clicked cell.
 
@@ -333,7 +333,7 @@ class LevelEditor:
             ClickedCell or None: The top-most clicked cell if found, or None if no cell
             collides with the event's position.
         """
-        target_cell = None
+        target_cell: pygame.sprite.Sprite = None
 
         if not checkingUnderneath:
 
