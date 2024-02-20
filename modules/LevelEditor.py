@@ -329,6 +329,7 @@ class LevelEditor:
         Args:
             event (pygame.Event): The mouse event containing the position of the click.
 
+            
         Returns:
             ClickedCell or None: The top-most clicked cell if found, or None if no cell
             collides with the event's position.
