@@ -8,7 +8,7 @@ from modules.DataTypes import Point
 from modules.GameEnums import GameDifficulty
 
 class LevelBackground():
-    def __init__(self, screen, text: str):
+    def __init__(self, screen: pygame.surface.Surface, text: str):
         
         self.screen = screen
 
@@ -52,29 +52,14 @@ class LevelBackground():
         self.sprite_group.add(self.solution_sprite)
 
 
-        self.block_sprite = Block(Point(0, 0), Border_Size_Lookup[GameDifficulty.BEGINNER]) #the constructor arguments don't matter because we're gonna set the location manually
-        self.block_sprite.rect.center = Point(60, WINDOW_DIMENSIONS.height-30)
 
-        self.ice_sprite = Ice(Point(0, 0), Border_Size_Lookup[GameDifficulty.BEGINNER]) #the constructor arguments don't matter because we're gonna set the location manually
-        self.ice_sprite.rect.center = Point(120, WINDOW_DIMENSIONS.height-30)
 
-        self.hollow_rect_sprite = HollowSquareSprite(Point(60, WINDOW_DIMENSIONS.height-30), 4)
-
-        self.pallete_sprite_group = pygame.sprite.Group()
-        self.pallete_sprite_group.add(self.block_sprite)
-        self.pallete_sprite_group.add(self.ice_sprite)
-        self.pallete_sprite_group.add(self.hollow_rect_sprite)
-
-    def draw(self, time_str: str, solution: str, edit_mode: bool = True):
+    def draw(self, time_str: str, solution: str):
         self.screen.fill(TITLE_SCREEN_COLOR)
         self.time_sprite.update_text(time_str)
         self.solution_sprite.update_text(solution)
         self.sprite_group.update()
         self.sprite_group.draw(self.screen)
-
-        if edit_mode:
-            self.pallete_sprite_group.update()
-            self.pallete_sprite_group.draw(self.screen)
 
 
 

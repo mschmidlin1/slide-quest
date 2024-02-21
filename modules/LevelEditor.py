@@ -1,12 +1,14 @@
 import pygame
 from modules.GameEnums import CellType
-from modules.Sprites import Block, Ice, Goal, Player
+from modules.Sprites import Block, Ice, Goal, Player, HollowSquareSprite
 from modules.DataTypes import Point, Size
-from modules.GameEnums import CellType
+from modules.GameEnums import CellType, GameDifficulty
 from modules.GameBoard import GameBoard
 from modules.LevelIO import LevelIO
 from modules.configs import LEFT_CLICK, RIGHT_CLICK
 from modules.my_logging import set_logger, log
+from modules.configs import WINDOW_DIMENSIONS, Border_Size_Lookup
+import logging
 set_logger()
 
 @log
@@ -70,8 +72,8 @@ class ClickedCell:
 @log
 class LevelEditor:
     @log
-    def __init__(self, gameboard: GameBoard, gameboard_sprite_group: pygame.sprite.LayeredUpdates, border_size: Size, player: Player, level_manager: LevelIO): #need from game, player, border_size, gameboard_sprite_group, gameboard, 
-        print("LevelEditor Init")
+    def __init__(self, gameboard: GameBoard, gameboard_sprite_group: pygame.sprite.LayeredUpdates, border_size: Size, player: Player, level_manager: LevelIO, screen: pygame.surface.Surface): #need from game, player, border_size, gameboard_sprite_group, gameboard, 
+        self.screen = screen
         self.gameboard = gameboard
         self.player = player
         self.level_manager = level_manager
@@ -83,6 +85,21 @@ class LevelEditor:
         self.click_type = None
         self.new_cell = None
         self.replaced_cells = set()
+
+        self.current_pallet_block: CellType = CellType.BLOCK
+
+        self.block_sprite = Block(Point(0, 0), Border_Size_Lookup[GameDifficulty.BEGINNER]) #the constructor arguments don't matter because we're gonna set the location manually
+        self.block_sprite.rect.center = Point(60, WINDOW_DIMENSIONS.height-30)
+
+        self.ice_sprite = Ice(Point(0, 0), Border_Size_Lookup[GameDifficulty.BEGINNER]) #the constructor arguments don't matter because we're gonna set the location manually
+        self.ice_sprite.rect.center = Point(120, WINDOW_DIMENSIONS.height-30)
+
+        self.hollow_rect_sprite = HollowSquareSprite(Point(60, WINDOW_DIMENSIONS.height-30), 4)
+
+        self.pallete_sprite_group = pygame.sprite.Group()
+        self.pallete_sprite_group.add(self.block_sprite)
+        self.pallete_sprite_group.add(self.ice_sprite)
+        self.pallete_sprite_group.add(self.hollow_rect_sprite)
     @log
     def replace_cell(self, old_cell, new_cell_type, event):
         """
@@ -346,10 +363,26 @@ class LevelEditor:
                     
         return None
     @log
+    def check_for_pallet_click(self, event: pygame.event.Event):
+        """
+        Checks to see if any sprites in the block pallet have been clicked.
+
+        If something in the pallet has been clicked, update the current_pallet_block property.
+
+        """
+        if self.block_sprite.rect.collidepoint(event.pos):
+            self.current_pallet_block = CellType.BLOCK
+            self.hollow_rect_sprite.rect.center = self.block_sprite.rect.center
+        elif self.ice_sprite.rect.collidepoint(event.pos):
+            self.current_pallet_block = CellType.ICE
+            self.hollow_rect_sprite.rect.center = self.ice_sprite.rect.center
+        print(self.current_pallet_block)
+    @log
     def update(self, events: list[pygame.event.Event]):
         for event in events:
             
             if event.type == pygame.MOUSEBUTTONDOWN:
+                self.check_for_pallet_click(event)
                 self.clickedcell = self.update_current_cell(event)
 
                 if self.clickedcell:
@@ -380,6 +413,7 @@ class LevelEditor:
 
         
         """
-        pass
+        self.pallete_sprite_group.update()
+        self.pallete_sprite_group.draw(self.screen)
 
             
