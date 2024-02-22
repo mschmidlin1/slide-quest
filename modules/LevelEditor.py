@@ -1,4 +1,5 @@
 import pygame
+from modules.configs import CELL_DIMENSIONS, WHITE
 from modules.GameEnums import CellType
 from modules.Sprites import Block, Ice, Goal, Player, HollowSquareSprite
 from modules.DataTypes import Point, Size
@@ -404,6 +405,16 @@ class LevelEditor:
                 elif event.key == pygame.K_s:
                     self.level_manager.SaveNew(self.gameboard)
                     print("Saved new map.")
+    
+    @log
+    def draw_grid(self):
+        """
+        This is just temporary for showing the dimensions of the grid until we can start implementing sprites more regularly
+        """
+        for x in range(0, WINDOW_DIMENSIONS.width, CELL_DIMENSIONS.width):
+            pygame.draw.line(self.screen, WHITE, (x, 0), (x, WINDOW_DIMENSIONS.height))
+        for y in range(0, WINDOW_DIMENSIONS.height, CELL_DIMENSIONS.height):
+            pygame.draw.line(self.screen, WHITE, (0, y), (WINDOW_DIMENSIONS.width, y))
     @log
     def draw(self):
         """
@@ -415,5 +426,6 @@ class LevelEditor:
         """
         self.pallete_sprite_group.update()
         self.pallete_sprite_group.draw(self.screen)
+        self.draw_grid()
 
             

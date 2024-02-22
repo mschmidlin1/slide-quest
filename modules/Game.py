@@ -76,15 +76,6 @@ class Game:
         if self.isEditActive:
             self.solution_moves = ShortestPath(self.gameboard)       
     @log
-    def draw_grid(self):
-        """
-        This is just temporary for showing the dimensions of the grid until we can start implementing sprites more regularly
-        """
-        for x in range(0, WINDOW_DIMENSIONS.width, CELL_DIMENSIONS.width):
-            pygame.draw.line(self.screen, WHITE, (x, 0), (x, WINDOW_DIMENSIONS.height))
-        for y in range(0, WINDOW_DIMENSIONS.height, CELL_DIMENSIONS.height):
-            pygame.draw.line(self.screen, WHITE, (0, y), (WINDOW_DIMENSIONS.width, y))
-    @log
     def isComplete(self):
         """
         Checks whether the game has been completed.
@@ -115,7 +106,6 @@ class Game:
 
         #draw grid last
         if(self.isEditActive):
-            self.draw_grid()
             self.levelEditor.draw()
 
     @log
