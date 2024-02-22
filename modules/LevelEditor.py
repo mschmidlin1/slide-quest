@@ -411,10 +411,11 @@ class LevelEditor:
         """
         This is just temporary for showing the dimensions of the grid until we can start implementing sprites more regularly
         """
-        for x in range(0, WINDOW_DIMENSIONS.width, CELL_DIMENSIONS.width):
-            pygame.draw.line(self.screen, WHITE, (x, 0), (x, WINDOW_DIMENSIONS.height))
-        for y in range(0, WINDOW_DIMENSIONS.height, CELL_DIMENSIONS.height):
-            pygame.draw.line(self.screen, WHITE, (0, y), (WINDOW_DIMENSIONS.width, y))
+        border_size = Border_Size_Lookup[self.level_manager.current_difficulty]
+        for x in range(border_size.width, WINDOW_DIMENSIONS.width-border_size.width + 1, CELL_DIMENSIONS.width):
+            pygame.draw.line(self.screen, WHITE, (x, border_size.height), (x, WINDOW_DIMENSIONS.height-border_size.height))
+        for y in range(border_size.height, WINDOW_DIMENSIONS.height-border_size.height + 1, CELL_DIMENSIONS.height):
+            pygame.draw.line(self.screen, WHITE, (border_size.width, y), (WINDOW_DIMENSIONS.width-border_size.width, y))
     @log
     def draw(self):
         """
