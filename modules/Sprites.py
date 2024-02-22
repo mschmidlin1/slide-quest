@@ -5,6 +5,8 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from modules.GameEnums import CellType
 from modules.configs import CELL_DIMENSIONS, WALL_COLOR, GOAL_COLOR, ICE_COLOR, PLAYER_COLOR, PLAYER_SPEED
 from modules.DataTypes import Point, Size
+from modules.my_logging import set_logger, log 
+import logging
 
 
 
@@ -47,7 +49,7 @@ class Player(Cell):
         self.current_pos = pygame.Vector2(self.current_pos)
         self.target_pos = pygame.Vector2(self.target_pos)
 
-        print("Starting Position: ", self.current_pos, "Target Position: ", self.target_pos)
+        logging.info(f"Starting Position:  {self.current_pos}  Target Position:  {self.target_pos}")
 
         self.moving = True
 

@@ -6,6 +6,7 @@ from modules.LevelEditor import LevelEditor
 from modules.LevelIO import LevelIO
 from modules.GameEnums import Direction, GameDifficulty, CellType
 from modules.my_logging import set_logger, log
+import logging
 from modules.LevelBackground import LevelBackground
 from LevelGenerator import ShortestPath
 from modules.configs import ( 
@@ -28,7 +29,7 @@ class Game:
     @log
     def __init__(self, screen: pygame.Surface, level_manager: LevelIO):
         
-        print("New game")
+        logging.info("New Game created.")
 
         self.screen = screen
         self.isEditActive = EDIT_ON

@@ -7,6 +7,7 @@ from modules.GameBoard import GameBoard
 from modules.LevelIO import LevelIO
 from modules.configs import LEFT_CLICK, RIGHT_CLICK
 from modules.my_logging import set_logger, log
+import logging
 set_logger()
 
 @log
@@ -71,7 +72,7 @@ class ClickedCell:
 class LevelEditor:
     @log
     def __init__(self, gameboard: GameBoard, gameboard_sprite_group: pygame.sprite.LayeredUpdates, border_size: Size, player: Player, level_manager: LevelIO): #need from game, player, border_size, gameboard_sprite_group, gameboard, 
-        print("LevelEditor Init")
+        logging.info("New LevelEditor initialized.")
         self.gameboard = gameboard
         self.player = player
         self.level_manager = level_manager
@@ -371,10 +372,10 @@ class LevelEditor:
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_s and pygame.key.get_mods() & pygame.KMOD_SHIFT:
                     self.level_manager.SaveInPlace(self.gameboard)
-                    print("Saved in place.")
+                    logging.info("Map saved. (over-wrote level)")
                 elif event.key == pygame.K_s:
                     self.level_manager.SaveNew(self.gameboard)
-                    print("Saved new map.")
+                    logging.info("New map saved.")
 
 
             

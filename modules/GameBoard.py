@@ -183,75 +183,7 @@ class GameBoard:
         Returns the GameBaord as a string with each row separated by '\\n' and each cell separated by ','.
         """
         return '\n'.join([','.join(list(map(str, row))) for row in self.gameboard])
-    # @log
-    # def SaveBoard(self, filename) -> None:
-    #     """
-    #     Saves the current state of the gameboard to a csv file using the current dttm LevelIO save format.
-    #     """
-    #     with open(filename, mode='w', newline='') as file:
-    #         file.write(str(self))
-    # @log
-    # def SavePlayerPos(self, filename) -> None:
-    #     """
-    #     Saves the player position to a file using the current dttm LevelIO save format.
-    #     """
-    #     pos_str = f"({self.player_pos.x},{self.player_pos.y})"
-    #     with open(filename, mode='w', newline='') as file:
-    #         file.write(pos_str)
-    # @log
-    # def Save(self, current_level: str):
-    #     """
-    #     Saves the board and the player pos to an appropriate file.
-    #     `current_level` is the attribute of the LevelIO class the contains the file name of the current level.
-    #     """
-    #     self.SavePlayerPos()
-    #     self.SaveBoard()
-
-    # @log
-    # def UpdateBoard(self, filename) -> None: #delete, same as SaveBoard()
-    #     """
-    #     Updates the current state of the gameboard to a csv file.
-    #     """
-    #     with open(filename, mode='w', newline='') as file:
-    #         print(str(self))
-    #         file.write(str(self))
-    # @log
-    # def ReadBoard(self, filename) -> None:
-    #     """
-    #     Reads the celltypes from a file and loads them into the GameBoard object.
-    #     """
-    #     with open(filename, mode='r', newline='') as f:
-    #         all_lines = f.readlines()
-
-    #     string_cells = []
-    #     for line in all_lines:
-    #         line = line.strip()
-    #         string_cells.append(line.split(','))
-    #     string_cells = np.array(string_cells)
-    #     self.gameboard = Str_to_CellType_vector_func(string_cells)
-    #     self.gameboard = self.gameboard.astype(cell_dtype)
-
-    #     return string_cells
-    # @log
-    # def ReadPlayerPos(self, filename) -> None:
-    #     """
-    #     Reads the player position from a file.
-    #     """
-    #     with open(filename, mode='r', newline='') as f:
-    #         all_lines = f.readlines()
-    #     pos_str = all_lines[0].strip()
-    #     pos_str = pos_str.replace("(", "")
-    #     pos_str = pos_str.replace(")", "")
-    #     x, y = pos_str.split(",")
-    #     x = x.strip()
-    #     y = y.strip()
-    #     self.player_pos = Point(x, y)
-    # @log
-    # def str_dttm(self) -> str:
-    #     """
-    #     This method gets the current datetime string and returns it.
-    #     """
-    #     return datetime.now().__str__().replace(":",".")
+    
 
 
 
