@@ -49,8 +49,8 @@ Board_Size_Lookup = {
         GameDifficulty.EXPERT: EXPERT_DIMENSIONS
 }
 
-#gametype
-EDIT_ON = False # --> Mike changed to bool instead of an Enum. Not necessary to have Enum since there can only ever be true and false
+#Defaul to edit on or edit off
+EDIT_ON = False
 
 #cell information
 
@@ -64,6 +64,7 @@ PLAYER_COLOR = (123, 5, 75)
 WALL_COLOR = (2, 100, 75)
 GOAL_COLOR = (255, 255, 0)
 ICE_COLOR = (173, 216, 230)
+PALLET_HIGHLIGHT_COLOR = (230, 237, 28)
 
 #other constants
 PLAYER_SPEED = .3
