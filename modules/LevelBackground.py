@@ -2,12 +2,13 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import pygame
-from modules.configs import TITLE_FONT, WINDOW_DIMENSIONS, TITLE_SCREEN_COLOR, TITLE_SCREEN_TEXT_COLOR
-from modules.Sprites import TextSprite, Player
+from modules.configs import TITLE_FONT, WINDOW_DIMENSIONS, TITLE_SCREEN_COLOR, TITLE_SCREEN_TEXT_COLOR, Border_Size_Lookup
+from modules.Sprites import TextSprite, Player, Block, Ice, HollowSquareSprite
 from modules.DataTypes import Point
+from modules.GameEnums import GameDifficulty
 
 class LevelBackground():
-    def __init__(self, screen, text: str):
+    def __init__(self, screen: pygame.surface.Surface, text: str):
         
         self.screen = screen
 
@@ -42,13 +43,16 @@ class LevelBackground():
             Point(WINDOW_DIMENSIONS.width-10, WINDOW_DIMENSIONS.height-10),
             TITLE_SCREEN_TEXT_COLOR,
             anchor='bottomright')
-
+        
 
         self.sprite_group = pygame.sprite.Group()
         self.sprite_group.add(self.current_level_sprite)
         self.sprite_group.add(self.time_sprite)
         self.sprite_group.add(self.main_menu_sprite)
         self.sprite_group.add(self.solution_sprite)
+
+
+
 
     def draw(self, time_str: str, solution: str):
         self.screen.fill(TITLE_SCREEN_COLOR)

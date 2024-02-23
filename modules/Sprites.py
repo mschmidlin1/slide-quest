@@ -3,7 +3,7 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from modules.GameEnums import CellType
-from modules.configs import CELL_DIMENSIONS, WALL_COLOR, GOAL_COLOR, ICE_COLOR, PLAYER_COLOR, PLAYER_SPEED
+from modules.configs import CELL_DIMENSIONS, WALL_COLOR, GOAL_COLOR, ICE_COLOR, PLAYER_COLOR, PLAYER_SPEED, PALLET_HIGHLIGHT_COLOR
 from modules.DataTypes import Point, Size
 from modules.my_logging import set_logger, log 
 import logging
@@ -159,3 +159,21 @@ class TitleScreenPlayerSprite(pygame.sprite.Sprite):
         self.image = self.surface
         self.rect = self.image.get_rect()
         self.rect.center = center_location
+
+class HollowSquareSprite(pygame.sprite.Sprite):
+    def __init__(self, location: Size, thickness: int, color=PALLET_HIGHLIGHT_COLOR, transparent_color=(0, 0, 0, 0)):
+        super().__init__()
+        
+        # Create a transparent surface with the given size
+        self.image = pygame.Surface((CELL_DIMENSIONS[0]+thickness, CELL_DIMENSIONS[1]+thickness), pygame.SRCALPHA)
+        
+        # Draw the outer square
+        pygame.draw.rect(self.image, color, self.image.get_rect(), thickness)
+        
+        # Draw the inner transparent square
+        inner_rect = pygame.Rect(thickness, thickness, CELL_DIMENSIONS[0]//2, CELL_DIMENSIONS[1]//2)
+        pygame.draw.rect(self.image, transparent_color, inner_rect)
+        
+        self.rect = self.image.get_rect()
+
+        self.rect.center = location

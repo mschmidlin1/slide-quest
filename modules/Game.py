@@ -27,7 +27,7 @@ class Game:
     A game is born with each map and is destroyed once the player reaches the goal.
     """
     @log
-    def __init__(self, screen: pygame.Surface, level_manager: LevelIO):
+    def __init__(self, screen: pygame.surface.Surface, level_manager: LevelIO):
         
         logging.info("New Game created.")
 
@@ -51,7 +51,7 @@ class Game:
 
         self.player = Player(self.gameboard.player_pos, self.border_size)
         self.gameboard_sprite_group.add(self.player)
-        self.levelEditor = LevelEditor(self.gameboard, self.gameboard_sprite_group, self.border_size, self.player, level_manager)
+        self.levelEditor = LevelEditor(self.gameboard, self.gameboard_sprite_group, self.border_size, self.player, level_manager, self.screen)
         self.level_background = LevelBackground(self.screen, level_manager.current_level)
         self.num_moves = 0
         self.start_time = time.time()
@@ -76,15 +76,6 @@ class Game:
                     self.num_moves += 1
         if self.isEditActive:
             self.solution_moves = ShortestPath(self.gameboard)       
-    @log
-    def draw_grid(self):
-        """
-        This is just temporary for showing the dimensions of the grid until we can start implementing sprites more regularly
-        """
-        for x in range(0, WINDOW_DIMENSIONS.width, CELL_DIMENSIONS.width):
-            pygame.draw.line(self.screen, WHITE, (x, 0), (x, WINDOW_DIMENSIONS.height))
-        for y in range(0, WINDOW_DIMENSIONS.height, CELL_DIMENSIONS.height):
-            pygame.draw.line(self.screen, WHITE, (0, y), (WINDOW_DIMENSIONS.width, y))
     @log
     def isComplete(self):
         """
@@ -116,7 +107,7 @@ class Game:
 
         #draw grid last
         if(self.isEditActive):
-            self.draw_grid()
+            self.levelEditor.draw()
 
     @log
     def update(self, events: list[pygame.event.Event]):

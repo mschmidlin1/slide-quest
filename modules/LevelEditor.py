@@ -1,19 +1,21 @@
 import pygame
+from modules.configs import CELL_DIMENSIONS, WHITE
 from modules.GameEnums import CellType
-from modules.Sprites import Block, Ice, Goal, Player
+from modules.Sprites import Block, Ice, Goal, Player, HollowSquareSprite, Cell
 from modules.DataTypes import Point, Size
-from modules.GameEnums import CellType
+from modules.GameEnums import CellType, GameDifficulty
 from modules.GameBoard import GameBoard
 from modules.LevelIO import LevelIO
 from modules.configs import LEFT_CLICK, RIGHT_CLICK
 from modules.my_logging import set_logger, log
+from modules.configs import WINDOW_DIMENSIONS, Border_Size_Lookup
 import logging
 set_logger()
 
 @log
 class ClickedCell:
     @log
-    def __init__(self, cell: pygame.sprite.Sprite, event: pygame.event.Event):
+    def __init__(self, cell: Cell, event: pygame.event.Event):
         """
         Initialize a ClickedCell object.
 
@@ -29,7 +31,7 @@ class ClickedCell:
     @log
     def is_draggable(self) -> bool:
         """
-        Check if the cell is draggable (PLAYER or GOAL).
+        Check if the cell is PLAYER or GOAL.
 
         Returns:
             bool: True if the cell is draggable; otherwise, False.
@@ -45,7 +47,7 @@ class ClickedCell:
         """
         return self.cell_type is not None and self.cell_starting_position is not None
     @log
-    def handle_dragging(self, event): 
+    def handle_dragging(self, event: pygame.event.Event) -> bool: 
         """
         Handle dragging the cell when it is draggable.
 
@@ -65,27 +67,44 @@ class ClickedCell:
         if self.is_draggable():
             self.cell.rect.x = event.pos[0] + self.cell.offset_x
             self.cell.rect.y = event.pos[1] + self.cell.offset_y
-            return True
-        else:
-            return False
 @log
 class LevelEditor:
     @log
-    def __init__(self, gameboard: GameBoard, gameboard_sprite_group: pygame.sprite.LayeredUpdates, border_size: Size, player: Player, level_manager: LevelIO): #need from game, player, border_size, gameboard_sprite_group, gameboard, 
-        logging.info("New LevelEditor initialized.")
+    def __init__(self, gameboard: GameBoard, gameboard_sprite_group: pygame.sprite.LayeredUpdates, border_size: Size, player: Player, level_manager: LevelIO, screen: pygame.surface.Surface): #need from game, player, border_size, gameboard_sprite_group, gameboard, 
+        self.screen = screen
         self.gameboard = gameboard
         self.player = player
         self.level_manager = level_manager
         self.gameboard_sprite_group = gameboard_sprite_group
         self.border_size = border_size
 
+        self.reset_click()
 
+        self.current_pallet_block: CellType = CellType.BLOCK
+
+        self.block_pallet_sprite = Block(Point(0, 0), Border_Size_Lookup[GameDifficulty.BEGINNER]) #the constructor arguments don't matter because we're gonna set the location manually
+        self.block_pallet_sprite.rect.center = Point(60, WINDOW_DIMENSIONS.height-30)
+
+        self.ice_pallet_sprite = Ice(Point(0, 0), Border_Size_Lookup[GameDifficulty.BEGINNER]) #the constructor arguments don't matter because we're gonna set the location manually
+        self.ice_pallet_sprite.rect.center = Point(120, WINDOW_DIMENSIONS.height-30)
+
+        self.selected_pallet_sprite = HollowSquareSprite(Point(60, WINDOW_DIMENSIONS.height-30), 4)
+
+        self.pallete_sprite_group = pygame.sprite.Group()
+        self.pallete_sprite_group.add(self.block_pallet_sprite)
+        self.pallete_sprite_group.add(self.ice_pallet_sprite)
+        self.pallete_sprite_group.add(self.selected_pallet_sprite)
+    @log
+    def reset_click(self):
+        """
+        Reset clickedcell, click_type, and new_cell to None.
+        """
         self.clickedcell = None
         self.click_type = None
         self.new_cell = None
-        self.replaced_cells = set()
+
     @log
-    def replace_cell(self, old_cell, new_cell_type, event):
+    def replace_cell(self, old_cell: pygame.sprite.Sprite, new_cell_type: CellType, event: pygame.event.Event):
         """
         Replace a cell with a new cell of the specified type.
 
@@ -104,23 +123,25 @@ class LevelEditor:
             new_cell_type (CellType): The type of the new cell to replace the old one.
             event (pygame.Event): The mouse event containing information about the replacement.
         """
-        if old_cell.cellType == new_cell_type or old_cell in self.replaced_cells or old_cell.cellType in {CellType.PLAYER, CellType.GOAL} :
+        if old_cell.cellType == new_cell_type or old_cell.cellType in {CellType.PLAYER, CellType.GOAL} :
             return
 
-        if new_cell_type == CellType.BLOCK:
+        if self.current_pallet_block == CellType.BLOCK:
             self.new_cell = Block(old_cell.Get_Cell_Current_Position(event.pos), self.border_size)
-        elif new_cell_type == CellType.ICE:
+        elif self.current_pallet_block == CellType.ICE:
             self.new_cell = Ice(old_cell.Get_Cell_Current_Position(event.pos), self.border_size)
         
+        # grab the gameboard coords you're working with
         temp_pos = Point(*old_cell.Get_Cell_Current_Position(event.pos))
+        # update gameboard object
         self.gameboard.UpdateCell(temp_pos, new_cell_type)
         # elif new_cell_type == CellType.GOAL:
         #     self.new_cell = Goal(old_cell.Get_Cell_Current_Position(event.pos), self.current_game.border_width, self.current_game.border_height)
 
-        if self.new_cell:
-            self.gameboard_sprite_group.remove(old_cell)
-            self.gameboard_sprite_group.add(self.new_cell)
-            self.replaced_cells.add(old_cell)
+        # if self.new_cell:
+        self.gameboard_sprite_group.remove(old_cell)
+        self.gameboard_sprite_group.add(self.new_cell)
+        # self.replaced_cells.add(old_cell)
     @log
     def move_goal(self, old_cell, new_cell):
         """
@@ -212,7 +233,7 @@ class LevelEditor:
         """
         dragging_cell.cell.rect.center = dragging_cell.cell_starting_position
     @log
-    def handle_mouse_click(self, clicked_cell, click_type, event):
+    def handle_mouse_click(self, clicked_cell: pygame.sprite.Sprite, click_type: int, event: pygame.event.Event):
         """
         Handle mouse clicks on cells in the gameboard.
 
@@ -242,14 +263,14 @@ class LevelEditor:
         self.click_type = click_type
         
         if self.click_type == LEFT_CLICK:  # LEFT CLICK
-            if clicked_cell.cell_type == CellType.ICE:
-                self.replace_cell(clicked_cell.cell, CellType.BLOCK, event)
+            if clicked_cell.cell_type not in [self.current_pallet_block, CellType.GOAL, CellType.PLAYER]:#need to check if we're on player?
+                self.replace_cell(clicked_cell.cell, self.current_pallet_block, event)
 
-        if self.click_type == RIGHT_CLICK:  # RIGHT CLICK
-            if clicked_cell.cell_type == CellType.BLOCK:
-                self.replace_cell(clicked_cell.cell, CellType.ICE, event)
+        # if self.click_type == RIGHT_CLICK:  # RIGHT CLICK
+        #     if clicked_cell.cell_type == CellType.BLOCK:
+        #         self.replace_cell(clicked_cell.cell, CellType.ICE, event)
     @log
-    def handle_mouse_moving(self, clicked_cell, click_type, event):
+    def handle_mouse_moving(self, clicked_cell: ClickedCell, event):
         """
         Handle mouse movement during cell dragging.
 
@@ -271,20 +292,19 @@ class LevelEditor:
             click_type (int): The type of mouse click (LEFT_CLICK or RIGHT_CLICK).
             event (pygame.Event): The mouse event describing the movement.
         """
-        self.click_type = click_type
 
-        clicked_cell.handle_dragging(event)
+        clicked_cell.handle_dragging(event) #check if it's a goal or a player, 
 
-        updated_cell = self.update_current_cell(event)
+        updated_cell = self.update_current_cell(event) #updates the current gameboard cell you're working with
 
         if updated_cell:
             if self.click_type == LEFT_CLICK:
-                self.replace_cell(updated_cell.cell, CellType.BLOCK, event)
+                self.replace_cell(updated_cell.cell, self.current_pallet_block, event)
 
-            elif self.click_type == RIGHT_CLICK:
-                    self.replace_cell(updated_cell.cell, CellType.ICE, event)
+            # elif self.click_type == RIGHT_CLICK:
+            #         self.replace_cell(updated_cell.cell, CellType.ICE, event)
     @log
-    def handle_mouse_up(self, clicked_cell, click_type, event):
+    def handle_mouse_up(self, clicked_cell: ClickedCell, event):
         """
         Handle mouse release event after dragging a cell.
 
@@ -307,18 +327,17 @@ class LevelEditor:
             click_type (int): The type of mouse click (LEFT_CLICK or RIGHT_CLICK).
             event (pygame.Event): The mouse event describing the release.
         """
-        self.click_type = click_type
 
         underneath_cell = self.update_current_cell(event, checkingUnderneath=True)
         underneath_goal = self.update_current_cell(event)
 
-        if clicked_cell.handle_dragging(event):
+        if clicked_cell.is_draggable():
+            clicked_cell.handle_dragging(event)
             self.update_cell_after_dragging(clicked_cell, underneath_cell, underneath_goal)
 
-        self.__init__(self.gameboard, self.gameboard_sprite_group, self.border_size, self.player, self.level_manager)
-        self.update_gameboard()
+        self.reset_click()
     @log
-    def update_current_cell(self, event, checkingUnderneath=False):
+    def update_current_cell(self, event: pygame.event.Event, checkingUnderneath: bool = False) -> pygame.sprite.Sprite:
         """
         Update the top-most clicked cell.
 
@@ -328,34 +347,50 @@ class LevelEditor:
         created for the top cell, encapsulating its information, and returned.
 
         Args:
-            event (pygame.Event): The mouse event containing the position of the click.
+            event (pygame.event.Event): The mouse event containing the position of the click.
+            checkingUnderneath (bool): Default False. 
 
             
         Returns:
             ClickedCell or None: The top-most clicked cell if found, or None if no cell
             collides with the event's position.
         """
-        target_cell = None
-
         if not checkingUnderneath:
-
             for clicked_cell in reversed(list(self.gameboard_sprite_group)):
                 if clicked_cell.rect.collidepoint(event.pos):
-                    target_cell = ClickedCell(clicked_cell, event)
-                    break
-            return target_cell
+                    return  ClickedCell(clicked_cell, event)
+            return None
+                    
         else:
             for clicked_cell in (self.gameboard_sprite_group):
                 if clicked_cell.rect.collidepoint(event.pos):
-                    target_cell = ClickedCell(clicked_cell, event)
-                    break
-            return target_cell
+                    return ClickedCell(clicked_cell, event)
+            return None
+                    
+    @log
+    def check_for_pallet_click(self, event: pygame.event.Event):
+        """
+        Checks to see if any sprites in the block pallet have been clicked.
+
+        If something in the pallet has been clicked, update the current_pallet_block property.
+
+        """
+        if self.block_pallet_sprite.rect.collidepoint(event.pos):
+            self.current_pallet_block = CellType.BLOCK
+            self.selected_pallet_sprite.rect.center = self.block_pallet_sprite.rect.center
+        elif self.ice_pallet_sprite.rect.collidepoint(event.pos):
+            self.current_pallet_block = CellType.ICE
+            self.selected_pallet_sprite.rect.center = self.ice_pallet_sprite.rect.center
+        print(self.current_pallet_block)
     @log
     def update(self, events: list[pygame.event.Event]):
         for event in events:
             
             if event.type == pygame.MOUSEBUTTONDOWN:
-                self.clickedcell = self.update_current_cell(event)
+                self.click_type = event.button
+                if event.button == LEFT_CLICK:
+                    self.check_for_pallet_click(event)
+                    self.clickedcell = self.update_current_cell(event)
 
                 if self.clickedcell:
                     self.handle_mouse_click(self.clickedcell, event.button, event)
@@ -363,11 +398,11 @@ class LevelEditor:
 
             elif event.type == pygame.MOUSEMOTION:
                 if self.clickedcell:
-                    self.handle_mouse_moving(self.clickedcell,self.click_type, event)
+                    self.handle_mouse_moving(self.clickedcell, event)
                                 
             elif event.type == pygame.MOUSEBUTTONUP:
                 if self.clickedcell:
-                    self.handle_mouse_up(self.clickedcell, self.click_type, event)
+                    self.handle_mouse_up(self.clickedcell, event)
 
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_s and pygame.key.get_mods() & pygame.KMOD_SHIFT:
@@ -375,7 +410,29 @@ class LevelEditor:
                     logging.info("Map saved. (over-wrote level)")
                 elif event.key == pygame.K_s:
                     self.level_manager.SaveNew(self.gameboard)
-                    logging.info("New map saved.")
+                    print("Saved new map.")
+    
+    @log
+    def draw_grid(self):
+        """
+        This is just temporary for showing the dimensions of the grid until we can start implementing sprites more regularly
+        """
+        border_size = Border_Size_Lookup[self.level_manager.current_difficulty]
+        for x in range(border_size.width, WINDOW_DIMENSIONS.width-border_size.width + 1, CELL_DIMENSIONS.width):
+            pygame.draw.line(self.screen, WHITE, (x, border_size.height), (x, WINDOW_DIMENSIONS.height-border_size.height))
+        for y in range(border_size.height, WINDOW_DIMENSIONS.height-border_size.height + 1, CELL_DIMENSIONS.height):
+            pygame.draw.line(self.screen, WHITE, (border_size.width, y), (WINDOW_DIMENSIONS.width-border_size.width, y))
+    @log
+    def draw(self):
+        """
+        Need to move the pallet sprite group into this class.
 
+        In update check for collision with any of the pallet sprites.
+
+        
+        """
+        self.pallete_sprite_group.update()
+        self.pallete_sprite_group.draw(self.screen)
+        self.draw_grid()
 
             
