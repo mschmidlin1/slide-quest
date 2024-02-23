@@ -13,7 +13,7 @@ set_logger()
 
 class Window():
     """
-    The manager of the pygame window and the main "screen" element. This class hands control of the screen to the various game screen the users sees. 
+    The manager of the pygame window and the main "screen" element. This class handles control of the screen to the various game screen the users sees. 
     """
     @log
     def __init__(self):
@@ -25,7 +25,7 @@ class Window():
     @log
     def new(self):
         """
-        Creates a new pygame instance. Sets up the main screen 
+        Creates a new pygame instance. Sets up the main surface.
         """
         pygame.init()
         self.screen = pygame.display.set_mode(WINDOW_DIMENSIONS)
@@ -35,6 +35,11 @@ class Window():
         self.clock = pygame.time.Clock()
     @log
     def run(self):
+        """
+        Main game loop.
+        - updates events
+        - draws sprites
+        """
         while True:
             events = pygame.event.get()
             self.update(events)
