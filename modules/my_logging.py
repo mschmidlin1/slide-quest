@@ -2,9 +2,14 @@ import logging
 import logging.config
 import functools
 from modules.configs import FILE_LOG_LEVEL, STDOUT_LOG_LEVEL
+import os
 
 #check for log folder and logs file and create if they don't exist.
-
+if not os.path.isdir("logs"):
+    os.mkdir("logs")
+if not os.path.isfile("logs/logs.txt"):
+    with open('logs/logs.txt', 'w') as file: 
+        pass
 
 def set_logger():
     LOGGING_CONFIG = {
