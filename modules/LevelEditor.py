@@ -383,10 +383,12 @@ class LevelEditor:
         if self.block_pallet_sprite.rect.collidepoint(event.pos):
             self.current_pallet_block = CellType.BLOCK
             self.selected_pallet_sprite.rect.center = self.block_pallet_sprite.rect.center
+            logging.info("Pallet block changed to BLOCK.")
         elif self.ice_pallet_sprite.rect.collidepoint(event.pos):
             self.current_pallet_block = CellType.ICE
             self.selected_pallet_sprite.rect.center = self.ice_pallet_sprite.rect.center
-        print(self.current_pallet_block)
+            logging.info("Pallet block changed to ICE.")
+        
     @log
     def update(self, events: list[pygame.event.Event]):
         for event in events:

@@ -5,6 +5,11 @@ from modules.GameEnums import GameDifficulty
 from modules.DataTypes import Size
 import pygame
 
+#logging settings
+FILE_LOG_LEVEL = "DEBUG"
+STDOUT_LOG_LEVEL = "INFO"
+
+
 #game settings
 WINDOW_TITLE = "Slide Quest"
 ICON = pygame.image.load('resources/images/Icy-Q-nobackground64x64.png')

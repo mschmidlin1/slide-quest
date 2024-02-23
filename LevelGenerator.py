@@ -3,15 +3,22 @@ from modules.configs import Board_Size_Lookup
 from modules.GameBoard import GameBoard
 from modules.LevelIO import LevelIO
 from modules.ShortestPath import ShortestPath
+from modules.LevelIO import LevelIO
 import numpy as np
 from modules.DataTypes import Point
 import random
+import os
 from modules.queue import MyQueue
 import copy
 import collections
 cell_dtype = np.dtype(CellType)
 
 
+#read in the mepgen_resources()
+
+level_io = LevelIO()
+sub_map: np.ndarray = level_io.ReadBoard("mapgen_resources/sub-map_1.csv")
+os.listdir("mapgen_resources")
 
 class LevelGenerator:
     """

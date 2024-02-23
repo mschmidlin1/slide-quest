@@ -1,7 +1,9 @@
 import logging
 import logging.config
 import functools
+from modules.configs import FILE_LOG_LEVEL, STDOUT_LOG_LEVEL
 
+#check for log folder and logs file and create if they don't exist.
 
 
 def set_logger():
@@ -15,13 +17,13 @@ def set_logger():
         },
         'handlers': {
             'file': {
-                'level': 'DEBUG',
+                'level': FILE_LOG_LEVEL,
                 'class': 'logging.FileHandler',
                 'filename': 'logs/logs.txt',
                 'formatter': 'standard',
             },
             'console': {
-                'level': 'INFO',
+                'level': STDOUT_LOG_LEVEL,
                 'class': 'logging.StreamHandler',
                 'formatter': 'standard',
                 'stream': 'ext://sys.stdout',  # Use standard output

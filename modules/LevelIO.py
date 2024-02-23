@@ -156,7 +156,7 @@ class LevelIO:
     @log
     def ReadBoard(self, filename: str = None) -> np.ndarray:
         """
-        Reads the celltypes from a file and loads them into the GameBoard object.
+        Reads the celltypes from a file and loads them into a numpy array.
         Will use the self.current_level unless `filename` is passed.
         """
         if filename is None:
