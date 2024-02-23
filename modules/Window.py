@@ -29,6 +29,7 @@ class Window():
         """
         pygame.init()
         self.screen = pygame.display.set_mode(WINDOW_DIMENSIONS)
+        print(type(self.screen))
         pygame.display.set_caption(WINDOW_TITLE)
         pygame.display.set_icon(ICON)
         self.clock = pygame.time.Clock()
