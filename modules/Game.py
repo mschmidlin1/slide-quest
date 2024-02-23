@@ -8,7 +8,7 @@ from modules.GameEnums import Direction, GameDifficulty, CellType
 from modules.my_logging import set_logger, log
 import logging
 from modules.LevelBackground import LevelBackground
-from LevelGenerator import ShortestPath
+from modules.ShortestPath import ShortestPath
 from modules.configs import ( 
     WHITE,
     WINDOW_DIMENSIONS,

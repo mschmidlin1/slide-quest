@@ -79,16 +79,21 @@ class LevelEditor:
         self.border_size = border_size
 
         self.reset_click()
-
+        self.create_pallet_sprites()
+    @log
+    def create_pallet_sprites(self):
+        """
+        Create the pallet and set current pallet block to CellType.BLOCK.
+        """
         self.current_pallet_block: CellType = CellType.BLOCK
 
         self.block_pallet_sprite = Block(Point(0, 0), Border_Size_Lookup[GameDifficulty.BEGINNER]) #the constructor arguments don't matter because we're gonna set the location manually
-        self.block_pallet_sprite.rect.center = Point(60, WINDOW_DIMENSIONS.height-30)
+        self.block_pallet_sprite.rect.center = Point(CELL_DIMENSIONS.width, 100)
 
         self.ice_pallet_sprite = Ice(Point(0, 0), Border_Size_Lookup[GameDifficulty.BEGINNER]) #the constructor arguments don't matter because we're gonna set the location manually
-        self.ice_pallet_sprite.rect.center = Point(120, WINDOW_DIMENSIONS.height-30)
+        self.ice_pallet_sprite.rect.center = Point(CELL_DIMENSIONS.width, 150)
 
-        self.selected_pallet_sprite = HollowSquareSprite(Point(60, WINDOW_DIMENSIONS.height-30), 4)
+        self.selected_pallet_sprite = HollowSquareSprite(Point(CELL_DIMENSIONS.width, 100), 4)
 
         self.pallete_sprite_group = pygame.sprite.Group()
         self.pallete_sprite_group.add(self.block_pallet_sprite)
