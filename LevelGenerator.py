@@ -10,67 +10,6 @@ import copy
 import collections
 cell_dtype = np.dtype(CellType)
 
-
-
-class Node:
-
-    def __init__(self, coordinate: Point):
-        self.coordinate = coordinate
-        self.shortest_distance = float("inf")
-        self.child_nodes = set()
-
-    def __hash__(self) -> int:
-        return hash(self.coordinate)
-
-
-class Graph:
-    Nodes = set()
-
-def get_lowest_value_key(input_dict: dict, exempt_keys: list = None):
-    """
-    This function finds the key with the lowest value in a dictionary, excluding certain keys.
-    
-    Parameters:
-    input_dict (dict): A dictionary with values that can be compared.
-    exempt_keys (list): A list of keys to be exempted from the minimum detection.
-
-    Returns:
-    key: The key of the element with the lowest value, not including exempted keys.
-    """
-    if not input_dict:
-        return None
-
-    if not exempt_keys:
-        exempt_keys = []
-
-    # Create a new dictionary excluding the exempted keys
-    filtered_dict = {k: v for k, v in input_dict.items() if k not in exempt_keys}
-
-    if not filtered_dict:
-        return None
-
-    return min(filtered_dict, key=filtered_dict.get)
-
-def CreateGameboardGraph(input_gameboard: GameBoard) -> dict:
-    """
-    Creates a graph from the gameboard.
-    Returns a dictionary of each node on the board and all of it's child nodes. Each child node is a node that can reach the target node in one move.
-    """
-    graph = {}
-    gameboard = copy.copy(input_gameboard)
-    for col in range(gameboard.gameboard.shape[0]):
-        for row in range(gameboard.gameboard.shape[1]):
-            if gameboard.gameboard[row, col] in  [CellType.ICE, CellType.GROUND, CellType.GOAL]:
-                graph[Point(col, row)] = []
-
-    for node in graph.keys():
-        for direction in Direction:
-            gameboard.player_pos = node
-            location = gameboard.MovePlayer(direction)
-            if node not in graph[location]:
-                graph[location].append(node)
-    return graph
-
 def ShortestPath(input_gameboard: GameBoard) -> list[Direction]:
     """
     This function takes in the gameboard and player position and will tell you
@@ -79,6 +18,8 @@ def ShortestPath(input_gameboard: GameBoard) -> list[Direction]:
     If there is no possible path to the goal, and empty list is returned.
 
     This function deep copys the input gamebaord as to not manipulate it's state.
+
+    This function uses Breadth First Search Algorithm (BFS).
     """
 
     gameboard = copy.deepcopy(input_gameboard)  # Use deepcopy if gameboard has nested objects
@@ -108,45 +49,6 @@ def ShortestPath(input_gameboard: GameBoard) -> list[Direction]:
                 queue.append((next_pos, path + [direction]))
     
     return []  # Return an empty list if there's no path to the goal
-
-
-def IsMapPossible(input_gameboard: GameBoard) -> bool:
-    """
-    This function checks if a map is possible. Meaning, it answers the question, "can the player get to the goal using standard game movement?"
-
-    This function uses Breadth First Search Algorithm (BFS). Here is a summary of the algorithm:
-
-    - add the player position to the queue
-
-    while the queue is not empty:
-        - take the first element from the queue
-        - Find positions you can get to from your current position
-        - If goal position is in these positions:
-            return `True`
-        - if those positions are not in the queue, the visited list, or equal to your current position:
-            - Add to queue
-        - Add current location to visited
-    return `False`
-    """
-    gameboard = copy.copy(input_gameboard)
-    queue = MyQueue()
-    queue.enqueue(gameboard.player_pos)
-    goal_pos = gameboard.Find_Goal_Pos()
-    visited = set()
-    while not queue.empty():
-        current_element = queue.dequeue()
-        
-        for direction in Direction:
-            gameboard.player_pos = current_element
-            location = gameboard.MovePlayer(direction)
-            if location == goal_pos:
-                return True
-            if (not queue.contains(location)) and (location not in visited) and (location!=current_element):
-                queue.enqueue(location)
-        visited.add(current_element)
-    return False
-        
-           
 
 
 
@@ -265,7 +167,7 @@ if __name__=="__main__":
         level = generator.generate()
         if level.player_pos == level.Find_Goal_Pos():
             print()
-        if IsMapPossible(level):
+        if len(ShortestPath(level))>0:
             if level.player_pos == level.Find_Goal_Pos():
                 print()
             level_manager.SaveNew(level)

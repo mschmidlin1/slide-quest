@@ -49,7 +49,7 @@ Board_Size_Lookup = {
 }
 
 #Defaul to edit on or edit off
-EDIT_ON = False
+IS_EDIT_ON_DEFAULT = False
 
 #cell information
 

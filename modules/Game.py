@@ -13,12 +13,10 @@ from modules.configs import (
     WHITE,
     WINDOW_DIMENSIONS,
     CELL_DIMENSIONS,
-    EDIT_ON,
+    IS_EDIT_ON_DEFAULT,
     Border_Size_Lookup)
 
 import time
-
-
 set_logger()
 
 class Game:
@@ -32,7 +30,7 @@ class Game:
         logging.info("New Game created.")
 
         self.screen = screen
-        self.isEditActive = EDIT_ON
+        self.isEditActive = IS_EDIT_ON_DEFAULT
         self.difficulty: GameDifficulty = level_manager.current_difficulty
         self.border_size: Size = Border_Size_Lookup[self.difficulty]
         gameboard_array, player_pos = level_manager.Read()
@@ -83,6 +81,8 @@ class Game:
         """
         if not self.player.moving:
             return self.gameboard.Find_Goal_Pos() == self.gameboard.GetPlayerPos()
+        else:
+            return False
     @log
     def totalTime(self) -> str:
         """
@@ -94,7 +94,7 @@ class Game:
     @log
     def draw(self):
         """
-        Draw the necessary game elements on the screen. Draws all child elements of the game.
+        Draw the necessary game elements on the screen. Draws all child elements of the game (level_background and levelEditor).
         """
         #draw background first
         if(self.isEditActive):
@@ -102,10 +102,10 @@ class Game:
         else:
             self.level_background.draw(self.totalTime(), "") # the solutions string won't be display if not in edit mode.
         
-        #draw sprite second
+        #draw gameboard second
         self.gameboard_sprite_group.draw(self.screen)
 
-        #draw grid last
+        #draw level editor last
         if(self.isEditActive):
             self.levelEditor.draw()
 
@@ -113,6 +113,8 @@ class Game:
     def update(self, events: list[pygame.event.Event]):
         """
         The Game.update() method takes a list of pygame events. From this the game will extract the necessary movement information for the player.
+
+        This also passes the events to child elements such as levelEditor.
         """
         self.move_player(events)
         self.gameboard_sprite_group.update()
