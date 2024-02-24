@@ -11,14 +11,12 @@ import os
 from modules.queue import MyQueue
 import copy
 import collections
+from modules.my_logging import set_logger, log
+import logging
+import random
 cell_dtype = np.dtype(CellType)
+set_logger()
 
-
-#read in the mepgen_resources()
-
-level_io = LevelIO()
-sub_map: np.ndarray = level_io.ReadBoard("mapgen_resources/sub-map_1.csv")
-os.listdir("mapgen_resources")
 
 class LevelGenerator:
     """
@@ -41,10 +39,26 @@ class LevelGenerator:
         self.difficulty = difficulty
         self.board_dimensions = Board_Size_Lookup[difficulty]
         self.block_probability = 0.05 #increase this number to increase number of blobs
+        self.feature_probability = 0.2
         self.probability_increase_ratio = 1.65 #decrease this number to increase size of blobs
         self.empty_board = np.empty(self.board_dimensions, dtype=cell_dtype)
         self.empty_board.fill(CellType.ICE)
+        self.resources = self.read_mapgen_resources()
+    @log
+    def read_mapgen_resources(self) -> dict[str, np.ndarray]:
+        """
+        Reads the mapgen resources from files.
 
+        Returns a dictionary where the keys are strings (file names) and the values are np.ndarrays of dtype CellType.
+        """
+        level_io = LevelIO()
+        resource_files = os.listdir("mapgen_resources")
+        resources = {}
+        for file in resource_files:
+            full_path = os.path.join("mapgen_resources", file)
+            sub_map: np.ndarray = level_io.ReadBoard(full_path)
+            resources[file] = sub_map
+        return resources
     def calculate_block_probability(self, num_adjacent_blocks: int) -> float:
         """
         Given the number of neighbors that as cell has of the same type, calculate the probability that that cell will also be that type.
@@ -94,8 +108,32 @@ class LevelGenerator:
         if possible_player_positions[idx]==temp_gameboard.goal_pos:
             raise ValueError("player position was found to be goal position.")
         return possible_player_positions[idx]
+    @log
+    def is_there_room(self, loc: Point, feature: np.ndarray) -> bool:
+        """
+        Figures out if there is room at `loc` for `feature`.
 
+        Use loc as the upper left corner of the feature.
+        """
+
+        pass
+    @log
+    def replace_points_with_feature(self, loc: Point, feature: np.ndarray, gameboard: GameBoard):
+        """
+        Use loc as the uppder left corner of the feature and replace the relevant positions in the gameboard with the feature.
+        """
+
+        pass
+
+    @log
+    def find_relevant_points(self, loc: Point, feature: np.ndarray) -> list[Point]:
+        """
+        Use `loc` as the top left corner of the feature and return all the Points that the feature would cover.
+        """
+
+        pass
     def generate(self, random_seed: int = None) -> GameBoard:
+        logging.info(f"Generating random map with seed: {random_seed}")
         np.random.seed(random_seed)
         board = self.empty_board.copy()
         width, height = board.shape
@@ -104,10 +142,19 @@ class LevelGenerator:
             for row in range(height):
                 all_board_locations.append(Point(row, col))
         random.shuffle(all_board_locations)
-        for loc in all_board_locations:
+        while len(all_board_locations)>0:
+            loc = all_board_locations.pop()#remove the last location in the list
+            if np.random.binomial(1, self.feature_probability): #binomial choice based on feature probability
+                feature = self.resources[random.choice(self.resources.keys())]
+                if self.is_there_room(loc, feature):
+                    #replace all the relevant points with the feature
+                    #remove all the relevant points from the all_board_locations
+                
+
+
             # num_neighbors = self.count_neighbors(board, loc, CellType.BLOCK)
             # prob = self.calculate_block_probability(num_neighbors)
-            if np.random.binomial(1, self.block_probability):
+            elif np.random.binomial(1, self.block_probability):
                 board[loc.y, loc.x] = CellType.BLOCK
 
         goal_pos = self.random_goal_pos(board)
