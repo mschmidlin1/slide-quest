@@ -10,6 +10,7 @@ WINDOW_TITLE = "Slide Quest"
 ICON = pygame.image.load('resources/images/Icy-Q-nobackground64x64.png')
 TITLE_FONT = "resources/fonts/m5x7.otf"
 PLAYER_SPRITE_SHEET = 'resources/sprites/player/adventurer-grey-scarf-Sheet.png'
+PLAYERSHADOW_SPRITE_SHEET = 'resources/sprites/player/player-shadow.png'
 
 #window information
 

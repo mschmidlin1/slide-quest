@@ -1,8 +1,4 @@
-
-
 from collections import deque
-
-
 
 class MyStack():
     def __init__(self):
@@ -17,9 +13,6 @@ class MyStack():
         return self.stack.pop()
     def top(self):
         return self.stack[-1]
-
-
-
 
 class MyQueue():
     def __init__(self):

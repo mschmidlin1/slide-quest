@@ -3,12 +3,10 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from modules.GameEnums import CellType
-from modules.configs import CELL_DIMENSIONS, WALL_COLOR, GOAL_COLOR, ICE_COLOR, PLAYER_COLOR, PLAYER_SPEED, PALLET_HIGHLIGHT_COLOR
+from modules.configs import CELL_DIMENSIONS, WALL_COLOR, GOAL_COLOR, ICE_COLOR, PLAYER_COLOR, PLAYER_SPEED, PALLET_HIGHLIGHT_COLOR, PLAYER_SPRITE_SHEET, PLAYERSHADOW_SPRITE_SHEET
 from modules.DataTypes import Point, Size
 from modules.my_logging import set_logger, log 
 import logging
-
-
 
 class Cell(pygame.sprite.Sprite):
     def __init__(self):
@@ -25,24 +23,33 @@ class Cell(pygame.sprite.Sprite):
         return location[0] // CELL_DIMENSIONS.width - self.border_size.width // CELL_DIMENSIONS.width, location[1] // CELL_DIMENSIONS.height - self.border_size.height // CELL_DIMENSIONS.height
 
 class Player(Cell):
-    def __init__(self, gameboard_loc: Point, border_size: Size, sprite_sheet_path: str):
+    def __init__(self, gameboard_loc: Point, border_size: Size):
         super().__init__()
         self.cellType = CellType.PLAYER
         self.border_size = border_size
-        self._layer = 2
         self.gameboard_loc = gameboard_loc
-        self.sprite_sheet = pygame.image.load(sprite_sheet_path).convert_alpha()  # Load the sprite sheet
         self.sprite_size = (50, 37)  # The size of a single sprite
-        self.idle_frames = self.load_frames(4)  # Load the first four frames for idle animation
-        self.current_frame = 0
-        self.image = self.idle_frames[self.current_frame]  # Start with the first frame
+        self.setup_sprites()  # Setup sprite imaging
         self.rect = self.image.get_rect()
         self.rect.center = self.GameboardCell_To_CenterPixelCoords(gameboard_loc)
         self.current_pos = self.rect.center
-        self.speed = PLAYER_SPEED
         self.moving = False
+        self.speed = PLAYER_SPEED
         self.last_update = pygame.time.get_ticks()
-        self.frame_rate = 1000  # Milliseconds per frame
+        self.frame_rate = 600  # Milliseconds per frame
+
+    def setup_sprites(self):
+        """
+        Loads the sprite sheet, slices it into frames, and sets the initial sprite image.
+        """
+        self.sprite_sheet = pygame.image.load(PLAYER_SPRITE_SHEET).convert_alpha()  # Load the sprite sheet
+        self.shadow_sprite = pygame.image.load(PLAYERSHADOW_SPRITE_SHEET).convert_alpha()  # Load the sprite sheet
+
+        self.shadow_sprite = pygame.transform.scale(self.shadow_sprite, (32, 32))
+
+        self.idle_frames = self.load_frames(4)  # Load the first four frames for idle animation
+        self.current_frame = 0
+        self.image = self.idle_frames[self.current_frame]  # Start with the first frame
 
     def load_frames(self, number_of_frames: int):
         """
@@ -50,9 +57,38 @@ class Player(Cell):
         """
         frames = []
         for i in range(number_of_frames):
-          frame = self.sprite_sheet.subsurface((i * self.sprite_size[0], 0, self.sprite_size[0], self.sprite_size[1]))
-          frames.append(frame)
+            frame = self.sprite_sheet.subsurface((i * self.sprite_size[0], 0, self.sprite_size[0], self.sprite_size[1]))
+            frames.append(frame)
         return frames
+
+    def update_sprite(self):
+        """
+        Update the sprite image based on the player's state. For example, cycle through
+        idle frames or switch to a moving animation.
+        """
+        current_time = pygame.time.get_ticks()
+        if current_time - self.last_update > self.frame_rate:
+            self.last_update = current_time
+            self.current_frame = (self.current_frame + 1) % len(self.idle_frames)
+            self.image = self.idle_frames[self.current_frame]
+
+    def draw_player(self, screen):
+        """
+        Custom drawing of the player sprite to control its visual representation.
+        """
+        # Custom drawing logic (for example, aligning the bottom middle of the sprite)
+        image_bottom_middle = (self.rect.centerx - self.image.get_width() / 2,
+                               self.rect.centery - self.image.get_height())
+        
+        # Calculate the position for the shadow sprite
+        # Assuming the shadow should be centered directly under the player sprite
+        shadow_pos = (self.rect.centerx - self.shadow_sprite.get_width() / 2,
+                    (self.rect.centery - 3) - self.shadow_sprite.get_height() / 2)
+
+        # Blit the shadow sprite first
+        screen.blit(self.shadow_sprite, shadow_pos)
+        screen.blit(self.image, image_bottom_middle)
+
 
     def move(self, location: Point):
         """
@@ -92,23 +128,22 @@ class Player(Cell):
                 distance_to_target.normalize_ip()
                 distance_to_target = distance_to_target * PLAYER_SPEED
                 self.current_pos += distance_to_target 
-
+            
             self.rect.center = self.GameboardCell_To_CenterPixelCoords(self.current_pos)
 
         else:
-            # Update the frame if it's time
+            # Update the frame if it's time            
             if current_time - self.last_update > self.frame_rate:
                 self.last_update = current_time
                 self.current_frame = (self.current_frame + 1) % len(self.idle_frames)
-                self.image = self.idle_frames[self.current_frame]
-                
+                self.image = self.idle_frames[self.current_frame]    
+     
             
 class Block(Cell):
     def __init__(self, gameboard_loc: Point, border_size: Size):
         super().__init__()
         self.cellType = CellType.BLOCK
         self.border_size = border_size
-        self._layer = 0
         self.gameboard_loc = gameboard_loc
         self.image = pygame.Surface(CELL_DIMENSIONS)
         self.image.fill(WALL_COLOR)
@@ -120,7 +155,6 @@ class Goal(Cell):
         super().__init__()
         self.cellType = CellType.GOAL
         self.border_size = border_size
-        self._layer = 1
         self.gameboard_loc = gameboard_loc
         self.image = pygame.Surface(CELL_DIMENSIONS)
         self.image.fill(GOAL_COLOR)
@@ -132,7 +166,6 @@ class Ice(Cell):
         super().__init__()
         self.cellType = CellType.ICE
         self.border_size = border_size
-        self._layer = 0
         self.gameboard_loc = gameboard_loc
         self.image = pygame.Surface(CELL_DIMENSIONS)
         self.image.fill(ICE_COLOR)

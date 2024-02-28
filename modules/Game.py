@@ -1,6 +1,7 @@
 import pygame
 from modules.GameBoard import GameBoard
 from modules.Sprites import Block, Goal, Ice, Player
+
 from modules.DataTypes import Point, Size
 from modules.LevelEditor import LevelEditor
 from modules.LevelIO import LevelIO
@@ -40,22 +41,26 @@ class Game:
         self.gameboard = GameBoard(gameboard_array, player_pos)
         self.solution_moves = ShortestPath(self.gameboard)
         self.least_moves = len(self.solution_moves)
+
         self.gameboard_sprite_group = pygame.sprite.LayeredUpdates()
+        self.player_sprites = pygame.sprite.LayeredUpdates()
+        self.obstacle_sprites = pygame.sprite.LayeredUpdates()
         
         for row, cells in enumerate(self.gameboard.gameboard):
             for col, cell in enumerate(cells):
                 if cell == CellType.BLOCK:
-                    self.gameboard_sprite_group.add(Block(Point(col, row), self.border_size))
+                    self.obstacle_sprites.add(Block(Point(col, row), self.border_size), layer=0)
                 if cell == CellType.GOAL:
-                    self.gameboard_sprite_group.add(Goal(Point(col, row), self.border_size))
+                    self.obstacle_sprites.add(Goal(Point(col, row), self.border_size), layer=1)
                 if cell == CellType.ICE:
-                    self.gameboard_sprite_group.add(Ice(Point(col, row), self.border_size))
+                    self.obstacle_sprites.add(Ice(Point(col, row), self.border_size), layer=0)
                     
-        self.player = Player(self.gameboard.player_pos, self.border_size, PLAYER_SPRITE_SHEET)
-        self.gameboard_sprite_group.add(self.player)
-
         self.player = Player(self.gameboard.player_pos, self.border_size)
-        self.gameboard_sprite_group.add(self.player)
+        self.player_sprites.add(self.player, layer=2)
+
+        self.gameboard_sprite_group.add(self.obstacle_sprites)
+        self.gameboard_sprite_group.add(self.player_sprites)
+
         self.levelEditor = LevelEditor(self.gameboard, self.gameboard_sprite_group, self.border_size, self.player, level_manager, self.screen)
         self.level_background = LevelBackground(self.screen, level_manager.current_level)
         self.num_moves = 0
@@ -108,7 +113,8 @@ class Game:
             self.level_background.draw(self.totalTime(), "") # the solutions string won't be display if not in edit mode.
         
         #draw sprite second
-        self.gameboard_sprite_group.draw(self.screen)
+        self.obstacle_sprites.draw(self.screen)
+        self.player.draw_player(self.screen)
 
         #draw grid last
         if(self.isEditActive):
@@ -124,7 +130,6 @@ class Game:
 
         if(self.isEditActive):
             self.levelEditor.update(events)
-            
 
         for event in events:
             if event.type == pygame.KEYDOWN:
