@@ -6,7 +6,7 @@ import numpy as np
 sys.path.append(os.getcwd())
 from modules.GameBoard import GameBoard
 from modules.GameEnums import Direction, CellType, Str_to_CellType, Str_to_CellType_func, Str_to_CellType_vector_func
-from modules.Point import Point
+from modules.DataTypes import Point
 
 class Test_Str_to_CellType(unittest.TestCase):
 

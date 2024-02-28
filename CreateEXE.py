@@ -1,30 +1,21 @@
-
-from PyInstaller.utils.hooks import collect_submodules
 import os
+import shutil
 
 working_dir = os.getcwd()
-
-modules_dir = os.path.join('', 'modules')
-#hidden_imports = collect_submodules(os.path.join(working_dir, 'modules'))
+modules_dir = os.path.join(working_dir, 'modules').replace("\\", "/")
 module_names = os.listdir(modules_dir)
-modules = ['modules'+'.'+name.split('.')[0] for name in module_names if name not in ['__pycache__']]
-
-
-
-
-
-spec_file = f"""
+modules = ['modules.' + name.split('.')[0] for name in module_names if name not in ['__pycache__', '__init__.py']]
+hidden_imports = '[' + ', '.join(f"'{module}'" for module in modules) + ']'
+entry_point_file = os.path.join(working_dir, "SlideQuest.py").replace("\\", "/")
+spec_file_content = f"""
 # -*- mode: python ; coding: utf-8 -*-
 
-
-
-
 a = Analysis(
-    ['SlideQuest.py'],
+    ["{entry_point_file}"],
     pathex=["{modules_dir}"],
     binaries=[],
     datas=[],
-    hiddenimports=[{','.join(modules)}],
+    hiddenimports={hidden_imports},
     hookspath=[],
     hooksconfig={{}},
     runtime_hooks=[],
@@ -53,10 +44,11 @@ exe = EXE(
     codesign_identity=None,
     entitlements_file=None,
 )
-
-
-
 """
 
-with open("SlideQuest.spec", 'w') as handle:
-    handle.write(spec_file)
+with open("SlideQuest.spec", 'w') as file:
+    file.write(spec_file_content)
+
+
+
+

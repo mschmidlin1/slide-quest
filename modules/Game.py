@@ -72,8 +72,8 @@ class Game:
                 if event.key == Direction.DOWN.value and not self.player.moving:
                     self.player.move(self.gameboard.MovePlayer(Direction.DOWN))
                     self.num_moves += 1
-        if self.isEditActive:
-            self.solution_moves = ShortestPath(self.gameboard)       
+                if self.isEditActive:
+                    self.solution_moves = ShortestPath(self.gameboard)       
     @log
     def isComplete(self):
         """

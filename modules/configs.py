@@ -76,3 +76,7 @@ PLAYER_SPEED = .3
 #settings
 LEFT_CLICK = 1
 RIGHT_CLICK = 3
+
+
+#sprite images
+SELECTOR_TOOL_IMAGE = pygame.transform.scale(pygame.image.load('resources/images/crosshair.png'), CELL_DIMENSIONS)

@@ -1,15 +1,12 @@
 
 # -*- mode: python ; coding: utf-8 -*-
 
-
-
-
 a = Analysis(
-    ['SlideQuest.py'],
-    pathex=["modules"],
+    ["C:/source/slide-quest/SlideQuest.py"],
+    pathex=["C:/source/slide-quest/modules"],
     binaries=[],
     datas=[],
-    hiddenimports=[modules.configs,modules.DataTypes,modules.Game,modules.GameBoard,modules.GameEnums,modules.LevelBackground,modules.LevelCompleteScreen,modules.LevelEditor,modules.LevelIO,modules.MapConverter,modules.my_logging,modules.queue,modules.ShortestPath,modules.Sprites,modules.TitleScreen,modules.Window,modules.__init__],
+    hiddenimports=['modules.configs', 'modules.DataTypes', 'modules.Game', 'modules.GameBoard', 'modules.GameEnums', 'modules.LevelBackground', 'modules.LevelCompleteScreen', 'modules.LevelEditor', 'modules.LevelIO', 'modules.MapConverter', 'modules.my_logging', 'modules.queue', 'modules.ShortestPath', 'modules.Sprites', 'modules.TitleScreen', 'modules.Window'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -38,6 +35,3 @@ exe = EXE(
     codesign_identity=None,
     entitlements_file=None,
 )
-
-
-

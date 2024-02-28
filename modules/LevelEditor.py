@@ -1,7 +1,7 @@
 import pygame
 from modules.configs import CELL_DIMENSIONS, WHITE
 from modules.GameEnums import CellType
-from modules.Sprites import Block, Ice, Goal, Player, HollowSquareSprite, Cell
+from modules.Sprites import Block, Ice, Goal, Player, HollowSquareSprite, Cell, SelectorTool, Highlighter
 from modules.DataTypes import Point, Size
 from modules.GameEnums import CellType, GameDifficulty
 from modules.GameBoard import GameBoard
@@ -67,6 +67,14 @@ class ClickedCell:
         if self.is_draggable():
             self.cell.rect.x = event.pos[0] + self.cell.offset_x
             self.cell.rect.y = event.pos[1] + self.cell.offset_y
+
+def get_gameboard_coords():
+    """
+    Takes in a pixel position and translates to gameboard coordinates.
+    Returns none if the position is not on the gameboard. 
+    """
+    
+    pass
 @log
 class LevelEditor:
     @log
@@ -77,6 +85,13 @@ class LevelEditor:
         self.level_manager = level_manager
         self.gameboard_sprite_group = gameboard_sprite_group
         self.border_size = border_size
+        for sprite in self.gameboard_sprite_group:
+            if isinstance(sprite, Goal):
+                self.goal: Goal = sprite
+                break
+        self.drag_type = None
+        self.offset = None
+        self.initial_location = None
 
         self.reset_click()
         self.create_pallet_sprites()
@@ -87,26 +102,42 @@ class LevelEditor:
         """
         self.current_pallet_block: CellType = CellType.BLOCK
 
+        self.select_tool_sprite = SelectorTool()
+        self.select_tool_sprite.rect.center = Point(CELL_DIMENSIONS.width, 100)
+
         self.block_pallet_sprite = Block(Point(0, 0), Border_Size_Lookup[GameDifficulty.BEGINNER]) #the constructor arguments don't matter because we're gonna set the location manually
-        self.block_pallet_sprite.rect.center = Point(CELL_DIMENSIONS.width, 100)
+        self.block_pallet_sprite.rect.center = Point(CELL_DIMENSIONS.width, 150)
 
         self.ice_pallet_sprite = Ice(Point(0, 0), Border_Size_Lookup[GameDifficulty.BEGINNER]) #the constructor arguments don't matter because we're gonna set the location manually
-        self.ice_pallet_sprite.rect.center = Point(CELL_DIMENSIONS.width, 150)
+        self.ice_pallet_sprite.rect.center = Point(CELL_DIMENSIONS.width, 200)
+
+
 
         self.selected_pallet_sprite = HollowSquareSprite(Point(CELL_DIMENSIONS.width, 100), 4)
 
         self.pallete_sprite_group = pygame.sprite.Group()
+        self.pallete_sprite_group.add(self.select_tool_sprite)
         self.pallete_sprite_group.add(self.block_pallet_sprite)
         self.pallete_sprite_group.add(self.ice_pallet_sprite)
         self.pallete_sprite_group.add(self.selected_pallet_sprite)
+
+        self.highlighter_sprite_group = pygame.sprite.Group()
+        
+        #self.highlighter_sprite_group.empty()
+        #TEST
+        # highlighter = Highlighter(Point(0, 0), Border_Size_Lookup[GameDifficulty.BEGINNER])
+        # highlighter1 = Highlighter(Point(1, 1), Border_Size_Lookup[GameDifficulty.BEGINNER])
+        # self.pallete_sprite_group.add(highlighter)
+        # self.pallete_sprite_group.add(highlighter1)
     @log
     def reset_click(self):
         """
         Reset clickedcell, click_type, and new_cell to None.
         """
-        self.clickedcell = None
-        self.click_type = None
-        self.new_cell = None
+
+        # self.clickedcell = None
+        # self.click_type = None
+        # self.new_cell = None
 
     @log
     def replace_cell(self, old_cell: pygame.sprite.Sprite, new_cell_type: CellType, event: pygame.event.Event):
@@ -380,7 +411,11 @@ class LevelEditor:
         If something in the pallet has been clicked, update the current_pallet_block property.
 
         """
-        if self.block_pallet_sprite.rect.collidepoint(event.pos):
+        if self.select_tool_sprite.rect.collidepoint(event.pos):
+            self.current_pallet_block = "SELECT"
+            self.selected_pallet_sprite.rect.center = self.select_tool_sprite.rect.center
+            logging.info("Pallet block changed to SELECT.")
+        elif self.block_pallet_sprite.rect.collidepoint(event.pos):
             self.current_pallet_block = CellType.BLOCK
             self.selected_pallet_sprite.rect.center = self.block_pallet_sprite.rect.center
             logging.info("Pallet block changed to BLOCK.")
@@ -388,6 +423,17 @@ class LevelEditor:
             self.current_pallet_block = CellType.ICE
             self.selected_pallet_sprite.rect.center = self.ice_pallet_sprite.rect.center
             logging.info("Pallet block changed to ICE.")
+        
+    def get_celltype(self, loc: Point) -> CellType:
+        """
+        Given a gameboard location, the method finds the CellType of that location from the sprite group.
+        """
+
+        for sprite in self.gameboard_sprite_group:
+            if sprite.gameboard_loc == coords:
+                self.drag_type = sprite.cellType
+                break
+
         
     @log
     def update(self, events: list[pygame.event.Event]):
@@ -397,19 +443,52 @@ class LevelEditor:
                 self.click_type = event.button
                 if event.button == LEFT_CLICK:
                     self.check_for_pallet_click(event)
-                    self.clickedcell = self.update_current_cell(event)
 
-                if self.clickedcell:
-                    self.handle_mouse_click(self.clickedcell, event.button, event)
+                    coords: Point = get_gameboard_coords()
+                    if self.gameboard.goal_pos==coords:
+                        self.offset: Point = self.goal.rect.center - event.pos
+                        self.drag_type = CellType.GOAL
+                        self.initial_location = self.goal.gameboard_loc
+                    elif self.player.gameboard_loc==coords:
+                        self.offset: Point = self.player.rect.center - event.pos
+                        self.drag_type = CellType.PLAYER
+                        self.initial_location = self.player.gameboard_loc
+                    else:
+                        if self.current_pallet_block != "SELECT":
+                            for sprite in self.gameboard_sprite_group:
+                                if sprite.gameboard_loc == coords:
+                                    self.drag_type = sprite.cellType
+                                    break
+                            if self.current_pallet_block != self.drag_type:
+                                #remove sprite from sprite group
+                                #create a new sprite of type self.drag_type with location "coords"
+                                pass
+                        else:
+                            self.drag_type = "SELECT"
+                            self.highlighter_sprite_group.empty()#every left click will just start a new click and drag highlight session
+                            self.highlighter_sprite_group.add(Highlighter(coords), Border_Size_Lookup[])#need difficulty here
                 
 
             elif event.type == pygame.MOUSEMOTION:
-                if self.clickedcell:
-                    self.handle_mouse_moving(self.clickedcell, event)
+                if self.drag_type is None:
+                    continue
+                if self.drag_type==CellType.PLAYER:
+                    self.player.rect.center = event.pos + self.offset
+                elif self.drag_type==CellType.GOAL:
+                    self.goal.rect.center = event.pos + self.offset
+                elif self.drag_type=="SELECT":
+                    coords: Point = get_gameboard_coords()
+                    #do rectangle stuff
+                else:
+
                                 
             elif event.type == pygame.MOUSEBUTTONUP:
-                if self.clickedcell:
-                    self.handle_mouse_up(self.clickedcell, event)
+                # if self.clickedcell:
+                #     self.handle_mouse_up(self.clickedcell, event)
+                
+                self.drag_type = None
+                self.offset = None
+                self.initial_location = None
 
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_s and pygame.key.get_mods() & pygame.KMOD_SHIFT:

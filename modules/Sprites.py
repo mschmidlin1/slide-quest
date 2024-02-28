@@ -3,7 +3,7 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from modules.GameEnums import CellType
-from modules.configs import CELL_DIMENSIONS, WALL_COLOR, GOAL_COLOR, ICE_COLOR, PLAYER_COLOR, PLAYER_SPEED, PALLET_HIGHLIGHT_COLOR
+from modules.configs import CELL_DIMENSIONS, WALL_COLOR, GOAL_COLOR, ICE_COLOR, PLAYER_COLOR, PLAYER_SPEED, PALLET_HIGHLIGHT_COLOR, SELECTOR_TOOL_IMAGE
 from modules.DataTypes import Point, Size
 from modules.my_logging import set_logger, log 
 import logging
@@ -112,6 +112,27 @@ class Ice(Cell):
         self.image.fill(ICE_COLOR)
         self.rect = self.image.get_rect()
         self.rect.center = self.GameboardCell_To_CenterPixelCoords(gameboard_loc)
+
+class Highlighter(Cell):
+    def __init__(self, gameboard_loc: Point, border_size: Size):
+        super().__init__()
+        self.cellType = "Highlighter"
+        self.border_size = border_size
+        self._layer = 0
+        self.gameboard_loc = gameboard_loc
+        self.image = pygame.Surface(CELL_DIMENSIONS, pygame.SRCALPHA)
+        self.image.fill((255, 255, 255, 128))
+
+
+
+        self.rect = self.image.get_rect()
+        self.rect.center = self.GameboardCell_To_CenterPixelCoords(gameboard_loc)
+
+class SelectorTool(pygame.sprite.Sprite):
+    def __init__(self, ):
+        super().__init__()
+        self.image = SELECTOR_TOOL_IMAGE
+        self.rect = self.image.get_rect()
 
 class TextSprite(pygame.sprite.Sprite):
     def __init__(self, text: str, font_file: str, font_size: int, location: Point, color: tuple, anchor: str = 'center'):
