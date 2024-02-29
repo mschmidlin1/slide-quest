@@ -4,3 +4,4 @@ __pycache__/
 .vscode/
 **/__pycache__/
 /logs/logs.txt
+SQenv/

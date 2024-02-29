@@ -2,17 +2,17 @@ import os
 import shutil
 
 working_dir = os.getcwd()
-modules_dir = os.path.join(working_dir, 'modules').replace("\\", "/")
-module_names = os.listdir(modules_dir)
-modules = ['modules.' + name.split('.')[0] for name in module_names if name not in ['__pycache__', '__init__.py']]
-hidden_imports = '[' + ', '.join(f"'{module}'" for module in modules) + ']'
+SQ_modules_dir = os.path.join(working_dir, 'SQ_modules').replace("\\", "/")
+module_names = os.listdir(SQ_modules_dir)
+SQ_modules = ['SQ_modules.' + name.split('.')[0] for name in module_names if name not in ['__pycache__', '__init__.py']]
+hidden_imports = '[' + ', '.join(f"'{module}'" for module in SQ_modules) + ']'
 entry_point_file = os.path.join(working_dir, "SlideQuest.py").replace("\\", "/")
 spec_file_content = f"""
 # -*- mode: python ; coding: utf-8 -*-
 
 a = Analysis(
     ["{entry_point_file}"],
-    pathex=["{modules_dir}"],
+    pathex=["{SQ_modules_dir}"],
     binaries=[],
     datas=[],
     hiddenimports={hidden_imports},

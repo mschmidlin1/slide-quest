@@ -3,10 +3,10 @@
 
 a = Analysis(
     ["C:/source/slide-quest/SlideQuest.py"],
-    pathex=["C:/source/slide-quest/modules"],
+    pathex=["C:/source/slide-quest/SQ_modules"],
     binaries=[],
     datas=[],
-    hiddenimports=['modules.configs', 'modules.DataTypes', 'modules.Game', 'modules.GameBoard', 'modules.GameEnums', 'modules.LevelBackground', 'modules.LevelCompleteScreen', 'modules.LevelEditor', 'modules.LevelIO', 'modules.MapConverter', 'modules.my_logging', 'modules.queue', 'modules.ShortestPath', 'modules.Sprites', 'modules.TitleScreen', 'modules.Window'],
+    hiddenimports=['SQ_modules.configs', 'SQ_modules.DataTypes', 'SQ_modules.Game', 'SQ_modules.GameBoard', 'SQ_modules.GameEnums', 'SQ_modules.LevelBackground', 'SQ_modules.LevelCompleteScreen', 'SQ_modules.LevelEditor', 'SQ_modules.LevelIO', 'SQ_modules.MapConverter', 'SQ_modules.my_logging', 'SQ_modules.queue', 'SQ_modules.ShortestPath', 'SQ_modules.Sprites', 'SQ_modules.TitleScreen', 'SQ_modules.Window'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],

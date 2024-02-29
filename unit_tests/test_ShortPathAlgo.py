@@ -2,12 +2,12 @@ import unittest
 import sys
 import os
 import numpy as np
-#necessary to import things from the modules folder
+#necessary to import things from the SQ_modules folder
 sys.path.append(os.getcwd())
-from modules.DataTypes import Point
+from SQ_modules.DataTypes import Point
 from LevelGenerator import ShortestPath
-from modules.GameEnums import GameDifficulty, CellType, Direction
-from modules.GameBoard import GameBoard
+from SQ_modules.GameEnums import GameDifficulty, CellType, Direction
+from SQ_modules.GameBoard import GameBoard
 cell_dtype = np.dtype(CellType)
 
 

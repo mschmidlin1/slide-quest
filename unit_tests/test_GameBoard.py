@@ -2,11 +2,11 @@ import unittest
 import sys
 import os
 import numpy as np
-#necessary to import things from the modules folder
+#necessary to import things from the SQ_modules folder
 sys.path.append(os.getcwd())
-from modules.GameBoard import GameBoard
-from modules.GameEnums import Direction, CellType
-from modules.DataTypes import Point, Cell
+from SQ_modules.GameBoard import GameBoard
+from SQ_modules.GameEnums import Direction, CellType
+from SQ_modules.DataTypes import Point, Cell
 cell_dtype = np.dtype(CellType)
 
 class Test_UpdateCell(unittest.TestCase):

@@ -2,11 +2,11 @@ import unittest
 import sys
 import os
 import numpy as np
-#necessary to import things from the modules folder
+#necessary to import things from the SQ_modules folder
 sys.path.append(os.getcwd())
-from modules.DataTypes import Point
+from SQ_modules.DataTypes import Point
 from LevelGenerator import LevelGenerator
-from modules.GameEnums import GameDifficulty, CellType
+from SQ_modules.GameEnums import GameDifficulty, CellType
 cell_dtype = np.dtype(CellType)
 class Test_Constructor(unittest.TestCase):
     def test_Constructor_Beginner(self):

@@ -1,17 +1,17 @@
-from modules.GameEnums import GameDifficulty, CellType, Game_Difficult_Str_Map_Reverse, Direction
-from modules.configs import Board_Size_Lookup
-from modules.GameBoard import GameBoard
-from modules.LevelIO import LevelIO
-from modules.ShortestPath import ShortestPath
-from modules.LevelIO import LevelIO
+from SQ_modules.GameEnums import GameDifficulty, CellType, Game_Difficult_Str_Map_Reverse, Direction
+from SQ_modules.configs import Board_Size_Lookup
+from SQ_modules.GameBoard import GameBoard
+from SQ_modules.LevelIO import LevelIO
+from SQ_modules.ShortestPath import ShortestPath
+from SQ_modules.LevelIO import LevelIO
 import numpy as np
-from modules.DataTypes import Point
+from SQ_modules.DataTypes import Point
 import random
 import os
-from modules.queue import MyQueue
+from SQ_modules.queue import MyQueue
 import copy
 import collections
-from modules.my_logging import set_logger, log
+from SQ_modules.my_logging import set_logger, log
 import logging
 import random
 cell_dtype = np.dtype(CellType)

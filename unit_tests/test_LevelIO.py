@@ -2,9 +2,9 @@ import unittest
 import sys
 import os
 import re
-#necessary to import things from the modules folder
+#necessary to import things from the SQ_modules folder
 sys.path.append(os.getcwd())
-from modules.LevelIO import LevelIO
+from SQ_modules.LevelIO import LevelIO
 
 class Test__init__(unittest.TestCase):
     def test_path_checking(self):
