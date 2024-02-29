@@ -5,7 +5,7 @@ import numpy as np
 #necessary to import things from the modules folder
 sys.path.append(os.getcwd())
 from modules.DataTypes import Point
-from LevelGenerator import CreateGameboardGraph, ShortestPath, get_lowest_value_key
+from LevelGenerator import ShortestPath
 from modules.GameEnums import GameDifficulty, CellType, Direction
 from modules.GameBoard import GameBoard
 cell_dtype = np.dtype(CellType)

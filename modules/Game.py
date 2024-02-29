@@ -1,7 +1,7 @@
 import pygame
 from modules.GameBoard import GameBoard
 from modules.Sprites import Block, Goal, Ice, Player
-from modules.DataTypes import Point, Size
+from modules.DataTypes import Point, Size, Cell
 from modules.LevelEditor import LevelEditor
 from modules.LevelIO import LevelIO
 from modules.GameEnums import Direction, GameDifficulty, CellType
@@ -41,11 +41,11 @@ class Game:
         for row, cells in enumerate(self.gameboard.gameboard):
             for col, cell in enumerate(cells):
                 if cell == CellType.BLOCK:
-                    self.gameboard_sprite_group.add(Block(Point(col, row), self.border_size))
+                    self.gameboard_sprite_group.add(Block(Cell(row, col), self.border_size))
                 if cell == CellType.GOAL:
-                    self.gameboard_sprite_group.add(Goal(Point(col, row), self.border_size))
+                    self.gameboard_sprite_group.add(Goal(Cell(row, col), self.border_size))
                 if cell == CellType.ICE:
-                    self.gameboard_sprite_group.add(Ice(Point(col, row), self.border_size))
+                    self.gameboard_sprite_group.add(Ice(Cell(row, col), self.border_size))
 
         self.player = Player(self.gameboard.player_pos, self.border_size)
         self.gameboard_sprite_group.add(self.player)
