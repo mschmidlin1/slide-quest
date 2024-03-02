@@ -8,7 +8,7 @@ sys.path.append(os.getcwd())
 from SQ_modules.GameBoard import GameBoard
 from SQ_modules.my_logging import set_logger, log
 from SQ_modules.GameEnums import CellType, Str_to_CellType_vector_func, GameDifficulty, Game_Difficult_Str_Map
-from SQ_modules.DataTypes import Point
+from SQ_modules.DataTypes import Point, Cell
 import numpy as np
 cell_dtype = np.dtype(CellType)
 set_logger()
@@ -126,11 +126,11 @@ class LevelIO:
         with open(filename, mode='w', newline='') as file:
             file.write(str(gameboard))
     @log
-    def SavePlayerPos(self, pos: Point, filename: str) -> None:
+    def SavePlayerPos(self, pos: Cell, filename: str) -> None:
         """
         Saves the player position to a file using the current dttm LevelIO save format.
         """
-        pos_str = f"({pos.x},{pos.y})"
+        pos_str = f"({pos.row},{pos.col})"
         with open(filename, mode='w', newline='') as file:
             file.write(pos_str)
     @log
@@ -174,7 +174,7 @@ class LevelIO:
 
         return gameboard
     @log
-    def ReadPlayerPos(self, filename: str = None) -> Point:
+    def ReadPlayerPos(self, filename: str = None) -> Cell:
         """
         Reads the player position from a file.
         Will use the self.current_level unless `filename` is passed.
@@ -189,9 +189,9 @@ class LevelIO:
         x, y = pos_str.split(",")
         x = x.strip()
         y = y.strip()
-        return Point(int(x), int(y))
+        return Cell(int(y), int(x))
     @log
-    def Read(self) -> tuple[np.ndarray, Point]:
+    def Read(self) -> tuple[np.ndarray, Cell]:
         gameboard = self.ReadBoard(self.current_level)
         player_pos = self.ReadPlayerPos(self.get_player_file())
         return gameboard, player_pos

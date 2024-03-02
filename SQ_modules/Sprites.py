@@ -2,52 +2,39 @@ import pygame
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from SQ_modules.GameEnums import CellType
-from SQ_modules.configs import CELL_DIMENSIONS, WALL_COLOR, GOAL_COLOR, ICE_COLOR, PLAYER_COLOR, PLAYER_SPEED, PALLET_HIGHLIGHT_COLOR, SELECTOR_TOOL_IMAGE
-from SQ_modules.DataTypes import Point, Size
-from SQ_modules.my_logging import set_logger, log 
+from SQ_modules.GameEnums import CellType, GameDifficulty
+from SQ_modules.configs import CELL_DIMENSIONS, WALL_COLOR, GOAL_COLOR, ICE_COLOR, PLAYER_COLOR, PLAYER_SPEED, PALLET_HIGHLIGHT_COLOR, SELECTOR_TOOL_IMAGE, Border_Size_Lookup
+from SQ_modules.DataTypes import Point, Size, Cell
+from SQ_modules.my_logging import set_logger, log
+from SQ_modules.Converters import PointToCell, CellToPoint
 import logging
 
 
-
-class Cell(pygame.sprite.Sprite):
-    def __init__(self):
-        super().__init__()
-    def GameboardCell_To_CenterPixelCoords(self, location: Point) -> Point:
-        """
-        Converts the coordinates of the Gameboard into the center pixel location of the correct cell.
-        """
-        x = self.border_size.width + (location[0] * CELL_DIMENSIONS.width) + (CELL_DIMENSIONS.width // 2)
-        y = self.border_size.height + (location[1] * CELL_DIMENSIONS.height) + (CELL_DIMENSIONS.height // 2)
-        return Point(round(x), round(y))
-    
-    def Get_Cell_Current_Position(self, location: Point) -> Point:
-        return location[0] // CELL_DIMENSIONS.width - self.border_size.width // CELL_DIMENSIONS.width, location[1] // CELL_DIMENSIONS.height - self.border_size.height // CELL_DIMENSIONS.height
-
-class Player(Cell):
-    def __init__(self, gameboard_loc: Point, border_size: Size):
+class Player(pygame.sprite.Sprite):
+    def __init__(self, gameboard_loc: Cell, difficulty: GameDifficulty):
         super().__init__()
         self.cellType = CellType.PLAYER
-        self.border_size = border_size
+        self.difficulty = difficulty
+        self.border_size = Border_Size_Lookup[difficulty]
         self._layer = 2
         self.gameboard_loc = gameboard_loc
         self.image = pygame.Surface(CELL_DIMENSIONS)
         self.image.fill(PLAYER_COLOR)
         self.rect = self.image.get_rect()
-        self.rect.center = self.GameboardCell_To_CenterPixelCoords(gameboard_loc)
+        self.rect.center = CellToPoint(gameboard_loc, self.difficulty)
         self.current_pos = self.rect.center
         self.speed = PLAYER_SPEED
         self.moving = False
 
-    def move(self, location: Point):
+    def move(self, location: Cell):
         """
         Set's the target position for the player as long as the player is not already moving.
         """
-        self.current_pos = self.Get_Cell_Current_Position(self.rect.center)
-        self.target_pos = location[0], location[1]
-        
-        self.current_pos = pygame.Vector2(self.current_pos)
-        self.target_pos = pygame.Vector2(self.target_pos)
+        self.current_pos = PointToCell(self.rect.center, self.difficulty)
+
+        #target and current position in Cell gameboard coordinates, but needs to be in x,y order        
+        self.current_pos = pygame.Vector2((self.current_pos.col, self.current_pos.row))
+        self.target_pos = pygame.Vector2(location.col, location.row)
 
         logging.info(f"Starting Position:  {self.current_pos}  Target Position:  {self.target_pos}")
 
@@ -56,7 +43,7 @@ class Player(Cell):
     def update(self):
         if self.moving:
             
-            self.target_pos_pixels = self.GameboardCell_To_CenterPixelCoords(self.target_pos)
+            self.target_pos_pixels = CellToPoint(self.target_pos, self.difficulty)
 
             if self.rect.center == self.target_pos_pixels:
                 self.moving = False
@@ -73,51 +60,55 @@ class Player(Cell):
             if distance_to_target_length != 0:
                 distance_to_target.normalize_ip()
                 distance_to_target = distance_to_target * PLAYER_SPEED
-                self.current_pos += distance_to_target 
+                self.current_pos += distance_to_target
 
-            self.rect.center = self.GameboardCell_To_CenterPixelCoords(self.current_pos)
+            self.rect.center = CellToPoint(self.current_pos, self.difficulty)
             
-class Block(Cell):
-    def __init__(self, gameboard_loc: Point, border_size: Size):
+class Block(pygame.sprite.Sprite):
+    def __init__(self, gameboard_loc: Cell, difficulty: GameDifficulty):
         super().__init__()
         self.cellType = CellType.BLOCK
-        self.border_size = border_size
+        self.difficulty = difficulty
+        self.border_size = Border_Size_Lookup[difficulty]
         self._layer = 0
         self.gameboard_loc = gameboard_loc
         self.image = pygame.Surface(CELL_DIMENSIONS)
         self.image.fill(WALL_COLOR)
         self.rect = self.image.get_rect()
-        self.rect.center = self.GameboardCell_To_CenterPixelCoords(gameboard_loc)
+        self.rect.center = CellToPoint(gameboard_loc, self.difficulty)
         
-class Goal(Cell):
-    def __init__(self, gameboard_loc: Point, border_size: Size):
+class Goal(pygame.sprite.Sprite):
+    def __init__(self, gameboard_loc: Cell, difficulty: GameDifficulty):
         super().__init__()
         self.cellType = CellType.GOAL
-        self.border_size = border_size
+        self.difficulty = difficulty
+        self.border_size = Border_Size_Lookup[difficulty]
         self._layer = 1
         self.gameboard_loc = gameboard_loc
         self.image = pygame.Surface(CELL_DIMENSIONS)
         self.image.fill(GOAL_COLOR)
         self.rect = self.image.get_rect()
-        self.rect.center = self.GameboardCell_To_CenterPixelCoords(gameboard_loc)
+        self.rect.center = CellToPoint(gameboard_loc, self.difficulty)
 
-class Ice(Cell):
-    def __init__(self, gameboard_loc: Point, border_size: Size):
+class Ice(pygame.sprite.Sprite):
+    def __init__(self, gameboard_loc: Cell, difficulty: GameDifficulty):
         super().__init__()
         self.cellType = CellType.ICE
-        self.border_size = border_size
+        self.difficulty = difficulty
+        self.border_size = Border_Size_Lookup[difficulty]
         self._layer = 0
         self.gameboard_loc = gameboard_loc
         self.image = pygame.Surface(CELL_DIMENSIONS)
         self.image.fill(ICE_COLOR)
         self.rect = self.image.get_rect()
-        self.rect.center = self.GameboardCell_To_CenterPixelCoords(gameboard_loc)
+        self.rect.center = CellToPoint(gameboard_loc, self.difficulty)
 
-class Highlighter(Cell):
-    def __init__(self, gameboard_loc: Point, border_size: Size):
+class Highlighter(pygame.sprite.Sprite):
+    def __init__(self, gameboard_loc: Cell, difficulty: GameDifficulty):
         super().__init__()
         self.cellType = "Highlighter"
-        self.border_size = border_size
+        self.difficulty = difficulty
+        self.border_size = Border_Size_Lookup[difficulty]
         self._layer = 0
         self.gameboard_loc = gameboard_loc
         self.image = pygame.Surface(CELL_DIMENSIONS, pygame.SRCALPHA)
@@ -126,7 +117,7 @@ class Highlighter(Cell):
 
 
         self.rect = self.image.get_rect()
-        self.rect.center = self.GameboardCell_To_CenterPixelCoords(gameboard_loc)
+        self.rect.center = CellToPoint(gameboard_loc, self.difficulty)
 
 class SelectorTool(pygame.sprite.Sprite):
     def __init__(self, ):
@@ -182,7 +173,7 @@ class TitleScreenPlayerSprite(pygame.sprite.Sprite):
         self.rect.center = center_location
 
 class HollowSquareSprite(pygame.sprite.Sprite):
-    def __init__(self, location: Size, thickness: int, color=PALLET_HIGHLIGHT_COLOR, transparent_color=(0, 0, 0, 0)):
+    def __init__(self, location: Point, thickness: int, color=PALLET_HIGHLIGHT_COLOR, transparent_color=(0, 0, 0, 0)):
         super().__init__()
         
         # Create a transparent surface with the given size

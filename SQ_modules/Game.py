@@ -41,13 +41,13 @@ class Game:
         for row, cells in enumerate(self.gameboard.gameboard):
             for col, cell in enumerate(cells):
                 if cell == CellType.BLOCK:
-                    self.gameboard_sprite_group.add(Block(Cell(row, col), self.border_size))
+                    self.gameboard_sprite_group.add(Block(Cell(row, col), self.difficulty))
                 if cell == CellType.GOAL:
-                    self.gameboard_sprite_group.add(Goal(Cell(row, col), self.border_size))
+                    self.gameboard_sprite_group.add(Goal(Cell(row, col), self.difficulty))
                 if cell == CellType.ICE:
-                    self.gameboard_sprite_group.add(Ice(Cell(row, col), self.border_size))
+                    self.gameboard_sprite_group.add(Ice(Cell(row, col), self.difficulty))
 
-        self.player = Player(self.gameboard.player_pos, self.border_size)
+        self.player = Player(self.gameboard.player_pos, self.difficulty)
         self.gameboard_sprite_group.add(self.player)
         self.levelEditor = LevelEditor(self.gameboard, self.gameboard_sprite_group, self.border_size, self.player, level_manager, self.screen)
         self.level_background = LevelBackground(self.screen, level_manager.current_level)
@@ -73,7 +73,7 @@ class Game:
                     self.player.move(self.gameboard.MovePlayer(Direction.DOWN))
                     self.num_moves += 1
                 if self.isEditActive:
-                    self.solution_moves = ShortestPath(self.gameboard)       
+                    self.solution_moves = ShortestPath(self.gameboard)
     @log
     def isComplete(self):
         """
