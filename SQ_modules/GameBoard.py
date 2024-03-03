@@ -30,6 +30,8 @@ class GameBoard:
     def UpdateCell(self, location: Cell, cell_type: CellType) -> None:
         """
         Adds a cell of type `type` to the coordinates `location` in the gameboard.
+
+        Will override the cell if it is already occupied.
         """
         #see if cell is occupied
         if location == self.player_pos and (cell_type not in [CellType.ICE, CellType.GROUND]):
@@ -183,9 +185,9 @@ class GameBoard:
         """
         return '\n'.join([','.join(list(map(str, row))) for row in self.gameboard])
     @log
-    def Find_CellType(self, loc: Cell) -> CellType:
+    def Get_CellType(self, loc: Cell) -> CellType:
         """
-        Given a location on the gameboard, find the CellType that occupies that location.
+        Given a location on the gameboard, gets the CellType that occupies that location.
         """
         return self.gameboard[loc.row, loc.col]
 

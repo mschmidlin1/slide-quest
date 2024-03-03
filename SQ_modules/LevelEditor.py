@@ -1,6 +1,6 @@
 import pygame
-from SQ_modules.configs import CELL_DIMENSIONS, WHITE
-from SQ_modules.GameEnums import CellType
+from SQ_modules.configs import CELL_DIMENSIONS, WHITE, Border_Size_Lookup
+from SQ_modules.GameEnums import CellType, GameDifficulty
 from SQ_modules.Sprites import Block, Ice, Goal, Player, HollowSquareSprite, Cell, SelectorTool, Highlighter
 from SQ_modules.DataTypes import Point, Size
 from SQ_modules.GameEnums import CellType, GameDifficulty
@@ -8,6 +8,7 @@ from SQ_modules.GameBoard import GameBoard
 from SQ_modules.LevelIO import LevelIO
 from SQ_modules.configs import LEFT_CLICK, RIGHT_CLICK
 from SQ_modules.my_logging import set_logger, log
+from SQ_modules.Converters import PointToCell, CellToPoint
 from SQ_modules.configs import WINDOW_DIMENSIONS, Border_Size_Lookup
 import logging
 set_logger()
@@ -68,30 +69,25 @@ class ClickedCell:
             self.cell.rect.x = event.pos[0] + self.cell.offset_x
             self.cell.rect.y = event.pos[1] + self.cell.offset_y
 
-def get_gameboard_coords():
-    """
-    Takes in a pixel position and translates to gameboard coordinates.
-    Returns none if the position is not on the gameboard. 
-    """
-    
-    pass
+
 @log
 class LevelEditor:
     @log
-    def __init__(self, gameboard: GameBoard, gameboard_sprite_group: pygame.sprite.LayeredUpdates, border_size: Size, player: Player, level_manager: LevelIO, screen: pygame.surface.Surface): #need from game, player, border_size, gameboard_sprite_group, gameboard, 
+    def __init__(self, gameboard: GameBoard, gameboard_sprite_group: pygame.sprite.LayeredUpdates, difficulty: GameDifficulty, player: Player, level_manager: LevelIO, screen: pygame.surface.Surface): #need from game, player, border_size, gameboard_sprite_group, gameboard, 
         self.screen = screen
         self.gameboard = gameboard
         self.player = player
         self.level_manager = level_manager
         self.gameboard_sprite_group = gameboard_sprite_group
-        self.border_size = border_size
+        self.difficulty = difficulty
+        self.border_size = Border_Size_Lookup[self.difficulty]
         for sprite in self.gameboard_sprite_group:
             if isinstance(sprite, Goal):
                 self.goal: Goal = sprite
                 break
         self.drag_type = None
         self.offset = None
-        self.initial_location = None
+        self.initial_mouse_location = None
 
         self.reset_click()
         self.create_pallet_sprites()
@@ -434,6 +430,20 @@ class LevelEditor:
                 self.drag_type = sprite.cellType
                 break
 
+    def handle_select(self):
+        """
+        Handles the creation of "highlight" sprites for the select tool.
+        """
+        #empty sprite group since all sprite will be added to the group again
+        self.highlighter_sprite_group.empty()
+        #iterate forwards if end location is higher, otherwise iterate backwards
+        row_step = 1 if self.current_mouse_location.row >= self.initial_mouse_location.row else -1 
+        col_step = 1 if self.current_mouse_location.col >= self.initial_mouse_location.col else -1
+        #iterate from start to end for both rows and cols. Need to add the step size since the last index of range is ommitted.
+        for row in range(self.initial_mouse_location.row, self.current_mouse_location.row + row_step, row_step):
+            for col in range(self.initial_mouse_location.col, self.current_mouse_location.col + col_step, col_step):
+                self.highlighter_sprite_group.add(Highlighter(Cell(row, col), Border_Size_Lookup[self.difficulty]))
+
         
     @log
     def update(self, events: list[pygame.event.Event]):
@@ -444,19 +454,17 @@ class LevelEditor:
                 if event.button == LEFT_CLICK:
                     self.check_for_pallet_click(event)
 
-                    coords: Point = get_gameboard_coords()
-                    if self.gameboard.goal_pos==coords:
+                    self.initial_mouse_location: Cell = PointToCell(Point(event.pos[0], event.pos[1]))
+                    if self.gameboard.goal_pos==self.initial_mouse_location:
                         self.offset: Point = self.goal.rect.center - event.pos
                         self.drag_type = CellType.GOAL
-                        self.initial_location = self.goal.gameboard_loc
-                    elif self.player.gameboard_loc==coords:
+                    elif self.player.gameboard_loc==self.initial_mouse_location:
                         self.offset: Point = self.player.rect.center - event.pos
                         self.drag_type = CellType.PLAYER
-                        self.initial_location = self.player.gameboard_loc
                     else:
                         if self.current_pallet_block != "SELECT":
                             for sprite in self.gameboard_sprite_group:
-                                if sprite.gameboard_loc == coords:
+                                if sprite.gameboard_loc == self.initial_mouse_location:
                                     self.drag_type = sprite.cellType
                                     break
                             if self.current_pallet_block != self.drag_type:
@@ -470,6 +478,7 @@ class LevelEditor:
                 
 
             elif event.type == pygame.MOUSEMOTION:
+                self.current_mouse_location: Cell = PointToCell(Point(event.pos[0], event.pos[1]))
                 if self.drag_type is None:
                     continue
                 if self.drag_type==CellType.PLAYER:
@@ -477,10 +486,11 @@ class LevelEditor:
                 elif self.drag_type==CellType.GOAL:
                     self.goal.rect.center = event.pos + self.offset
                 elif self.drag_type=="SELECT":
-                    coords: Point = get_gameboard_coords()
-                    #do rectangle stuff
+                    self.handle_select()
                 else:
-
+                    if self.gameboard.Get_CellType(self.current_mouse_location) != self.drag_type:
+                        self.gameboard.UpdateCell(self.current_mouse_location, self.drag_type)
+                        ## need to figure out how to update the sprite group now. It would be cool if it just did it itself.
                                 
             elif event.type == pygame.MOUSEBUTTONUP:
                 # if self.clickedcell:
@@ -488,7 +498,7 @@ class LevelEditor:
                 
                 self.drag_type = None
                 self.offset = None
-                self.initial_location = None
+                self.initial_mouse_location = None
 
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_s and pygame.key.get_mods() & pygame.KMOD_SHIFT:
@@ -496,7 +506,7 @@ class LevelEditor:
                     logging.info("Map saved. (over-wrote level)")
                 elif event.key == pygame.K_s:
                     self.level_manager.SaveNew(self.gameboard)
-                    print("Saved new map.")
+                    logging.info("Saved new map.")
     
     @log
     def draw_grid(self):
