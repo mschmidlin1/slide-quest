@@ -189,3 +189,38 @@ class HollowSquareSprite(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
 
         self.rect.center = location
+
+
+
+def FindSpritesByLocation(sprite_group: pygame.sprite.Group, location: Cell) -> list[pygame.sprite.Sprite]:
+    """
+    Retrieves a list of sprites from a specified sprite group where each sprite has the specific `location` on the game board.
+
+    If a sprite does not have the `gameboard_loc` attribute, it is ignored. Only sprites whose 'gameboard_loc' matches the specified location are included in the result.
+
+    The function returns an empty list if no sprites are found at the specified location.
+
+    Parameters:
+    -
+    - sprite_group (pygame.sprite.Group): The group of sprites to search through.
+    - location (Cell): The location on the game board for which to find sprites.
+
+    Returns:
+    -
+    - list[pygame.sprite.Sprite]: A list of sprites from the given sprite group that are located at `location` on the game board.
+
+    Example:
+    -
+    ```
+    found_sprites = GetSpriteByLocation(game_sprites, desired_location)
+    for sprite in found_sprites:
+        print(sprite)
+    ```
+    """
+    sprites = []
+    for sprite in sprite_group:
+        if not hasattr(sprite, 'gameboard_loc'):
+            continue
+        if sprite.gameboard_loc == location:
+            sprites.append(sprite)
+    return sprites

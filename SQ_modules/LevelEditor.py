@@ -1,7 +1,7 @@
 import pygame
 from SQ_modules.configs import CELL_DIMENSIONS, WHITE, Border_Size_Lookup
 from SQ_modules.GameEnums import CellType, GameDifficulty
-from SQ_modules.Sprites import Block, Ice, Goal, Player, HollowSquareSprite, Cell, SelectorTool, Highlighter
+from SQ_modules.Sprites import Block, Ice, Goal, Player, HollowSquareSprite, Cell, SelectorTool, Highlighter, FindSpritesByLocation
 from SQ_modules.DataTypes import Point, Size
 from SQ_modules.GameEnums import CellType, GameDifficulty
 from SQ_modules.GameBoard import GameBoard
@@ -136,44 +136,42 @@ class LevelEditor:
         # self.new_cell = None
 
     @log
-    def replace_cell(self, old_cell: pygame.sprite.Sprite, new_cell_type: CellType, event: pygame.event.Event):
+    def replace_gameboard_sprite(self):
         """
-        Replace a cell with a new cell of the specified type.
+        Replaces a sprite in the game board at the current mouse location with a new sprite based on the `drag_type` attribute.
 
-        Args:
-            old_cell (pygame.Sprite): The cell to be replaced.
-            new_cell_type (CellType): The type of the new cell to replace the old one.
-            event (pygame.Event): The mouse event containing information about the replacement.
+        The new sprite created and added to the game board depends on the `drag_type` attribute of the object. 
+        Currently, it supports creating `Block` and `Ice` sprites based on the difficulty level and the location.
 
-        This method replaces a cell in the gameboard with a new cell of the specified type.
-        The replacement depends on the `new_cell_type` provided. It also takes into account
-        specific conditions for replacing cells, such as ensuring that player and goal cells
-        are not replaced.
-
-        Parameters:
-            old_cell (pygame.Sprite): The cell to be replaced.
-            new_cell_type (CellType): The type of the new cell to replace the old one.
-            event (pygame.Event): The mouse event containing information about the replacement.
+        Raises:
+        - RuntimeError: If more than two sprites are found at the location, no sprites are found, or neither of the two sprites is of type `CellType.PLAYER` when two sprites are found.
+        - RuntimeError: If the `drag_type` attribute is set to a value for which sprite replacement is not implemented.
         """
-        if old_cell.cellType == new_cell_type or old_cell.cellType in {CellType.PLAYER, CellType.GOAL} :
-            return
+        sprites = FindSpritesByLocation(self.gameboard_sprite_group, self.current_mouse_location)
+        if len(sprites) > 2:
+            raise RuntimeError(f"Found more than two sprites in gameboard with location {self.current_mouse_location}")
+        if len(sprites) == 0:
+            raise RuntimeError(f"Found zero sprites in gameboard with location {self.current_mouse_location}")
+        if len(sprites) == 2: # in this case one of the sprites has to be the player
+            if sprites[0].cellType != CellType.PLAYER and sprites[1].cellType != CellType.PLAYER:
+                raise RuntimeError(f"Neither of the sprites in gameboard at location {self.current_mouse_location} have type {CellType.PLAYER}.")
+            else:
+                if sprites[0].cellType == CellType.PLAYER:
+                    old_sprite = sprites[1]
+                else:
+                    old_sprite = sprites[0]
+        else: #lenth must be 1 in this case
+            old_sprite = sprites[0]
 
-        if self.current_pallet_block == CellType.BLOCK:
-            self.new_cell = Block(old_cell.Get_Cell_Current_Position(event.pos), self.border_size)
-        elif self.current_pallet_block == CellType.ICE:
-            self.new_cell = Ice(old_cell.Get_Cell_Current_Position(event.pos), self.border_size)
-        
-        # grab the gameboard coords you're working with
-        temp_pos = Point(*old_cell.Get_Cell_Current_Position(event.pos))
-        # update gameboard object
-        self.gameboard.UpdateCell(temp_pos, new_cell_type)
-        # elif new_cell_type == CellType.GOAL:
-        #     self.new_cell = Goal(old_cell.Get_Cell_Current_Position(event.pos), self.current_game.border_width, self.current_game.border_height)
+        self.gameboard_sprite_group.remove(old_sprite)
 
-        # if self.new_cell:
-        self.gameboard_sprite_group.remove(old_cell)
-        self.gameboard_sprite_group.add(self.new_cell)
-        # self.replaced_cells.add(old_cell)
+        if self.drag_type == CellType.BLOCK:
+            new_sprite = Block(self.current_mouse_location, self.difficulty)
+        elif self.drag_type == CellType.ICE:
+            new_sprite = Ice(self.current_mouse_location, self.difficulty)
+        else:
+            raise RuntimeError(f"Level Editor replace_gameboard_sprite not implemented for {self.drag_type}")
+        self.gameboard_sprite_group.add(new_sprite)
     @log
     def move_goal(self, old_cell, new_cell):
         """
@@ -296,7 +294,7 @@ class LevelEditor:
         
         if self.click_type == LEFT_CLICK:  # LEFT CLICK
             if clicked_cell.cell_type not in [self.current_pallet_block, CellType.GOAL, CellType.PLAYER]:#need to check if we're on player?
-                self.replace_cell(clicked_cell.cell, self.current_pallet_block, event)
+                self.replace_gameboard_sprite(clicked_cell.cell, self.current_pallet_block, event)
 
         # if self.click_type == RIGHT_CLICK:  # RIGHT CLICK
         #     if clicked_cell.cell_type == CellType.BLOCK:
@@ -331,7 +329,7 @@ class LevelEditor:
 
         if updated_cell:
             if self.click_type == LEFT_CLICK:
-                self.replace_cell(updated_cell.cell, self.current_pallet_block, event)
+                self.replace_gameboard_sprite(updated_cell.cell, self.current_pallet_block, event)
 
             # elif self.click_type == RIGHT_CLICK:
             #         self.replace_cell(updated_cell.cell, CellType.ICE, event)
@@ -420,15 +418,6 @@ class LevelEditor:
             self.selected_pallet_sprite.rect.center = self.ice_pallet_sprite.rect.center
             logging.info("Pallet block changed to ICE.")
         
-    def get_celltype(self, loc: Point) -> CellType:
-        """
-        Given a gameboard location, the method finds the CellType of that location from the sprite group.
-        """
-
-        for sprite in self.gameboard_sprite_group:
-            if sprite.gameboard_loc == coords:
-                self.drag_type = sprite.cellType
-                break
 
     def handle_select(self):
         """
@@ -444,7 +433,72 @@ class LevelEditor:
             for col in range(self.initial_mouse_location.col, self.current_mouse_location.col + col_step, col_step):
                 self.highlighter_sprite_group.add(Highlighter(Cell(row, col), Border_Size_Lookup[self.difficulty]))
 
+    def handle_left_click(self, event: pygame.event.Event):
+        """
+        Handles the left click event for the level editor.
+        """
+        #handles if the block pallet was clicked
+        self.check_for_pallet_click(event)
+        #save the current location of the mouse as the "initial location" for any dragging movements
+        self.initial_mouse_location: Cell = PointToCell(Point(event.pos[0], event.pos[1]))
+        #also update the current mouse position, some methods rely on the current mouse position always being accurate
+        self.current_mouse_location: Cell = PointToCell(Point(event.pos[0], event.pos[1]))
+
+        #if none, the click was outside the bounds of the gameboard.
+        if self.initial_mouse_location is None:
+            return
+
+        #check if you clicked on the goal
+        if self.gameboard.goal_pos==self.initial_mouse_location:
+            self.offset: Point = self.goal.rect.center - event.pos # the offset is so your mouse and the goal maintain relative positioning while dragging
+            self.drag_type = CellType.GOAL
         
+        #check if you clicked on the player
+        elif self.player.gameboard_loc==self.initial_mouse_location:
+            self.offset: Point = self.player.rect.center - event.pos # the offset is so your mouse and the player maintain relative positioning while dragging
+            self.drag_type = CellType.PLAYER
+        
+        
+        # check if the pallet is currently set to the "select" tool
+        elif self.current_pallet_block == "SELECT":
+            self.drag_type = "SELECT"
+            self.highlighter_sprite_group.empty() #every left click will just start a new click and drag highlight session
+            self.highlighter_sprite_group.add(Highlighter(self.initial_mouse_location, self.difficulty)) #added initial clicked to highlighted cells sprite group
+        
+        # this else contains the logic for "painting" depending on which pallet block is currently chosen
+        else:
+            self.drag_type = self.current_pallet_block
+            if self.gameboard.Get_CellType(self.initial_mouse_location) != self.current_pallet_block:
+                #update gameboard
+                self.gameboard.UpdateCell(self.current_mouse_location, self.drag_type)
+                #update sprite group 
+                self.replace_gameboard_sprite() 
+
+    def handle_mouse_motion(self, event: pygame.event.Event):
+        """
+        Handles mouse motion event for level editor. This mostly consistly of any "dragging" operations.
+        """
+        #always update the current mouse location
+        self.current_mouse_location: Cell = PointToCell(Point(event.pos[0], event.pos[1]))
+        #if drag type is none, then there is nothing that needs to be handled.
+        if self.drag_type is None:
+            return
+        #if you're dragging the player
+        if self.drag_type==CellType.PLAYER:
+            self.player.rect.center = event.pos + self.offset
+        #if you're dragging the goal
+        elif self.drag_type==CellType.GOAL:
+            self.goal.rect.center = event.pos + self.offset
+        #if the select tool is being used
+        elif self.drag_type=="SELECT":
+            self.handle_select()
+        # handles any of the painting operations with the current pallet selection.
+        else:
+            if self.gameboard.Get_CellType(self.current_mouse_location) != self.drag_type:
+                #update gameboard
+                self.gameboard.UpdateCell(self.current_mouse_location, self.drag_type)
+                #update sprite group 
+                self.replace_gameboard_sprite() 
     @log
     def update(self, events: list[pygame.event.Event]):
         for event in events:
@@ -452,45 +506,11 @@ class LevelEditor:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 self.click_type = event.button
                 if event.button == LEFT_CLICK:
-                    self.check_for_pallet_click(event)
-
-                    self.initial_mouse_location: Cell = PointToCell(Point(event.pos[0], event.pos[1]))
-                    if self.gameboard.goal_pos==self.initial_mouse_location:
-                        self.offset: Point = self.goal.rect.center - event.pos
-                        self.drag_type = CellType.GOAL
-                    elif self.player.gameboard_loc==self.initial_mouse_location:
-                        self.offset: Point = self.player.rect.center - event.pos
-                        self.drag_type = CellType.PLAYER
-                    else:
-                        if self.current_pallet_block != "SELECT":
-                            for sprite in self.gameboard_sprite_group:
-                                if sprite.gameboard_loc == self.initial_mouse_location:
-                                    self.drag_type = sprite.cellType
-                                    break
-                            if self.current_pallet_block != self.drag_type:
-                                #remove sprite from sprite group
-                                #create a new sprite of type self.drag_type with location "coords"
-                                pass
-                        else:
-                            self.drag_type = "SELECT"
-                            self.highlighter_sprite_group.empty()#every left click will just start a new click and drag highlight session
-                            self.highlighter_sprite_group.add(Highlighter(coords), Border_Size_Lookup[])#need difficulty here
+                    self.handle_left_click(event)
                 
 
             elif event.type == pygame.MOUSEMOTION:
-                self.current_mouse_location: Cell = PointToCell(Point(event.pos[0], event.pos[1]))
-                if self.drag_type is None:
-                    continue
-                if self.drag_type==CellType.PLAYER:
-                    self.player.rect.center = event.pos + self.offset
-                elif self.drag_type==CellType.GOAL:
-                    self.goal.rect.center = event.pos + self.offset
-                elif self.drag_type=="SELECT":
-                    self.handle_select()
-                else:
-                    if self.gameboard.Get_CellType(self.current_mouse_location) != self.drag_type:
-                        self.gameboard.UpdateCell(self.current_mouse_location, self.drag_type)
-                        ## need to figure out how to update the sprite group now. It would be cool if it just did it itself.
+                self.handle_mouse_motion(event)
                                 
             elif event.type == pygame.MOUSEBUTTONUP:
                 # if self.clickedcell:
