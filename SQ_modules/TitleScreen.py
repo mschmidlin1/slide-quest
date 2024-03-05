@@ -4,7 +4,8 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import pygame
 from SQ_modules.configs import TITLE_FONT, WINDOW_DIMENSIONS, TITLE_SCREEN_COLOR, TITLE_SCREEN_TEXT_COLOR
 from SQ_modules.Sprites import TextSprite, Player
-from SQ_modules.DataTypes import Point, Size
+from SQ_modules.DataTypes import Point, Size, Cell
+from SQ_modules.GameEnums import GameDifficulty
 
 class TitleScreen():
     def __init__(self, screen):
@@ -27,8 +28,8 @@ class TitleScreen():
             TITLE_SCREEN_TEXT_COLOR)
 
         self.player_sprite = Player(
-            Point(WINDOW_DIMENSIONS[0]//2, WINDOW_DIMENSIONS[1]//2),
-            Size(0,0)
+            Cell(0, 0),
+            GameDifficulty.BEGINNER
         )
         self.player_sprite.rect.center = Point(WINDOW_DIMENSIONS[0]//2, WINDOW_DIMENSIONS[1]//2)
 

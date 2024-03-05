@@ -49,7 +49,7 @@ class Game:
 
         self.player = Player(self.gameboard.player_pos, self.difficulty)
         self.gameboard_sprite_group.add(self.player)
-        self.levelEditor = LevelEditor(self.gameboard, self.gameboard_sprite_group, self.border_size, self.player, level_manager, self.screen)
+        self.levelEditor = LevelEditor(self.gameboard, self.gameboard_sprite_group, self.difficulty, self.player, level_manager, self.screen)
         self.level_background = LevelBackground(self.screen, level_manager.current_level)
         self.num_moves = 0
         self.start_time = time.time()

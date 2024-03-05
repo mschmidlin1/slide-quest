@@ -30,20 +30,21 @@ class Player(pygame.sprite.Sprite):
         """
         Set's the target position for the player as long as the player is not already moving.
         """
-        self.current_pos = PointToCell(self.rect.center, self.difficulty)
+        self.current_pos_cell = PointToCell(Point(self.rect.center[0], self.rect.center[1]), self.difficulty)
 
         #target and current position in Cell gameboard coordinates, but needs to be in x,y order        
-        self.current_pos = pygame.Vector2((self.current_pos.col, self.current_pos.row))
+        self.current_pos = pygame.Vector2((self.current_pos_cell.col, self.current_pos_cell.row))
+        self.target_pos_cell = location
         self.target_pos = pygame.Vector2(location.col, location.row)
 
-        logging.info(f"Starting Position:  {self.current_pos}  Target Position:  {self.target_pos}")
+        logging.info(f"Starting Position:  {self.current_pos_cell}  Target Position:  {self.target_pos_cell}")
 
         self.moving = True
 
     def update(self):
         if self.moving:
             
-            self.target_pos_pixels = CellToPoint(self.target_pos, self.difficulty)
+            self.target_pos_pixels = CellToPoint(self.target_pos_cell, self.difficulty)
 
             if self.rect.center == self.target_pos_pixels:
                 self.moving = False
@@ -61,7 +62,7 @@ class Player(pygame.sprite.Sprite):
                 distance_to_target.normalize_ip()
                 distance_to_target = distance_to_target * PLAYER_SPEED
                 self.current_pos += distance_to_target
-
+                            # this conversion needs work
             self.rect.center = CellToPoint(self.current_pos, self.difficulty)
             
 class Block(pygame.sprite.Sprite):
