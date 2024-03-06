@@ -62,8 +62,12 @@ class Player(pygame.sprite.Sprite):
                 distance_to_target.normalize_ip()
                 distance_to_target = distance_to_target * PLAYER_SPEED
                 self.current_pos += distance_to_target
-                            # this conversion needs work
-            self.rect.center = CellToPoint(self.current_pos, self.difficulty)
+                            
+            #have to do manual conversion until I think of a better way to structure the converter.
+            x = Border_Size_Lookup[self.difficulty].width + (self.current_pos[0] * CELL_DIMENSIONS.width) + (CELL_DIMENSIONS.width // 2)
+            y = Border_Size_Lookup[self.difficulty].height + (self.current_pos[1] * CELL_DIMENSIONS.height) + (CELL_DIMENSIONS.height // 2)
+            self.rect.center = Point(round(x), round(y))
+            # self.rect.center = CellToPoint(self.current_pos, self.difficulty)
             
 class Block(pygame.sprite.Sprite):
     def __init__(self, gameboard_loc: Cell, difficulty: GameDifficulty):

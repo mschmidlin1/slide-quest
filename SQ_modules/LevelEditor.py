@@ -90,10 +90,7 @@ class LevelEditor:
         self.gameboard_sprite_group = gameboard_sprite_group
         self.difficulty = difficulty
         self.border_size = Border_Size_Lookup[self.difficulty]
-        for sprite in self.gameboard_sprite_group:
-            if isinstance(sprite, Goal):
-                self.goal: Goal = sprite
-                break
+
         self.reset_click()
         self.create_pallet_sprites()
         self.selected_sprite_group = pygame.sprite.Group()
@@ -115,7 +112,7 @@ class LevelEditor:
 
 
 
-        self.selected_pallet_sprite = HollowSquareSprite(Point(CELL_DIMENSIONS.width, 100), 4)
+        self.selected_pallet_sprite = HollowSquareSprite(Point(CELL_DIMENSIONS.width, 150), 4)
 
         self.pallete_sprite_group = pygame.sprite.Group()
         self.pallete_sprite_group.add(self.select_tool_sprite)
@@ -137,6 +134,11 @@ class LevelEditor:
         self.drag_type = None
         self.offset = None
         self.initial_mouse_location = None
+
+        for sprite in self.gameboard_sprite_group:
+            if isinstance(sprite, Goal):
+                self.goal: Goal = sprite
+                break
 
     def replace_gameboard_sprite(self, location: Cell, cell_type: CellType):
         """
@@ -173,11 +175,14 @@ class LevelEditor:
         #remove the old sprite
         self.gameboard_sprite_group.remove(old_sprite)
 
-        #create new sprite based on the type, only BLOCK and ICE are implemented for now.
-        if self.drag_type == CellType.BLOCK:
+        #create new sprite based on the type, only BLOCK, ICE, and GOAL are implemented for now.
+        if cell_type == CellType.BLOCK:
             new_sprite = Block(location, self.difficulty)
-        elif self.drag_type == CellType.ICE:
+        elif cell_type == CellType.ICE:
             new_sprite = Ice(location, self.difficulty)
+        elif cell_type == CellType.GOAL:
+            new_sprite = Goal(location, self.difficulty)
+            self.goal = new_sprite
         else:
             raise RuntimeError(f"Level Editor replace_gameboard_sprite not implemented for {self.drag_type}")
         #add new sprite to group.
@@ -235,13 +240,13 @@ class LevelEditor:
             return
 
         #check if you clicked on the goal
-        if self.gameboard.goal_pos==self.initial_mouse_location:
-            self.offset: Point = self.goal.rect.center - event.pos # the offset is so your mouse and the goal maintain relative positioning while dragging
+        if self.gameboard.goal_pos == self.initial_mouse_location:
+            self.offset: Point = Point(self.goal.rect.center[0] - event.pos[0], self.goal.rect.center[1] - event.pos[1]) # the offset is so your mouse and the goal maintain relative positioning while dragging
             self.drag_type = CellType.GOAL
         
         #check if you clicked on the player
-        elif self.player.gameboard_loc==self.initial_mouse_location:
-            self.offset: Point = self.player.rect.center - event.pos # the offset is so your mouse and the player maintain relative positioning while dragging
+        elif self.gameboard.player_pos == self.initial_mouse_location:
+            self.offset: Point = Point(self.player.rect.center[0] - event.pos[0], self.player.rect.center[1] - event.pos[1]) # the offset is so your mouse and the player maintain relative positioning while dragging
             self.drag_type = CellType.PLAYER
         
         
@@ -253,6 +258,9 @@ class LevelEditor:
         # this else contains the logic for "painting" depending on which pallet block is currently chosen
         else:
             self.drag_type = self.current_pallet_block
+            #if you are on top of the player or the goal, return and do not replace cell
+            if self.current_mouse_location in [self.gameboard.player_pos, self.gameboard.Find_Goal_Pos()]:
+                return
             if self.gameboard.Get_CellType(self.initial_mouse_location) != self.current_pallet_block:
                 #update gameboard
                 self.gameboard.UpdateCell(self.current_mouse_location, self.drag_type)
@@ -268,17 +276,26 @@ class LevelEditor:
         #if drag type is none, then there is nothing that needs to be handled.
         if self.drag_type is None:
             return
+        #this means that the mouse is off of the gameboard.
+        if self.current_mouse_location is None:
+            return
         #if you're dragging the player
         if self.drag_type==CellType.PLAYER:
-            self.player.rect.center = event.pos + self.offset
+            self.player.rect.center = Point(event.pos[0] + self.offset[0], event.pos[1] + self.offset[1])
         #if you're dragging the goal
         elif self.drag_type==CellType.GOAL:
-            self.goal.rect.center = event.pos + self.offset
+            self.goal.rect.center = Point(event.pos[0] + self.offset[0], event.pos[1] + self.offset[1])
         #if the select tool is being used
         elif self.drag_type=="SELECT":
             self.handle_select()
         # handles any of the painting operations with the current pallet selection.
         else:
+            if self.current_mouse_location is None:
+                print()
+            
+            #if you are on top of the player or the goal, return and do not replace cell
+            if self.current_mouse_location in [self.gameboard.player_pos, self.gameboard.Find_Goal_Pos()]:
+                return
             if self.gameboard.Get_CellType(self.current_mouse_location) != self.drag_type:
                 #update gameboard
                 self.gameboard.UpdateCell(self.current_mouse_location, self.drag_type)
@@ -298,8 +315,11 @@ class LevelEditor:
 
 
         if self.drag_type == CellType.PLAYER:
+            #if mouse if off of gameboard - put back to original position
+            if self.current_mouse_location is None:
+                self.player.rect.center = CellToPoint(self.initial_mouse_location, self.difficulty)
             #player can only be "set down" on ice and ground.
-            if self.gameboard.Get_CellType(self.current_mouse_location) in [CellType.ICE, CellType.GROUND]: 
+            elif self.gameboard.Get_CellType(self.current_mouse_location) in [CellType.ICE, CellType.GROUND]: 
                 #set new player position for gameboard
                 self.gameboard.SetPlayerPos(self.current_mouse_location)
                 #set new player position for sprite
@@ -309,8 +329,11 @@ class LevelEditor:
                 self.player.rect.center = CellToPoint(self.initial_mouse_location, self.difficulty)
 
         elif self.drag_type == CellType.GOAL:
+            #if mouse if off of gameboard - put back to original position
+            if self.current_mouse_location is None:
+                self.goal.rect.center = CellToPoint(self.initial_mouse_location, self.difficulty)
             #we could allow putting of the goal anywhere, it's limited to ICE and GROUND right now.
-            if self.gameboard.Get_CellType(self.current_mouse_location) in [CellType.ICE, CellType.GROUND]: 
+            elif self.gameboard.Get_CellType(self.current_mouse_location) in [CellType.ICE, CellType.GROUND]: 
                 #set old goal location to ICE, set new goal location to GOAL
                 self.gameboard.UpdateCell(self.initial_mouse_location, CellType.ICE)
                 self.gameboard.UpdateCell(self.current_mouse_location, CellType.GOAL)
@@ -322,13 +345,10 @@ class LevelEditor:
 
             #if operator tries to drop player on an "illegal" location, return the sprite to initial location.
             else:
-
-                self.player.rect.center = CellToPoint(self.initial_mouse_location, self.difficulty)
+                self.goal.rect.center = CellToPoint(self.initial_mouse_location, self.difficulty)
         
         
-        self.drag_type = None
-        self.offset = None
-        self.initial_mouse_location = None
+        self.reset_click()
 
     def handle_button_down(self, event: pygame.event.Event):
         """
