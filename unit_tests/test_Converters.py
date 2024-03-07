@@ -1,13 +1,13 @@
 import unittest
+import os
+import sys
+#necessary to import things from the SQ_modules folder
+sys.path.append(os.getcwd())
 from SQ_modules.Converters import CellToPoint, PointToCell
 from SQ_modules.DataTypes import Cell, Point
 from SQ_modules.GameEnums import CellType, GameDifficulty
 from SQ_modules.configs import CELL_DIMENSIONS, Border_Size_Lookup, WINDOW_DIMENSIONS
-import sys
-import os
 import numpy as np
-#necessary to import things from the SQ_modules folder
-sys.path.append(os.getcwd())
 from SQ_modules.GameBoard import GameBoard
 from SQ_modules.GameEnums import Direction, CellType
 from SQ_modules.DataTypes import Point, Cell
@@ -78,3 +78,6 @@ class Test_PointToCell(unittest.TestCase):
         difficulty = GameDifficulty.EXPERT
         cell = PointToCell(point, difficulty)
         self.assertEqual(cell, Cell(0, 0))
+
+if __name__ == '__main__':
+    unittest.main()
