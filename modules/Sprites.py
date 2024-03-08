@@ -89,7 +89,6 @@ class Player(Cell):
         screen.blit(self.shadow_sprite, shadow_pos)
         screen.blit(self.image, image_bottom_middle)
 
-
     def move(self, location: Point):
         """
         Set's the target position for the player as long as the player is not already moving.

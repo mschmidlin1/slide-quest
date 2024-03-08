@@ -7,6 +7,7 @@ from modules.Game import Game
 from modules.configs import WINDOW_DIMENSIONS, WINDOW_TITLE, EDIT_ON, ICON
 from modules.my_logging import set_logger, log
 from modules.LevelBackground import LevelBackground
+from modules.SplashScreen import SplashScreen
 
 set_logger()
 
@@ -18,7 +19,8 @@ class Window():
     @log
     def __init__(self):
         self.new()
-        self.title_screen: TitleScreen = TitleScreen(self.screen)
+        self.splash_screen_shown = False  # Add this to track if the splash screen has been shown
+        self.title_screen: TitleScreen = None
         self.current_game: Game = None
         self.level_complete_screen: LevelCompleteScreen = None
         self.level_manager = LevelIO()
@@ -29,12 +31,25 @@ class Window():
         """
         pygame.init()
         self.screen = pygame.display.set_mode(WINDOW_DIMENSIONS)
-        print(type(self.screen))
+        # print(type(self.screen))
         pygame.display.set_caption(WINDOW_TITLE)
         pygame.display.set_icon(ICON)
         self.clock = pygame.time.Clock()
+
+    @log
+    def run_splash_screen(self):
+        splash_screen = SplashScreen(self.screen)
+        splash_screen.run()
+        self.splash_screen_shown = True  # Mark splash screen as shown
+
     @log
     def run(self):
+        if not self.splash_screen_shown:  # Show the splash screen before anything else
+            self.run_splash_screen()    
+
+        if not self.title_screen and self.splash_screen_shown:  # Initialize title_screen after splash
+            self.title_screen = TitleScreen(self.screen)    
+
         while True:
             events = pygame.event.get()
             self.update(events)
@@ -62,7 +77,6 @@ class Window():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-
 
             if self.title_screen != None: #if you're currently on the title screen
                 if event.type == pygame.KEYDOWN:

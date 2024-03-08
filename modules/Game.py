@@ -113,6 +113,7 @@ class Game:
             self.level_background.draw(self.totalTime(), "") # the solutions string won't be display if not in edit mode.
         
         #draw sprite second
+        # self.gameboard_sprite_group.draw(self.screen)
         self.obstacle_sprites.draw(self.screen)
         self.player.draw_player(self.screen)
 
