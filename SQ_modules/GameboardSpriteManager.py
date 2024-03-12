@@ -1,7 +1,7 @@
 import pygame
 from pygame.sprite import Sprite
 from SQ_modules.DataTypes import Cell
-from SQ_modules.GameEnums import CellType
+from SQ_modules.GameEnums import CellType, Direction, GameDifficulty
 from SQ_modules.GameBoard import GameBoard
 import numpy as np
 from SQ_modules.Sprites import Player, Goal, Block, Ice
@@ -50,14 +50,52 @@ def Sprite_To_CellType(sprite: Sprite) -> CellType:
 
 class GameboardSpriteManager:
 
-    def __init__(self, gameboard: GameBoard):
+    def __init__(self, gameboard: GameBoard, difficulty: GameDifficulty):
         self.gameboard = gameboard
+        self.difficulty = difficulty
         self.gameboard_sprites = np.empty(self.gameboard.gameboard.shape, dtype=sprite_dtype)
+        self.gameboard_sprite_group = pygame.sprite.LayeredUpdates()
+        self.player_sprite_group = pygame.sprite.LayeredUpdates()
+        self.player: pygame.sprite.Sprite = None
 
+        self.PopulateSprites()
+        self.CreatePlayerSprite()
 
+    def CreatePlayerSprite(self):
+        """"
+        Creates the player sprite.
+        """
+        self.player_sprite = Player(self.gameboard.player_pos, self.difficulty)
+        self.player_sprite_group.add(self.player_sprite)
+
+    def PopulateSprites(self):
+        """
+        Populates the gameboard sprites using the self.gameboard property.
+        self.gameboard_sprites will be filled in by the end of this method.
+        """
+        for row_num, cells in enumerate(self.gameboard.gameboard):
+            for col_num, cell in enumerate(cells):
+                sprite_type = CellType_To_Sprite(cell)
+                new_sprite = sprite_type(Cell(row_num, col_num), self.difficulty)
+                self.gameboard_sprites[row_num, col_num] = new_sprite
+                self.gameboard_sprite_group.add(new_sprite)
+                 
     def GetSprite(self, cell: Cell) -> Sprite:
         """
         Get the gameboard sprite for the given cell position.
+        """
+        pass
+
+    def GetCellType(self, cell: Cell) -> CellType:
+        """
+        Gets the celltype of the given cell location.
+        """
+
+        pass
+
+    def Move(self, direction: Direction):
+        """
+        Moves the player in a given direction.
         """
         pass
 
@@ -66,6 +104,30 @@ class GameboardSpriteManager:
         Replaces the cell location with cell_type.
         """
         pass
+
+    def update(self, events: list[pygame.event.Event]):
+        """
+        Handles all updates for Gameboard sprites.
+        """
+
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == Direction.LEFT.value and not self.player.moving:
+                    self.player.move(self.gameboard.MovePlayer(Direction.LEFT))
+                if event.key == Direction.RIGHT.value and not self.player.moving:
+                    self.player.move(self.gameboard.MovePlayer(Direction.RIGHT))
+                if event.key == Direction.UP.value and not self.player.moving:
+                    self.player.move(self.gameboard.MovePlayer(Direction.UP))
+                if event.key == Direction.DOWN.value and not self.player.moving:
+                    self.player.move(self.gameboard.MovePlayer(Direction.DOWN))
+
+    def draw(self):
+        """
+        Handles drawing of all gameboard sprites.
+        """
+
+        pass
+
 
 
 
