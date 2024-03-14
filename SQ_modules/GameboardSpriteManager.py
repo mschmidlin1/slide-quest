@@ -1,5 +1,6 @@
 import pygame
 from pygame.sprite import Sprite
+from SQ_modules.Converters import CellToPoint
 from SQ_modules.DataTypes import Cell
 from SQ_modules.GameEnums import CellType, Direction, GameDifficulty
 from SQ_modules.GameBoard import GameBoard
@@ -9,7 +10,7 @@ sprite_dtype = np.dtype(Sprite)
 
 
 
-def CellType_To_Sprite(cell_type: CellType) -> Sprite:
+def CellType_To_SpriteType(cell_type: CellType) -> Sprite:
     """
     Takes a cell type and returns it's type of sprite.
 
@@ -26,7 +27,7 @@ def CellType_To_Sprite(cell_type: CellType) -> Sprite:
     else:
         raise NotImplementedError(f"CellType_To_Sprite() not implemented for {cell_type}")
     
-def Sprite_To_CellType(sprite: Sprite) -> CellType:
+def SpriteType_To_CellType(sprite: Sprite) -> CellType:
     """
     Takes a Sprite and returns it's CellType.
 
@@ -56,7 +57,7 @@ class GameboardSpriteManager:
         self.gameboard_sprites = np.empty(self.gameboard.gameboard.shape, dtype=sprite_dtype)
         self.gameboard_sprite_group = pygame.sprite.LayeredUpdates()
         self.player_sprite_group = pygame.sprite.LayeredUpdates()
-        self.player: pygame.sprite.Sprite = None
+        self.player_sprite: Player = None
 
         self.PopulateSprites()
         self.CreatePlayerSprite()
@@ -66,7 +67,7 @@ class GameboardSpriteManager:
         Creates the player sprite.
         """
         self.player_sprite = Player(self.gameboard.player_pos, self.difficulty)
-        self.player_sprite_group.add(self.player_sprite)
+        self.player_sprite_group.add(self.player_sprite)z
 
     def PopulateSprites(self):
         """
@@ -75,7 +76,7 @@ class GameboardSpriteManager:
         """
         for row_num, cells in enumerate(self.gameboard.gameboard):
             for col_num, cell in enumerate(cells):
-                sprite_type = CellType_To_Sprite(cell)
+                sprite_type = CellType_To_SpriteType(cell)
                 new_sprite = sprite_type(Cell(row_num, col_num), self.difficulty)
                 self.gameboard_sprites[row_num, col_num] = new_sprite
                 self.gameboard_sprite_group.add(new_sprite)
@@ -84,49 +85,55 @@ class GameboardSpriteManager:
         """
         Get the gameboard sprite for the given cell position.
         """
-        pass
+        return self.gameboard_sprites[cell.row, cell.col]
 
     def GetCellType(self, cell: Cell) -> CellType:
         """
         Gets the celltype of the given cell location.
         """
 
-        pass
+        return SpriteType_To_CellType(type(self.GetSprite(cell)))
 
-    def Move(self, direction: Direction):
+    def Move(self, cell: Cell):
         """
         Moves the player in a given direction.
         """
-        pass
+        self.player_sprite.move(cell)
 
-    def SetSprite(self, cell: Cell, cell_type: CellType) -> Sprite:
+    def SetSprite(self, cell: Cell, cell_type: CellType) -> None:
         """
-        Replaces the cell location with cell_type.
+        Replaces the cell location with a sprite of cell_type.
         """
-        pass
+        #if cell type is player, just set the player sprite to the new location
+        if cell_type == CellType.PLAYER:
+            self.player_sprite.rect.center = CellToPoint(cell, self.difficulty)
+            return
+        
+        #get the old sprite object from the location and delete from gameboard group
+        old_sprite = self.GetSprite(cell)
+        self.gameboard_sprite_group.remove(old_sprite)
+
+        #create new sprite, set in gameboard array, and add to gameboard sprite group
+        new_cell_type = CellType_To_SpriteType(cell_type)
+        new_sprite = new_cell_type(cell, self.difficulty)
+        self.gameboard_sprites[cell.row, cell.col] = new_sprite
+        self.gameboard_sprite_group.add(new_sprite)
+
+
 
     def update(self, events: list[pygame.event.Event]):
         """
         Handles all updates for Gameboard sprites.
         """
-
-        for event in events:
-            if event.type == pygame.KEYDOWN:
-                if event.key == Direction.LEFT.value and not self.player.moving:
-                    self.player.move(self.gameboard.MovePlayer(Direction.LEFT))
-                if event.key == Direction.RIGHT.value and not self.player.moving:
-                    self.player.move(self.gameboard.MovePlayer(Direction.RIGHT))
-                if event.key == Direction.UP.value and not self.player.moving:
-                    self.player.move(self.gameboard.MovePlayer(Direction.UP))
-                if event.key == Direction.DOWN.value and not self.player.moving:
-                    self.player.move(self.gameboard.MovePlayer(Direction.DOWN))
+        self.gameboard_sprite_group.update()
+        self.player_sprite_group.update()
 
     def draw(self):
         """
         Handles drawing of all gameboard sprites.
         """
-
-        pass
+        self.gameboard_sprite_group.draw()
+        self.player_sprite_group.draw()
 
 
 
