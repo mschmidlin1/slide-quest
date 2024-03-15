@@ -2,10 +2,9 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import pygame
-from SQ_modules.configs import TITLE_FONT, WINDOW_DIMENSIONS, TITLE_SCREEN_COLOR, TITLE_SCREEN_TEXT_COLOR
-from SQ_modules.Sprites import TextSprite, Player
-from SQ_modules.DataTypes import Point, Size, Cell
-from SQ_modules.GameEnums import GameDifficulty
+from SQ_modules.configs import TITLE_FONT, WINDOW_DIMENSIONS, TITLE_SCREEN_TEXT_COLOR
+from SQ_modules.Sprites import TextSprite
+from SQ_modules.DataTypes import Point
 
 class TitleScreen():
     def __init__(self, screen):

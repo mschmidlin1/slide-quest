@@ -52,16 +52,12 @@ class LevelBackground():
         self.sprite_group.add(self.solution_sprite)
 
 
-
-
     def draw(self, time_str: str, solution: str):
         self.screen.fill(TITLE_SCREEN_COLOR)
         self.time_sprite.update_text(time_str)
         self.solution_sprite.update_text(solution)
         self.sprite_group.update()
         self.sprite_group.draw(self.screen)
-
-
 
 
 if __name__=="__main__":

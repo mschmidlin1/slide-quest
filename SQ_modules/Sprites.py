@@ -3,7 +3,7 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from SQ_modules.GameEnums import CellType, GameDifficulty
-from SQ_modules.configs import CELL_DIMENSIONS, WALL_COLOR, GOAL_COLOR, ICE_COLOR, PLAYER_COLOR, PLAYER_SPEED, PALLET_HIGHLIGHT_COLOR, SELECTOR_TOOL_IMAGE, Border_Size_Lookup
+from SQ_modules.configs import CELL_DIMENSIONS, WALL_COLOR, GOAL_COLOR, ICE_COLOR, PLAYER_COLOR, PLAYER_SPEED, PALLET_HIGHLIGHT_COLOR, SELECTOR_TOOL_IMAGE, Border_Size_Lookup, PLAYER_SPRITE_SHEET, PLAYERSHADOW_SPRITE_SHEET 
 from SQ_modules.DataTypes import Point, Size, Cell
 from SQ_modules.my_logging import set_logger, log
 from SQ_modules.Converters import PointToCell, CellToPoint
@@ -14,17 +14,68 @@ class Player(pygame.sprite.Sprite):
     def __init__(self, gameboard_loc: Cell, difficulty: GameDifficulty):
         super().__init__()
         self.cellType = CellType.PLAYER
-        self.difficulty = difficulty
         self.border_size = Border_Size_Lookup[difficulty]
-        self._layer = 2
         self.gameboard_loc = gameboard_loc
-        self.image = pygame.Surface(CELL_DIMENSIONS)
-        self.image.fill(PLAYER_COLOR)
+        self.sprite_size = (50, 37)  # The size of a single sprite
+        self.setup_sprites()  # Setup sprite imaging
         self.rect = self.image.get_rect()
-        self.rect.center = CellToPoint(gameboard_loc, self.difficulty)
+        self.rect.center = self.GameboardCell_To_CenterPixelCoords(gameboard_loc)
         self.current_pos = self.rect.center
-        self.speed = PLAYER_SPEED
         self.moving = False
+        self.speed = PLAYER_SPEED
+        self.last_update = pygame.time.get_ticks()
+        self.frame_rate = 600  # Milliseconds per frame
+
+    def setup_sprites(self):
+        """
+        Loads the sprite sheet, slices it into frames, and sets the initial sprite image.
+        """
+        self.sprite_sheet = pygame.image.load(PLAYER_SPRITE_SHEET).convert_alpha()  # Load the sprite sheet
+        self.shadow_sprite = pygame.image.load(PLAYERSHADOW_SPRITE_SHEET).convert_alpha()  # Load the sprite sheet
+
+        self.shadow_sprite = pygame.transform.scale(self.shadow_sprite, (32, 32))
+
+        self.idle_frames = self.load_frames(4)  # Load the first four frames for idle animation
+        self.current_frame = 0
+        self.image = self.idle_frames[self.current_frame]  # Start with the first frame
+
+    def load_frames(self, number_of_frames: int):
+        """
+        Slices the sprite sheet into individual frames.
+        """
+        frames = []
+        for i in range(number_of_frames):
+            frame = self.sprite_sheet.subsurface((i * self.sprite_size[0], 0, self.sprite_size[0], self.sprite_size[1]))
+            frames.append(frame)
+        return frames
+
+    def update_sprite(self):
+        """
+        Update the sprite image based on the player's state. For example, cycle through
+        idle frames or switch to a moving animation.
+        """
+        current_time = pygame.time.get_ticks()
+        if current_time - self.last_update > self.frame_rate:
+            self.last_update = current_time
+            self.current_frame = (self.current_frame + 1) % len(self.idle_frames)
+            self.image = self.idle_frames[self.current_frame]
+
+    def draw_player(self, screen):
+        """
+        Custom drawing of the player sprite to control its visual representation.
+        """
+        # Custom drawing logic (for example, aligning the bottom middle of the sprite)
+        image_bottom_middle = (self.rect.centerx - self.image.get_width() / 2,
+                               self.rect.centery - self.image.get_height())
+        
+        # Calculate the position for the shadow sprite
+        # Assuming the shadow should be centered directly under the player sprite
+        shadow_pos = (self.rect.centerx - self.shadow_sprite.get_width() / 2,
+                    (self.rect.centery - 3) - self.shadow_sprite.get_height() / 2)
+
+        # Blit the shadow sprite first
+        screen.blit(self.shadow_sprite, shadow_pos)
+        screen.blit(self.image, image_bottom_middle)
 
     def move(self, location: Cell):
         """
@@ -42,6 +93,9 @@ class Player(pygame.sprite.Sprite):
         self.moving = True
 
     def update(self):
+
+        current_time = pygame.time.get_ticks()
+
         if self.moving:
             
             self.target_pos_pixels = CellToPoint(self.target_pos_cell, self.difficulty)
@@ -62,7 +116,14 @@ class Player(pygame.sprite.Sprite):
                 distance_to_target.normalize_ip()
                 distance_to_target = distance_to_target * PLAYER_SPEED
                 self.current_pos += distance_to_target
-                            
+            self.rect.center = self.GameboardCell_To_CenterPixelCoords(self.current_pos)
+
+        else:
+            # Update the frame if it's time            
+            if current_time - self.last_update > self.frame_rate:
+                self.last_update = current_time
+                self.current_frame = (self.current_frame + 1) % len(self.idle_frames)
+                self.image = self.idle_frames[self.current_frame]
             #have to do manual conversion until I think of a better way to structure the converter.
             x = Border_Size_Lookup[self.difficulty].width + (self.current_pos[0] * CELL_DIMENSIONS.width) + (CELL_DIMENSIONS.width // 2)
             y = Border_Size_Lookup[self.difficulty].height + (self.current_pos[1] * CELL_DIMENSIONS.height) + (CELL_DIMENSIONS.height // 2)
@@ -118,9 +179,6 @@ class Highlighter(pygame.sprite.Sprite):
         self.gameboard_loc = gameboard_loc
         self.image = pygame.Surface(CELL_DIMENSIONS, pygame.SRCALPHA)
         self.image.fill((255, 255, 255, 128))
-
-
-
         self.rect = self.image.get_rect()
         self.rect.center = CellToPoint(gameboard_loc, self.difficulty)
 
@@ -131,26 +189,36 @@ class SelectorTool(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
 
 class TextSprite(pygame.sprite.Sprite):
-    def __init__(self, text: str, font_file: str, font_size: int, location: Point, color: tuple, anchor: str = 'center'):
+    def __init__(self, text: str, font_file: str, font_size: int, location: Point, color: tuple = (0,0,0), anchor: str = 'center', outline_color: tuple = None, outline_width: int = 2):
         super().__init__()
         self.font = pygame.font.Font(font_file, font_size)
         self.color = color
         self.image = self.font.render(text, True, color)
         self.rect = self.image.get_rect()
+        self.outline_color = outline_color
+        self.outline_width = outline_width
         self.anchor = anchor
         self.location = location
-        if anchor == 'center':
-            self.rect.center = location
-        elif anchor == 'topleft':
-            self.rect.topleft = location
-        elif anchor == 'topright':
-            self.rect.topright = location
-        elif anchor == 'bottomleft':
-            self.rect.bottomleft = location
-        elif anchor == 'bottomright':
-            self.rect.bottomright = location
-        else:
-            raise ValueError("Invalid anchor point")
+        self.update_text(text)
+        
+    def render_text_with_outline(self, text: str):
+        # Render the base text
+        base_text = self.font.render(text, True, self.color)
+        if not self.outline_color:
+            return base_text
+        
+        # Create a surface to hold the text with an outline
+        outline_surface = pygame.Surface(base_text.get_rect().inflate(self.outline_width*2, self.outline_width*2).size, pygame.SRCALPHA)
+        
+        # Render the outline by blitting the base text multiple times with an offset
+        outline_rect = base_text.get_rect()
+        for dx, dy in [(-1, -1), (-1, 1), (1, -1), (1, 1)]:  # You can add more directions for a thicker outline
+            outline_surface.blit(self.font.render(text, True, self.outline_color), (outline_rect.x + dx*self.outline_width, outline_rect.y + dy*self.outline_width))
+        
+        # Blit the base text onto the outline surface
+        outline_surface.blit(base_text, (self.outline_width, self.outline_width))
+        return outline_surface
+
         
     def update_text(self, text: str):
         self.image = self.font.render(text, True, self.color)
