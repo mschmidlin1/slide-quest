@@ -40,23 +40,19 @@ class Game:
         self.least_moves = len(self.solution_moves)
 
         self.gameboard_sprite_group = pygame.sprite.LayeredUpdates()
-        self.player_sprites = pygame.sprite.LayeredUpdates()
-        self.obstacle_sprites = pygame.sprite.LayeredUpdates()
+        # self.player_sprites = pygame.sprite.LayeredUpdates()
         
         for row, cells in enumerate(self.gameboard.gameboard):
             for col, cell in enumerate(cells):
                 if cell == CellType.BLOCK:
-                    self.obstacle_sprites.add(Block(Cell(row, col), self.difficulty), layer=0)
+                    self.gameboard_sprite_group.add(Block(Cell(row, col), self.difficulty), layer=0)
                 if cell == CellType.GOAL:
-                    self.obstacle_sprites.add(Goal(Cell(row, col), self.difficulty), layer=1)
+                    self.gameboard_sprite_group.add(Goal(Cell(row, col), self.difficulty), layer=1)
                 if cell == CellType.ICE:
-                    self.obstacle_sprites.add(Ice(Cell(row, col), self.difficulty), layer=0)
+                    self.gameboard_sprite_group.add(Ice(Cell(row, col), self.difficulty), layer=0)
                     
         self.player = Player(self.gameboard.player_pos, self.difficulty)
-        self.player_sprites.add(self.player, layer=2)
-
-        self.gameboard_sprite_group.add(self.obstacle_sprites)
-        self.gameboard_sprite_group.add(self.player_sprites)
+        # self.player_sprites.add(self.player, layer=2)
 
         self.levelEditor = LevelEditor(self.gameboard, self.gameboard_sprite_group, self.difficulty, self.player, level_manager, self.screen)
         self.level_background = LevelBackground(self.screen, level_manager.current_level)
@@ -112,8 +108,9 @@ class Game:
             self.level_background.draw(self.totalTime(), "") # the solutions string won't be display if not in edit mode.
         
         #draw sprite second
-        self.obstacle_sprites.draw(self.screen)
+        self.gameboard_sprite_group.draw(self.screen)
         self.player.draw_player(self.screen)
+        # self.player_sprites.draw(self.screen)
 
         #draw level editor last
         if(self.isEditActive):
@@ -128,6 +125,7 @@ class Game:
         """
         self.move_player(events)
         self.gameboard_sprite_group.update()
+        self.player.update()
 
         if(self.isEditActive):
             self.levelEditor.update(events)
