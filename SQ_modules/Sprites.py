@@ -221,7 +221,7 @@ class TextSprite(pygame.sprite.Sprite):
 
         
     def update_text(self, text: str):
-        self.image = self.font.render(text, True, self.color)
+        self.image = self.render_text_with_outline(text)
         self.rect = self.image.get_rect()
         if self.anchor == 'center':
             self.rect.center = self.location

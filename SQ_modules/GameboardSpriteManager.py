@@ -67,7 +67,7 @@ class GameboardSpriteManager:
         Creates the player sprite.
         """
         self.player_sprite = Player(self.gameboard.player_pos, self.difficulty)
-        self.player_sprite_group.add(self.player_sprite)z
+        self.player_sprite_group.add(self.player_sprite)
 
     def PopulateSprites(self):
         """
