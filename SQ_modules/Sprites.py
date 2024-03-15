@@ -236,14 +236,14 @@ class TextSprite(pygame.sprite.Sprite):
         else:
             raise ValueError("Invalid anchor point")
 
-class TitleScreenPlayerSprite(pygame.sprite.Sprite):
-    def __init__(self, center_location: Point):
-        super().__init__()
-        self.surface = pygame.Surface((100, 100))
-        self.surface.fill(PLAYER_COLOR)
-        self.image = self.surface
-        self.rect = self.image.get_rect()
-        self.rect.center = center_location
+# class TitleScreenPlayerSprite(pygame.sprite.Sprite):
+#     def __init__(self, center_location: Point):
+#         super().__init__()
+#         self.surface = pygame.Surface((100, 100))
+#         self.surface.fill(PLAYER_COLOR)
+#         self.image = self.surface
+#         self.rect = self.image.get_rect()
+#         self.rect.center = center_location
 
 class HollowSquareSprite(pygame.sprite.Sprite):
     def __init__(self, location: Point, thickness: int, color=PALLET_HIGHLIGHT_COLOR, transparent_color=(0, 0, 0, 0)):

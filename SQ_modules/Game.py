@@ -127,7 +127,9 @@ class Game:
         This also passes the events to child elements such as levelEditor.
         """
         self.move_player(events)
-        self.gameboard_sprite_group.update()
+        # self.gameboard_sprite_group.update()
+        self.player.update()
+        self.obstacle_sprites.update()
 
         if(self.isEditActive):
             self.levelEditor.update(events)
