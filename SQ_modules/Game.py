@@ -46,11 +46,11 @@ class Game:
         for row, cells in enumerate(self.gameboard.gameboard):
             for col, cell in enumerate(cells):
                 if cell == CellType.BLOCK:
-                    self.obstacle_sprites.add(Block(Cell(col, row), self.difficulty), layer=0)
+                    self.obstacle_sprites.add(Block(Cell(row, col), self.difficulty), layer=0)
                 if cell == CellType.GOAL:
-                    self.obstacle_sprites.add(Goal(Cell(col, row), self.difficulty), layer=1)
+                    self.obstacle_sprites.add(Goal(Cell(row, col), self.difficulty), layer=1)
                 if cell == CellType.ICE:
-                    self.obstacle_sprites.add(Ice(Cell(col, row), self.difficulty), layer=0)
+                    self.obstacle_sprites.add(Ice(Cell(row, col), self.difficulty), layer=0)
                     
         self.player = Player(self.gameboard.player_pos, self.difficulty)
         self.player_sprites.add(self.player, layer=2)
@@ -127,9 +127,7 @@ class Game:
         This also passes the events to child elements such as levelEditor.
         """
         self.move_player(events)
-        # self.gameboard_sprite_group.update()
-        self.player.update()
-        self.obstacle_sprites.update()
+        self.gameboard_sprite_group.update()
 
         if(self.isEditActive):
             self.levelEditor.update(events)
