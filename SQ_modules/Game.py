@@ -46,19 +46,19 @@ class Game:
         for row, cells in enumerate(self.gameboard.gameboard):
             for col, cell in enumerate(cells):
                 if cell == CellType.BLOCK:
-                    self.obstacle_sprites.add(Block(Point(col, row), self.border_size), layer=0)
+                    self.obstacle_sprites.add(Block(Cell(col, row), self.difficulty), layer=0)
                 if cell == CellType.GOAL:
-                    self.obstacle_sprites.add(Goal(Point(col, row), self.border_size), layer=1)
+                    self.obstacle_sprites.add(Goal(Cell(col, row), self.difficulty), layer=1)
                 if cell == CellType.ICE:
-                    self.obstacle_sprites.add(Ice(Point(col, row), self.border_size), layer=0)
+                    self.obstacle_sprites.add(Ice(Cell(col, row), self.difficulty), layer=0)
                     
-        self.player = Player(self.gameboard.player_pos, self.border_size)
+        self.player = Player(self.gameboard.player_pos, self.difficulty)
         self.player_sprites.add(self.player, layer=2)
 
         self.gameboard_sprite_group.add(self.obstacle_sprites)
         self.gameboard_sprite_group.add(self.player_sprites)
 
-        self.levelEditor = LevelEditor(self.gameboard, self.gameboard_sprite_group, self.border_size, self.player, level_manager, self.screen)
+        self.levelEditor = LevelEditor(self.gameboard, self.gameboard_sprite_group, self.difficulty, self.player, level_manager, self.screen)
         self.level_background = LevelBackground(self.screen, level_manager.current_level)
         self.num_moves = 0
         self.start_time = time.time()
@@ -112,7 +112,6 @@ class Game:
             self.level_background.draw(self.totalTime(), "") # the solutions string won't be display if not in edit mode.
         
         #draw sprite second
-        # self.gameboard_sprite_group.draw(self.screen)
         self.obstacle_sprites.draw(self.screen)
         self.player.draw_player(self.screen)
 

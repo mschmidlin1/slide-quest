@@ -14,12 +14,13 @@ class Player(pygame.sprite.Sprite):
     def __init__(self, gameboard_loc: Cell, difficulty: GameDifficulty):
         super().__init__()
         self.cellType = CellType.PLAYER
+        self.difficulty = difficulty
         self.border_size = Border_Size_Lookup[difficulty]
         self.gameboard_loc = gameboard_loc
         self.sprite_size = (50, 37)  # The size of a single sprite
         self.setup_sprites()  # Setup sprite imaging
         self.rect = self.image.get_rect()
-        self.rect.center = self.GameboardCell_To_CenterPixelCoords(gameboard_loc)
+        self.rect.center = CellToPoint(gameboard_loc, self.difficulty)
         self.current_pos = self.rect.center
         self.moving = False
         self.speed = PLAYER_SPEED
@@ -116,7 +117,11 @@ class Player(pygame.sprite.Sprite):
                 distance_to_target.normalize_ip()
                 distance_to_target = distance_to_target * PLAYER_SPEED
                 self.current_pos += distance_to_target
-            self.rect.center = self.GameboardCell_To_CenterPixelCoords(self.current_pos)
+
+            #have to do manual conversion until I think of a better way to structure the converter.
+            x = Border_Size_Lookup[self.difficulty].width + (self.current_pos[0] * CELL_DIMENSIONS.width) + (CELL_DIMENSIONS.width // 2)
+            y = Border_Size_Lookup[self.difficulty].height + (self.current_pos[1] * CELL_DIMENSIONS.height) + (CELL_DIMENSIONS.height // 2)
+            self.rect.center = Point(round(x), round(y))
 
         else:
             # Update the frame if it's time            
@@ -124,12 +129,7 @@ class Player(pygame.sprite.Sprite):
                 self.last_update = current_time
                 self.current_frame = (self.current_frame + 1) % len(self.idle_frames)
                 self.image = self.idle_frames[self.current_frame]
-            #have to do manual conversion until I think of a better way to structure the converter.
-            x = Border_Size_Lookup[self.difficulty].width + (self.current_pos[0] * CELL_DIMENSIONS.width) + (CELL_DIMENSIONS.width // 2)
-            y = Border_Size_Lookup[self.difficulty].height + (self.current_pos[1] * CELL_DIMENSIONS.height) + (CELL_DIMENSIONS.height // 2)
-            self.rect.center = Point(round(x), round(y))
-            # self.rect.center = CellToPoint(self.current_pos, self.difficulty)
-            
+
 class Block(pygame.sprite.Sprite):
     def __init__(self, gameboard_loc: Cell, difficulty: GameDifficulty):
         super().__init__()
