@@ -1,6 +1,6 @@
 import pygame
 from SQ_modules.GameBoard import GameBoard
-from SQ_modules.Sprites import Block, Goal, Ice, Player
+from SQ_modules.Sprites import Block, Goal, Ice, Player, SpriteLoader
 from SQ_modules.DataTypes import Point, Size, Cell
 from SQ_modules.LevelEditor import LevelEditor
 from SQ_modules.LevelIO import LevelIO
@@ -15,7 +15,8 @@ from SQ_modules.configs import (
     CELL_DIMENSIONS,
     PLAYER_SPRITE_SHEET,
     IS_EDIT_ON_DEFAULT,
-    Border_Size_Lookup)
+    Border_Size_Lookup,
+    ENVIRONMENT_SPRITE_SHEET)
 
 import time
 set_logger()
@@ -38,6 +39,8 @@ class Game:
         self.gameboard = GameBoard(gameboard_array, player_pos)
         self.solution_moves = ShortestPath(self.gameboard)
         self.least_moves = len(self.solution_moves)
+
+        self.load_all_resources()
 
         self.gameboard_sprite_group = pygame.sprite.LayeredUpdates()
         # self.player_sprites = pygame.sprite.LayeredUpdates()
@@ -79,6 +82,19 @@ class Game:
                     self.num_moves += 1
                 if self.isEditActive:
                     self.solution_moves = ShortestPath(self.gameboard)
+    def load_all_resources(self):
+        sprite_positions = {
+            'ice': (32, 192, 32, 32),            
+            'goal': (96, 224, 32, 32),
+            'block_1x1_1': (32, 320, 32, 32),
+            'block_1x1_2': (32, 352, 32, 32),
+            'block_1x1_3': (64, 352, 32, 32),
+            'block_1x1_4': (96, 352, 32, 32),
+            'block_1x1_5': (128, 352, 32, 32)
+        }
+
+        SpriteLoader.load_sprite_sheet(ENVIRONMENT_SPRITE_SHEET, sprite_positions)
+
     @log
     def isComplete(self):
         """
