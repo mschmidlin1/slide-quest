@@ -186,7 +186,7 @@ class Block(pygame.sprite.Sprite):
         self.difficulty = difficulty
         self.border_size = Border_Size_Lookup[difficulty]
         self.gameboard_loc = gameboard_loc
-        block_variants = ['block_1x1_1', 'block_1x1_2', 'block_1x1_3', 'block_1x1_4', 'block_1x1_5']
+        block_variants = ['block_1x1_a', 'block_1x1_b', 'block_1x1_c', 'block_1x1_d', 'block_1x1_e']
         chosen_block = random.choice(block_variants)  
         self.image = SpriteLoader.get_sprite(chosen_block)  # Use the chosen sprite
         self.rect = self.image.get_rect()
@@ -213,6 +213,20 @@ class Ice(pygame.sprite.Sprite):
         self.image = SpriteLoader.get_sprite('ice')
         self.rect = self.image.get_rect()
         self.rect.center = CellToPoint(gameboard_loc, self.difficulty)
+
+class Border(pygame.sprite.Sprite):
+    def __init__(self, position: Point, sprite_name: str):
+        super().__init__()
+        self.image = SpriteLoader.get_sprite(sprite_name)
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (position.x, position.y)
+
+class Background(pygame.sprite.Sprite):
+    def __init__(self, position: Point):
+        super().__init__()
+        self.image = SpriteLoader.get_sprite('background')
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (position.x, position.y)
 
 class Highlighter(pygame.sprite.Sprite):
     def __init__(self, gameboard_loc: Cell, difficulty: GameDifficulty):

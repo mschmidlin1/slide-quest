@@ -34,6 +34,28 @@ Game_Difficult_Str_Map_Reverse = {
     GameDifficulty.EXPERT: "4"
 }
 
+sprite_positions = {
+    'ice': (32, 192, 32, 32),            
+    'goal': (96, 224, 32, 32),
+    'background': (32, 32, 32, 32),
+    'block_1x1_a': (32, 320, 32, 32),
+    'block_1x1_b': (32, 352, 32, 32),
+    'block_1x1_c': (64, 352, 32, 32),
+    'block_1x1_d': (96, 352, 32, 32),
+    'block_1x1_e': (128, 352, 32, 32),
+    'border_top': (32, 128, 32, 32),
+    'border_topAbove': (32, 256, 32, 32),
+    'border_left': (64, 32, 32, 32),
+    'border_right': (0, 32, 32, 32),
+    'border_bottom': (512, 384, 32, 32),
+    'border_topLeft': (64, 32, 32, 32),
+    'border_topLeftAbove': (0, 256, 32, 32),
+    'border_topRight': (0, 32, 32, 32),
+    'border_topRightAbove': (32, 288, 32, 32),
+    'border_bottomLeft': (448, 384, 32, 32),
+    'border_bottomRight': (576, 384, 32, 32)
+}
+
 class CellType(Enum):
     """
     An Enum class that represents the type of cell to fill the grid.

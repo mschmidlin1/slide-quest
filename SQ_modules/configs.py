@@ -16,7 +16,7 @@ ICON = pygame.image.load('resources/images/Icy-Q-nobackground64x64.png')
 TITLE_FONT = "resources/fonts/m5x7.otf"
 PLAYER_SPRITE_SHEET = 'resources/sprites/player/adventurer-grey-scarf-Sheet.png'
 PLAYERSHADOW_SPRITE_SHEET = 'resources/sprites/player/player-shadow.png'
-ENVIRONMENT_SPRITE_SHEET = 'resources/sprites/environment/Spritesheet_revised.png'
+ENVIRONMENT_SPRITE_SHEET = 'resources/sprites/environment/Spritesheet_revised_2.0.png'
 
 #window information
 
