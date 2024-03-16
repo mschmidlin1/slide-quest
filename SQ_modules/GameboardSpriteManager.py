@@ -9,7 +9,6 @@ from SQ_modules.Sprites import Player, Goal, Block, Ice
 sprite_dtype = np.dtype(Sprite)
 
 
-
 def CellType_To_SpriteType(cell_type: CellType) -> Sprite:
     """
     Takes a cell type and returns it's type of sprite.
@@ -45,9 +44,6 @@ def SpriteType_To_CellType(sprite: Sprite) -> CellType:
         return CellType.ICE
     else:
         raise NotImplementedError(f"Sprite_To_CellType() not implemented for {sprite}")
-
-
-
 
 class GameboardSpriteManager:
 
@@ -118,8 +114,6 @@ class GameboardSpriteManager:
         new_sprite = new_cell_type(cell, self.difficulty)
         self.gameboard_sprites[cell.row, cell.col] = new_sprite
         self.gameboard_sprite_group.add(new_sprite)
-
-
 
     def update(self, events: list[pygame.event.Event]):
         """

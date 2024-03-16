@@ -6,7 +6,6 @@ from SQ_modules.LevelCompleteScreen import LevelCompleteScreen
 from SQ_modules.Game import Game
 from SQ_modules.configs import WINDOW_DIMENSIONS, WINDOW_TITLE, ICON
 from SQ_modules.my_logging import set_logger, log
-from SQ_modules.LevelBackground import LevelBackground
 from SQ_modules.SplashScreen import SplashScreen
 
 set_logger()
@@ -19,7 +18,7 @@ class Window():
     @log
     def __init__(self):
         self.new()
-        self.splash_screen_shown = True  # Add this to track if the splash screen has been shown
+        self.splash_screen_shown = False  # Add this to track if the splash screen has been shown
         self.title_screen: TitleScreen = None
         self.current_game: Game = None
         self.level_complete_screen: LevelCompleteScreen = None

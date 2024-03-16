@@ -1,10 +1,10 @@
 import pygame
 from SQ_modules.GameBoard import GameBoard
-from SQ_modules.Sprites import Block, Goal, Ice, Player
+from SQ_modules.Sprites import Block, Goal, Ice, Player, SpriteLoader
 from SQ_modules.DataTypes import Point, Size, Cell
 from SQ_modules.LevelEditor import LevelEditor
 from SQ_modules.LevelIO import LevelIO
-from SQ_modules.GameEnums import Direction, GameDifficulty, CellType
+from SQ_modules.GameEnums import Direction, GameDifficulty, CellType, sprite_positions
 from SQ_modules.my_logging import set_logger, log
 import logging
 from SQ_modules.LevelBackground import LevelBackground
@@ -15,7 +15,8 @@ from SQ_modules.configs import (
     CELL_DIMENSIONS,
     PLAYER_SPRITE_SHEET,
     IS_EDIT_ON_DEFAULT,
-    Border_Size_Lookup)
+    Border_Size_Lookup,
+    ENVIRONMENT_SPRITE_SHEET)
 
 import time
 set_logger()
@@ -39,6 +40,8 @@ class Game:
         self.solution_moves = ShortestPath(self.gameboard)
         self.least_moves = len(self.solution_moves)
 
+        self.load_all_resources()
+
         self.gameboard_sprite_group = pygame.sprite.LayeredUpdates()
         # self.player_sprites = pygame.sprite.LayeredUpdates()
         
@@ -55,9 +58,12 @@ class Game:
         # self.player_sprites.add(self.player, layer=2)
 
         self.levelEditor = LevelEditor(self.gameboard, self.gameboard_sprite_group, self.difficulty, self.player, level_manager, self.screen)
-        self.level_background = LevelBackground(self.screen, level_manager.current_level)
+
+        self.level_background = LevelBackground(self.screen, level_manager.current_level, self.difficulty)
+        self.level_background.fill_background()
         self.num_moves = 0
         self.start_time = time.time()
+
     @log
     def move_player(self, events: list[pygame.event.Event]):
         """
@@ -79,6 +85,11 @@ class Game:
                     self.num_moves += 1
                 if self.isEditActive:
                     self.solution_moves = ShortestPath(self.gameboard)
+
+    @log
+    def load_all_resources(self):
+        SpriteLoader.load_sprite_sheet(ENVIRONMENT_SPRITE_SHEET, sprite_positions)
+
     @log
     def isComplete(self):
         """
@@ -88,6 +99,7 @@ class Game:
             return self.gameboard.Find_Goal_Pos() == self.gameboard.GetPlayerPos()
         else:
             return False
+    
     @log
     def totalTime(self) -> str:
         """
@@ -96,12 +108,15 @@ class Game:
         total_time = time.time() - self.start_time
         minutes, seconds = divmod(total_time, 60)
         return f"{int(minutes):02}:{int(seconds):02}"
+    
     @log
     def draw(self):
         """
         Draw the necessary game elements on the screen. Draws all child elements of the game (level_background and levelEditor).
         """
         #draw background first
+        self.level_background.background_sprites.draw(self.screen)
+
         if(self.isEditActive):
             self.level_background.draw(self.totalTime(), self.solution_str())
         else:
@@ -115,6 +130,9 @@ class Game:
         #draw level editor last
         if(self.isEditActive):
             self.levelEditor.draw()
+        else:
+            self.level_background.bottom_border_sprites.draw(self.screen)
+
 
     @log
     def update(self, events: list[pygame.event.Event]):
