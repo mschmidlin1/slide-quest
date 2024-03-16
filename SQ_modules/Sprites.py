@@ -136,7 +136,6 @@ class Block(pygame.sprite.Sprite):
         self.cellType = CellType.BLOCK
         self.difficulty = difficulty
         self.border_size = Border_Size_Lookup[difficulty]
-        self._layer = 0
         self.gameboard_loc = gameboard_loc
         self.image = pygame.Surface(CELL_DIMENSIONS)
         self.image.fill(WALL_COLOR)
@@ -149,7 +148,6 @@ class Goal(pygame.sprite.Sprite):
         self.cellType = CellType.GOAL
         self.difficulty = difficulty
         self.border_size = Border_Size_Lookup[difficulty]
-        self._layer = 1
         self.gameboard_loc = gameboard_loc
         self.image = pygame.Surface(CELL_DIMENSIONS)
         self.image.fill(GOAL_COLOR)
@@ -162,7 +160,6 @@ class Ice(pygame.sprite.Sprite):
         self.cellType = CellType.ICE
         self.difficulty = difficulty
         self.border_size = Border_Size_Lookup[difficulty]
-        self._layer = 0
         self.gameboard_loc = gameboard_loc
         self.image = pygame.Surface(CELL_DIMENSIONS)
         self.image.fill(ICE_COLOR)
@@ -221,7 +218,7 @@ class TextSprite(pygame.sprite.Sprite):
 
         
     def update_text(self, text: str):
-        self.image = self.font.render(text, True, self.color)
+        self.image = self.render_text_with_outline(text)
         self.rect = self.image.get_rect()
         if self.anchor == 'center':
             self.rect.center = self.location
