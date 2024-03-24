@@ -1,13 +1,62 @@
 import pygame
 import sys
 import os
+import random
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from SQ_modules.GameEnums import CellType, GameDifficulty
-from SQ_modules.configs import CELL_DIMENSIONS, WALL_COLOR, GOAL_COLOR, ICE_COLOR, PLAYER_COLOR, PLAYER_SPEED, PALLET_HIGHLIGHT_COLOR, SELECTOR_TOOL_IMAGE, Border_Size_Lookup, PLAYER_SPRITE_SHEET, PLAYERSHADOW_SPRITE_SHEET 
+from SQ_modules.configs import CELL_DIMENSIONS, WALL_COLOR, GOAL_COLOR, ICE_COLOR, PLAYER_COLOR, PLAYER_SPEED, PALLET_HIGHLIGHT_COLOR, SELECTOR_TOOL_IMAGE, Border_Size_Lookup, PLAYER_SPRITE_SHEET, PLAYERSHADOW_SPRITE_SHEET, ENVIRONMENT_SPRITE_SHEET 
 from SQ_modules.DataTypes import Point, Size, Cell
 from SQ_modules.my_logging import set_logger, log
 from SQ_modules.Converters import PointToCell, CellToPoint
 import logging
+
+class SpriteLoader:
+    _sprites = {}
+
+    @classmethod
+    def load_sprite_sheet(cls, sheet_path, sprite_positions):
+        """
+        Load and slice a sprite sheet.
+        
+        Parameters:
+        - sheet_path (str): Path to the sprite sheet file.
+        - sprite_positions (dict): A dictionary with keys as sprite names and values as tuples
+                                specifying the sprite's rectangle on the sprite sheet (x, y, width, height).
+        
+        Returns:
+        - dict: A dictionary of sprite names and their corresponding pygame.Surface objects.
+        """
+        sprite_sheet = pygame.image.load(sheet_path).convert_alpha()
+        
+        for sprite_name, pos in sprite_positions.items():
+            x, y, width, height = pos
+            sprite = sprite_sheet.subsurface((x, y, width, height))
+            cls._sprites[sprite_name] = sprite
+
+    @classmethod
+    def get_sprite(cls, sprite_name):
+        """
+        Retrieve a loaded sprite by name.
+        
+        Parameters:
+        - sprite_name (str): The name of the sprite to retrieve.
+        
+        Returns:
+        - pygame.Surface: The requested sprite.
+        """
+        return cls._sprites.get(sprite_name)
+
+    @classmethod
+    def get_ice_sprite(cls):
+        return cls.load_sprite(ENVIRONMENT_SPRITE_SHEET, (32, 224, 32, 32))
+
+    @classmethod
+    def get_block_sprite(cls):
+        return cls.load_sprite(ENVIRONMENT_SPRITE_SHEET, (32, 352, 32, 32))
+
+    @classmethod
+    def get_goal_sprite(cls):
+        return cls.load_sprite(ENVIRONMENT_SPRITE_SHEET, (64, 256, 32, 32))
 
 
 class Player(pygame.sprite.Sprite):
@@ -136,10 +185,10 @@ class Block(pygame.sprite.Sprite):
         self.cellType = CellType.BLOCK
         self.difficulty = difficulty
         self.border_size = Border_Size_Lookup[difficulty]
-        self._layer = 0
         self.gameboard_loc = gameboard_loc
-        self.image = pygame.Surface(CELL_DIMENSIONS)
-        self.image.fill(WALL_COLOR)
+        block_variants = ['block_1x1_a', 'block_1x1_b', 'block_1x1_c', 'block_1x1_d', 'block_1x1_e']
+        chosen_block = random.choice(block_variants)  
+        self.image = SpriteLoader.get_sprite(chosen_block)  # Use the chosen sprite
         self.rect = self.image.get_rect()
         self.rect.center = CellToPoint(gameboard_loc, self.difficulty)
         
@@ -149,10 +198,8 @@ class Goal(pygame.sprite.Sprite):
         self.cellType = CellType.GOAL
         self.difficulty = difficulty
         self.border_size = Border_Size_Lookup[difficulty]
-        self._layer = 1
         self.gameboard_loc = gameboard_loc
-        self.image = pygame.Surface(CELL_DIMENSIONS)
-        self.image.fill(GOAL_COLOR)
+        self.image = SpriteLoader.get_sprite('goal')
         self.rect = self.image.get_rect()
         self.rect.center = CellToPoint(gameboard_loc, self.difficulty)
 
@@ -162,12 +209,24 @@ class Ice(pygame.sprite.Sprite):
         self.cellType = CellType.ICE
         self.difficulty = difficulty
         self.border_size = Border_Size_Lookup[difficulty]
-        self._layer = 0
         self.gameboard_loc = gameboard_loc
-        self.image = pygame.Surface(CELL_DIMENSIONS)
-        self.image.fill(ICE_COLOR)
+        self.image = SpriteLoader.get_sprite('ice')
         self.rect = self.image.get_rect()
         self.rect.center = CellToPoint(gameboard_loc, self.difficulty)
+
+class Border(pygame.sprite.Sprite):
+    def __init__(self, position: Point, sprite_name: str):
+        super().__init__()
+        self.image = SpriteLoader.get_sprite(sprite_name)
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (position.x, position.y)
+
+class Background(pygame.sprite.Sprite):
+    def __init__(self, position: Point):
+        super().__init__()
+        self.image = SpriteLoader.get_sprite('background')
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (position.x, position.y)
 
 class Highlighter(pygame.sprite.Sprite):
     def __init__(self, gameboard_loc: Cell, difficulty: GameDifficulty):
@@ -221,7 +280,7 @@ class TextSprite(pygame.sprite.Sprite):
 
         
     def update_text(self, text: str):
-        self.image = self.font.render(text, True, self.color)
+        self.image = self.render_text_with_outline(text)
         self.rect = self.image.get_rect()
         if self.anchor == 'center':
             self.rect.center = self.location
