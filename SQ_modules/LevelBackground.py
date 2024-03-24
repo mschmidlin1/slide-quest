@@ -5,7 +5,6 @@ import pygame
 from SQ_modules.configs import TITLE_FONT, WINDOW_DIMENSIONS, TITLE_SCREEN_COLOR, TITLE_SCREEN_TEXT_COLOR, Border_Size_Lookup
 from SQ_modules.Sprites import TextSprite, Player, Block, Ice, HollowSquareSprite
 from SQ_modules.DataTypes import Point
-from SQ_modules.GameEnums import GameDifficulty
 
 class LevelBackground():
     def __init__(self, screen: pygame.surface.Surface, text: str):

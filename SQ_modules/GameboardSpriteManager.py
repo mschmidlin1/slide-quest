@@ -51,23 +51,24 @@ def SpriteType_To_CellType(sprite: Sprite) -> CellType:
 
 class GameboardSpriteManager:
 
-    def __init__(self, gameboard: GameBoard, difficulty: GameDifficulty):
+    def __init__(self, gameboard: GameBoard, difficulty: GameDifficulty, screen: pygame.surface.Surface):
         self.gameboard = gameboard
         self.difficulty = difficulty
+        self.screen = screen
         self.gameboard_sprites = np.empty(self.gameboard.gameboard.shape, dtype=sprite_dtype)
         self.gameboard_sprite_group = pygame.sprite.LayeredUpdates()
-        self.player_sprite_group = pygame.sprite.LayeredUpdates()
         self.player_sprite: Player = None
 
         self.PopulateSprites()
         self.CreatePlayerSprite()
+
+        self.goal_sprite: Goal = self.GetGoalSprite()
 
     def CreatePlayerSprite(self):
         """"
         Creates the player sprite.
         """
         self.player_sprite = Player(self.gameboard.player_pos, self.difficulty)
-        self.player_sprite_group.add(self.player_sprite)z
 
     def PopulateSprites(self):
         """
@@ -119,21 +120,28 @@ class GameboardSpriteManager:
         self.gameboard_sprites[cell.row, cell.col] = new_sprite
         self.gameboard_sprite_group.add(new_sprite)
 
+        if cell_type == CellType.GOAL:
+            self.goal_sprite = new_sprite
 
+    def GetGoalSprite(self) -> Sprite:
+        """
+        Get's the goal sprite object.
+        """
+        return self.GetSprite(self.gameboard.Find_Goal_Pos())
 
     def update(self, events: list[pygame.event.Event]):
         """
         Handles all updates for Gameboard sprites.
         """
         self.gameboard_sprite_group.update()
-        self.player_sprite_group.update()
+        self.player_sprite.update()
 
     def draw(self):
         """
         Handles drawing of all gameboard sprites.
         """
-        self.gameboard_sprite_group.draw()
-        self.player_sprite_group.draw()
+        self.gameboard_sprite_group.draw(self.screen)
+        self.player_sprite.draw_player(self.screen)
 
 
 

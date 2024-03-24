@@ -8,7 +8,6 @@ import numpy as np
 from SQ_modules.DataTypes import Point
 import random
 import os
-from SQ_modules.queue import MyQueue
 import copy
 import collections
 from SQ_modules.my_logging import set_logger, log

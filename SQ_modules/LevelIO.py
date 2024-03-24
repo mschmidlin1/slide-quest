@@ -14,6 +14,31 @@ cell_dtype = np.dtype(CellType)
 set_logger()
 
 
+
+class MapgenIO:
+    """
+    A class for reading and writing mapgen resources.
+    """
+    @staticmethod
+    def SaveMapgen(mapgen_array: np.ndarray) -> None:
+        """
+        Saves the mapgen array to the mapgen folder.
+        """
+        #temporarily set goal position so gameboard object can be created
+        bottom_right = mapgen_array[-1, -1]
+        mapgen_array[-1, -1] = CellType.GOAL
+        
+        gameboard = GameBoard(mapgen_array, Cell(0, 0))
+
+        #put the bottom right cell back in the gameboard array
+        gameboard.gameboard[-1, -1] = bottom_right
+
+        root_dir = "mapgen_resources"
+        str_dttm = LevelIO.str_dttm()
+        filename = os.path.join(root_dir, "sub-map_"+str_dttm+".csv")
+        with open(filename, mode='w', newline='') as file:
+            file.write(str(gameboard))
+
 class LevelIO:
     """
     Class for managing levels and completed levels in a SlideQuest.
@@ -139,7 +164,7 @@ class LevelIO:
         Saves the board and the player pos to an new level file.
         """
         level_str = os.path.basename(self.current_level)[0] + '_'
-        str_dttm = self.str_dttm()
+        str_dttm = str_dttm()
         player_file = level_str + str_dttm + "-player.txt"
         map_file = level_str + str_dttm + ".csv"
         player_file = os.path.join(self.levels_root_dir, player_file)
@@ -196,7 +221,8 @@ class LevelIO:
         player_pos = self.ReadPlayerPos(self.get_player_file())
         return gameboard, player_pos
     @log
-    def str_dttm(self) -> str:
+    @staticmethod
+    def str_dttm() -> str:
         """
         This method gets the current datetime string and returns it.
         """

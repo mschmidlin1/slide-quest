@@ -190,6 +190,12 @@ class GameBoard:
         Given a location on the gameboard, gets the CellType that occupies that location.
         """
         return self.gameboard[loc.row, loc.col]
+    def Crop(self, upper_left: Cell, lower_right: Cell) -> np.ndarray:
+        """
+        Crops the provided rectangle from the gameboard and returns the sub-array. The lower right corner WILL be included in the returned array. 
+        """
+        return self.gameboard[upper_left.row:lower_right.row+1,upper_left.col:lower_right.col+1]
+
 
 
 

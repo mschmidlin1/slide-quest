@@ -1,11 +1,11 @@
 import pygame
 from SQ_modules.GameBoard import GameBoard
-from SQ_modules.Sprites import Block, Goal, Ice, Player
 from SQ_modules.DataTypes import Point, Size, Cell
 from SQ_modules.LevelEditor import LevelEditor
 from SQ_modules.LevelIO import LevelIO
 from SQ_modules.GameEnums import Direction, GameDifficulty, CellType
 from SQ_modules.my_logging import set_logger, log
+from SQ_modules.GameboardSpriteManager import GameboardSpriteManager
 import logging
 from SQ_modules.LevelBackground import LevelBackground
 from SQ_modules.ShortestPath import ShortestPath
@@ -39,26 +39,28 @@ class Game:
         self.solution_moves = ShortestPath(self.gameboard)
         self.least_moves = len(self.solution_moves)
 
-        self.gameboard_sprite_group = pygame.sprite.LayeredUpdates()
-        self.player_sprites = pygame.sprite.LayeredUpdates()
+        self.gameboard_sprite_manager = GameboardSpriteManager(self.gameboard, self.difficulty, self.screen)
+
+        # self.gameboard_sprite_group = pygame.sprite.LayeredUpdates()
+        # self.player_sprites = pygame.sprite.LayeredUpdates()
         self.obstacle_sprites = pygame.sprite.LayeredUpdates()
         
-        for row, cells in enumerate(self.gameboard.gameboard):
-            for col, cell in enumerate(cells):
-                if cell == CellType.BLOCK:
-                    self.obstacle_sprites.add(Block(Cell(col, row), self.difficulty), layer=0)
-                if cell == CellType.GOAL:
-                    self.obstacle_sprites.add(Goal(Cell(col, row), self.difficulty), layer=1)
-                if cell == CellType.ICE:
-                    self.obstacle_sprites.add(Ice(Cell(col, row), self.difficulty), layer=0)
+        # for row, cells in enumerate(self.gameboard.gameboard):
+        #     for col, cell in enumerate(cells):
+        #         if cell == CellType.BLOCK:
+        #             self.obstacle_sprites.add(Block(Cell(col, row), self.difficulty), layer=0)
+        #         if cell == CellType.GOAL:
+        #             self.obstacle_sprites.add(Goal(Cell(col, row), self.difficulty), layer=1)
+        #         if cell == CellType.ICE:
+        #             self.obstacle_sprites.add(Ice(Cell(col, row), self.difficulty), layer=0)
                     
-        self.player = Player(self.gameboard.player_pos, self.difficulty)
-        self.player_sprites.add(self.player, layer=2)
+        # self.player = Player(self.gameboard.player_pos, self.difficulty)
+        # self.player_sprites.add(self.player, layer=2)
 
-        self.gameboard_sprite_group.add(self.obstacle_sprites)
-        self.gameboard_sprite_group.add(self.player_sprites)
+        # self.gameboard_sprite_group.add(self.obstacle_sprites)
+        # self.gameboard_sprite_group.add(self.player_sprites)
 
-        self.levelEditor = LevelEditor(self.gameboard, self.gameboard_sprite_group, self.difficulty, self.player, level_manager, self.screen)
+        self.levelEditor = LevelEditor(self.gameboard, self.gameboard_sprite_manager, self.difficulty, level_manager, self.screen)
         self.level_background = LevelBackground(self.screen, level_manager.current_level)
         self.num_moves = 0
         self.start_time = time.time()
@@ -69,17 +71,17 @@ class Game:
         """
         for event in events:
             if event.type == pygame.KEYDOWN:
-                if event.key == Direction.LEFT.value and not self.player.moving:
-                    self.player.move(self.gameboard.MovePlayer(Direction.LEFT))
+                if event.key == Direction.LEFT.value and not self.gameboard_sprite_manager.player_sprite.moving:
+                    self.gameboard_sprite_manager.Move(self.gameboard.MovePlayer(Direction.LEFT))
                     self.num_moves += 1
-                if event.key == Direction.RIGHT.value and not self.player.moving:
-                    self.player.move(self.gameboard.MovePlayer(Direction.RIGHT))
+                if event.key == Direction.RIGHT.value and not self.gameboard_sprite_manager.player_sprite.moving:
+                    self.gameboard_sprite_manager.Move(self.gameboard.MovePlayer(Direction.RIGHT))
                     self.num_moves += 1
-                if event.key == Direction.UP.value and not self.player.moving:
-                    self.player.move(self.gameboard.MovePlayer(Direction.UP))
+                if event.key == Direction.UP.value and not self.gameboard_sprite_manager.player_sprite.moving:
+                    self.gameboard_sprite_manager.Move(self.gameboard.MovePlayer(Direction.UP))
                     self.num_moves += 1
-                if event.key == Direction.DOWN.value and not self.player.moving:
-                    self.player.move(self.gameboard.MovePlayer(Direction.DOWN))
+                if event.key == Direction.DOWN.value and not self.gameboard_sprite_manager.player_sprite.moving:
+                    self.gameboard_sprite_manager.Move(self.gameboard.MovePlayer(Direction.DOWN))
                     self.num_moves += 1
                 if self.isEditActive:
                     self.solution_moves = ShortestPath(self.gameboard)
@@ -88,7 +90,7 @@ class Game:
         """
         Checks whether the game has been completed.
         """
-        if not self.player.moving:
+        if not self.gameboard_sprite_manager.player_sprite.moving:
             return self.gameboard.Find_Goal_Pos() == self.gameboard.GetPlayerPos()
         else:
             return False
@@ -112,8 +114,9 @@ class Game:
             self.level_background.draw(self.totalTime(), "") # the solutions string won't be display if not in edit mode.
         
         #draw sprite second
-        self.obstacle_sprites.draw(self.screen)
-        self.player.draw_player(self.screen)
+        # self.obstacle_sprites.draw(self.screen)
+        # self.player.draw_player(self.screen)
+        self.gameboard_sprite_manager.draw()
 
         #draw level editor last
         if(self.isEditActive):
@@ -128,8 +131,9 @@ class Game:
         """
         self.move_player(events)
         # self.gameboard_sprite_group.update()
-        self.player.update()
-        self.obstacle_sprites.update()
+        # self.player.update()
+        # self.obstacle_sprites.update()
+        self.gameboard_sprite_manager.update(events)
 
         if(self.isEditActive):
             self.levelEditor.update(events)
@@ -137,7 +141,8 @@ class Game:
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_F1:
-                    self.isEditActive = not self.isEditActive
+                    if self.levelEditor.drag_type is None:#only let the level editor be turned off if a click and drag operation is not happening
+                        self.isEditActive = not self.isEditActive
             
 
     @log

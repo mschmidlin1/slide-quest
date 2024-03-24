@@ -1,7 +1,6 @@
 from SQ_modules.DataTypes import Cell, Point
 from SQ_modules.GameEnums import CellType, GameDifficulty
 from SQ_modules.configs import CELL_DIMENSIONS, Border_Size_Lookup, WINDOW_DIMENSIONS, Board_Size_Lookup
-from pygame.sprite import Sprite
 
 
 def CellToPoint(cell: Cell, difficulty: GameDifficulty) -> Point:

@@ -696,6 +696,93 @@ class Test_MovePlayer(unittest.TestCase):
         new_pos = my_gameboard.MovePlayer(Direction.UP)
         self.assertEqual(new_pos, Cell(0, 6))
 
+    def test_crop_2x2(self):
+        gameboard = np.empty((10, 10), dtype=cell_dtype)
+        gameboard.fill(CellType.ICE)
+        gameboard[0, 1] = CellType.GOAL
+        my_gameboard = GameBoard(gameboard, Cell(0, 0))
+        my_gameboard.gameboard = np.array([
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.GOAL, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.BLOCK, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.BLOCK, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],     
+        ], dtype=cell_dtype)
+        sub_array = my_gameboard.Crop(Cell(0, 0), Cell(1, 1))
+        print(sub_array)
+        self.assertEqual((2, 2), sub_array.shape)
+        self.assertTrue(np.array_equal([[CellType.ICE, CellType.ICE], [CellType.ICE, CellType.ICE]], sub_array))
+
+    def test_crop_1x1(self):
+        gameboard = np.empty((10, 10), dtype=cell_dtype)
+        gameboard.fill(CellType.ICE)
+        gameboard[0, 1] = CellType.GOAL
+        my_gameboard = GameBoard(gameboard, Cell(0, 0))
+        my_gameboard.gameboard = np.array([
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.GOAL, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.BLOCK, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.BLOCK, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],     
+        ], dtype=cell_dtype)
+        sub_array = my_gameboard.Crop(Cell(0, 0), Cell(0, 0))
+        print(sub_array)
+        self.assertEqual((1, 1), sub_array.shape)
+        self.assertTrue(np.array_equal([[CellType.ICE]], sub_array))
+
+    def test_crop_1x2(self):
+        gameboard = np.empty((10, 10), dtype=cell_dtype)
+        gameboard.fill(CellType.ICE)
+        gameboard[0, 1] = CellType.GOAL
+        my_gameboard = GameBoard(gameboard, Cell(0, 0))
+        my_gameboard.gameboard = np.array([
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.GOAL, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.BLOCK, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.BLOCK, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],     
+        ], dtype=cell_dtype)
+        sub_array = my_gameboard.Crop(Cell(0, 0), Cell(0, 1))
+        print(sub_array)
+        self.assertEqual((1, 2), sub_array.shape)
+        self.assertTrue(np.array_equal([[CellType.ICE, CellType.ICE]], sub_array))
+
+    def test_crop_block(self):
+        gameboard = np.empty((10, 10), dtype=cell_dtype)
+        gameboard.fill(CellType.ICE)
+        gameboard[0, 1] = CellType.GOAL
+        my_gameboard = GameBoard(gameboard, Cell(0, 0))
+        my_gameboard.gameboard = np.array([
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.GOAL, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.BLOCK, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.BLOCK, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],     
+        ], dtype=cell_dtype)
+        sub_array = my_gameboard.Crop(Cell(3, 0), Cell(6, 1))
+        print(sub_array)
+        self.assertEqual((4, 2), sub_array.shape)
+        self.assertTrue(np.array_equal([[CellType.ICE, CellType.ICE], [CellType.BLOCK, CellType.ICE], [CellType.ICE, CellType.ICE], [CellType.ICE, CellType.ICE]], sub_array))
 #MovePlayer
 
 if __name__ == '__main__':
