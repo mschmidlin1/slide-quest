@@ -173,7 +173,7 @@ class GameBoard:
             self.player_pos = new_player_pos
             return new_player_pos
         
-        elif cell_type==CellType.GOAL:
+        elif cell_type==CellType.GOAL or cell_type==CellType.GROUND:
             self.player_pos = location
             return location
         else:
