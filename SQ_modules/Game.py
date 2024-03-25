@@ -8,7 +8,7 @@ from SQ_modules.my_logging import set_logger, log
 from SQ_modules.GameboardSpriteManager import GameboardSpriteManager
 import logging
 from SQ_modules.LevelBackground import LevelBackground
-from SQ_modules.Sprites import SpriteLoader
+from SQ_modules.Sprites import Block, Goal, Ice, Player, SpriteLoader
 from SQ_modules.ShortestPath import ShortestPath
 from SQ_modules.configs import ( 
     WHITE,
@@ -40,11 +40,12 @@ class Game:
         self.gameboard = GameBoard(gameboard_array, player_pos)
         self.solution_moves = ShortestPath(self.gameboard)
         self.least_moves = len(self.solution_moves)
-
+        self.load_all_resources()
         self.gameboard_sprite_manager = GameboardSpriteManager(self.gameboard, self.difficulty, self.screen)
 
         self.levelEditor = LevelEditor(self.gameboard, self.gameboard_sprite_manager, self.difficulty, level_manager, self.screen)
-        self.level_background = LevelBackground(self.screen, level_manager.current_level)
+        self.level_background = LevelBackground(self.screen, level_manager.current_level, self.difficulty)
+        self.level_background.fill_background()
         self.num_moves = 0
         self.start_time = time.time()
 

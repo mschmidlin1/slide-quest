@@ -294,8 +294,7 @@ class LevelEditor:
         """
         self.pallete_sprite_group.draw(self.screen)
         self.selected_sprite_group.draw(self.screen)
-        self.gameboard_sprite_group.draw(self.screen)
-        self.player.draw_player(self.screen)
+        #self.gameboard_sprite_manager.draw()
         self.draw_grid()
 
             
