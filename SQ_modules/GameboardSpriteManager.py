@@ -23,6 +23,8 @@ def CellType_To_SpriteType(cell_type: CellType) -> Sprite:
         return Block
     elif cell_type == CellType.ICE:
         return Ice
+    elif cell_type == CellType.GROUND:
+        return Ground
     else:
         raise NotImplementedError(f"CellType_To_Sprite() not implemented for {cell_type}")
     

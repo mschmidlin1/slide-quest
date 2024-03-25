@@ -191,7 +191,21 @@ class Block(pygame.sprite.Sprite):
         self.image = SpriteLoader.get_sprite(chosen_block)  # Use the chosen sprite
         self.rect = self.image.get_rect()
         self.rect.center = CellToPoint(gameboard_loc, self.difficulty)
-        
+
+class Ground(pygame.sprite.Sprite):
+    def __init__(self, gameboard_loc: Cell, difficulty: GameDifficulty):
+        super().__init__()
+        self.cellType = CellType.BLOCK
+        self.difficulty = difficulty
+        self.border_size = Border_Size_Lookup[difficulty]
+        self.gameboard_loc = gameboard_loc
+        block_variants = ['block_1x1_a', 'block_1x1_b', 'block_1x1_c', 'block_1x1_d', 'block_1x1_e']
+        chosen_block = random.choice(block_variants)  
+        self.image = SpriteLoader.get_sprite(chosen_block)  # Use the chosen sprite
+        self.rect = self.image.get_rect()
+        self.rect.center = CellToPoint(gameboard_loc, self.difficulty)
+
+
 class Goal(pygame.sprite.Sprite):
     def __init__(self, gameboard_loc: Cell, difficulty: GameDifficulty):
         super().__init__()
