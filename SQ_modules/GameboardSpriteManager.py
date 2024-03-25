@@ -5,7 +5,7 @@ from SQ_modules.DataTypes import Cell
 from SQ_modules.GameEnums import CellType, Direction, GameDifficulty
 from SQ_modules.GameBoard import GameBoard
 import numpy as np
-from SQ_modules.Sprites import Player, Goal, Block, Ice
+from SQ_modules.Sprites import Player, Goal, Block, Ice, Ground
 sprite_dtype = np.dtype(Sprite)
 
 
@@ -23,6 +23,8 @@ def CellType_To_SpriteType(cell_type: CellType) -> Sprite:
         return Block
     elif cell_type == CellType.ICE:
         return Ice
+    elif cell_type == CellType.GROUND:
+        return Ground
     else:
         raise NotImplementedError(f"CellType_To_Sprite() not implemented for {cell_type}")
     
@@ -42,6 +44,8 @@ def SpriteType_To_CellType(sprite: Sprite) -> CellType:
         return CellType.BLOCK
     elif sprite == Ice:
         return CellType.ICE
+    elif sprite == Ground:
+        return CellType.GROUND
     else:
         raise NotImplementedError(f"Sprite_To_CellType() not implemented for {sprite}")
 

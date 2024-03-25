@@ -1,7 +1,7 @@
 import pygame
 from SQ_modules.configs import CELL_DIMENSIONS, WHITE, Border_Size_Lookup, LEFT_CLICK, RIGHT_CLICK, WINDOW_DIMENSIONS
 from SQ_modules.GameEnums import CellType, GameDifficulty
-from SQ_modules.Sprites import Block, Ice, Goal, Player, HollowSquareSprite, Cell, SelectorTool, Highlighter, FindSpritesByLocation
+from SQ_modules.Sprites import Block, Ice, Goal, Player, HollowSquareSprite, Cell, SelectorTool, Highlighter, FindSpritesByLocation, Ground
 from SQ_modules.DataTypes import Point, Size
 from SQ_modules.GameBoard import GameBoard
 from SQ_modules.LevelIO import LevelIO, MapgenIO
@@ -50,7 +50,8 @@ class LevelEditor:
         self.ice_pallet_sprite = Ice(Cell(0, 0), GameDifficulty.BEGINNER) #the constructor arguments don't matter because we're gonna set the location manually
         self.ice_pallet_sprite.rect.center = Point(CELL_DIMENSIONS.width, 200)
 
-
+        self.ground_pallet_sprite = Ground(Cell(0, 0), GameDifficulty.BEGINNER) #the constructor arguments don't matter because we're gonna set the location manually
+        self.ground_pallet_sprite.rect.center = Point(CELL_DIMENSIONS.width, 250)
 
         self.selected_pallet_sprite = HollowSquareSprite(Point(CELL_DIMENSIONS.width, 150), 4)
 
@@ -59,6 +60,7 @@ class LevelEditor:
         self.pallete_sprite_group.add(self.block_pallet_sprite)
         self.pallete_sprite_group.add(self.ice_pallet_sprite)
         self.pallete_sprite_group.add(self.selected_pallet_sprite)
+        self.pallete_sprite_group.add(self.ground_pallet_sprite)
 
     def reset_click(self):
         """
@@ -87,6 +89,9 @@ class LevelEditor:
             self.current_pallet_block = CellType.ICE
             self.selected_pallet_sprite.rect.center = self.ice_pallet_sprite.rect.center
             logging.info("Pallet block changed to ICE.")
+        elif self.ground_pallet_sprite.rect.collidepoint(event.pos):
+            self.current_pallet_block = CellType.GROUND
+            self.selected_pallet_sprite.rect.center = self.ground_pallet_sprite.rect.center
         
     def handle_select(self):
         """

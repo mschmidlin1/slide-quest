@@ -34,6 +34,10 @@ class MapgenIO:
         gameboard.gameboard[-1, -1] = bottom_right
 
         root_dir = "mapgen_resources"
+
+        if not os.path.exists(root_dir):
+            os.mkdir(root_dir)
+
         str_dttm = LevelIO.str_dttm()
         filename = os.path.join(root_dir, "sub-map_"+str_dttm+".csv")
         with open(filename, mode='w', newline='') as file:
