@@ -4,7 +4,7 @@ import os
 import random
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from SQ_modules.GameEnums import CellType, GameDifficulty
-from SQ_modules.configs import CELL_DIMENSIONS, WALL_COLOR, GOAL_COLOR, ICE_COLOR, PLAYER_COLOR, PLAYER_SPEED, PALLET_HIGHLIGHT_COLOR, SELECTOR_TOOL_IMAGE, Border_Size_Lookup, PLAYER_SPRITE_SHEET, PLAYERSHADOW_SPRITE_SHEET, ENVIRONMENT_SPRITE_SHEET 
+from SQ_modules.configs import CELL_DIMENSIONS, WALL_COLOR, GOAL_COLOR, GROUND_COLOR, ICE_COLOR, PLAYER_COLOR, PLAYER_SPEED, PALLET_HIGHLIGHT_COLOR, SELECTOR_TOOL_IMAGE, Border_Size_Lookup, PLAYER_SPRITE_SHEET, PLAYERSHADOW_SPRITE_SHEET, ENVIRONMENT_SPRITE_SHEET 
 from SQ_modules.DataTypes import Point, Size, Cell
 from SQ_modules.my_logging import set_logger, log
 from SQ_modules.Converters import PointToCell, CellToPoint
@@ -195,13 +195,12 @@ class Block(pygame.sprite.Sprite):
 class Ground(pygame.sprite.Sprite):
     def __init__(self, gameboard_loc: Cell, difficulty: GameDifficulty):
         super().__init__()
-        self.cellType = CellType.BLOCK
+        self.cellType = CellType.GROUND
         self.difficulty = difficulty
-        self.border_size = Border_Size_Lookup[difficulty]
+        self._layer = 0
         self.gameboard_loc = gameboard_loc
-        block_variants = ['block_1x1_a', 'block_1x1_b', 'block_1x1_c', 'block_1x1_d', 'block_1x1_e']
-        chosen_block = random.choice(block_variants)  
-        self.image = SpriteLoader.get_sprite(chosen_block)  # Use the chosen sprite
+        self.image = pygame.Surface(CELL_DIMENSIONS)
+        self.image.fill(GROUND_COLOR)
         self.rect = self.image.get_rect()
         self.rect.center = CellToPoint(gameboard_loc, self.difficulty)
 
