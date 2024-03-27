@@ -85,7 +85,7 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=['resources\\\images\\\icy_q_nobackground64x64.ico'],
+    icon=['resources/images/icy_q_nobackground64x64.ico'],
 )
 
 """
