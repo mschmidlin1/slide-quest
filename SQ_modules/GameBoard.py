@@ -1,6 +1,5 @@
 import sys
 import os
-from datetime import datetime
 #necessary to import things from the SQ_modules folder
 sys.path.append(os.getcwd())
 

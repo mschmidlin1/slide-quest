@@ -1,5 +1,5 @@
 import logging
-import logging.config
+from logging.config import dictConfig
 import functools
 from SQ_modules.configs import FILE_LOG_LEVEL, STDOUT_LOG_LEVEL
 import os
@@ -43,7 +43,7 @@ def set_logger():
         }
     }
 
-    logging.config.dictConfig(LOGGING_CONFIG)
+    dictConfig(LOGGING_CONFIG)
 
 def log(func):
     @functools.wraps(func)

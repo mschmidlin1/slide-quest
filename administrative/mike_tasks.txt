@@ -2,3 +2,6 @@
 
 
 remove logs and replace with meaningful info logs about user driven events
+
+
+create exe
