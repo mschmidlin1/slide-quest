@@ -7,6 +7,7 @@ from SQ_modules.Game import Game
 from SQ_modules.configs import WINDOW_DIMENSIONS, WINDOW_TITLE, ICON
 from SQ_modules.my_logging import set_logger, log
 from SQ_modules.SplashScreen import SplashScreen
+from SQ_modules.GameAudio import GameAudio
 
 set_logger()
 
@@ -23,6 +24,8 @@ class Window():
         self.current_game: Game = None
         self.level_complete_screen: LevelCompleteScreen = None
         self.level_manager = LevelIO()
+        self.game_audio = GameAudio()
+        self.game_audio.title_screen_music.play()
     @log
     def new(self):
         """
@@ -33,6 +36,7 @@ class Window():
         pygame.display.set_caption(WINDOW_TITLE)
         pygame.display.set_icon(ICON)
         self.clock = pygame.time.Clock()
+        pygame.mixer.init()
 
     @log
     def run_splash_screen(self):
@@ -84,30 +88,34 @@ class Window():
             if self.title_screen != None: #if you're currently on the title screen
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
-                        self.current_game = Game(self.screen, self.level_manager)
+                        self.current_game = Game(self.screen, self.level_manager, self.game_audio)
                         self.title_screen = None
+                        self.game_audio.title_screen_music.stop()
 
             if self.current_game != None: #if you're currently playing the game
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         self.title_screen = TitleScreen(self.screen)
+                        self.game_audio.title_screen_music.play()
                     if event.key == pygame.K_r:
-                        self.current_game = Game(self.screen, self.level_manager)
+                        self.current_game = Game(self.screen, self.level_manager, self.game_audio)
 
             if self.level_complete_screen != None: #if you're currently on the level complete screen
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
-                        self.current_game = Game(self.screen, self.level_manager)
+                        self.current_game = Game(self.screen, self.level_manager, self.game_audio)
                         self.level_complete_screen = None
 
                     elif event.key == pygame.K_ESCAPE:
                         self.title_screen = TitleScreen(self.screen)
+                        self.game_audio.title_screen_music.play()
                         self.level_complete_screen = None
 
         #pulled isComplete() out of the event loop as it would not check completion unless an event was detected
         if self.current_game is not None:
             
             if self.current_game.isComplete():
+                    self.game_audio.level_complete_sfx.play()
                     self.level_complete_screen = LevelCompleteScreen(self.screen, self.current_game.num_moves, self.current_game.totalTime(), self.current_game.least_moves)
                     self.current_game = None
                     self.level_manager.next_level()
