@@ -1,7 +1,7 @@
 import pygame
 import os
 from SQ_modules.configs import GAME_VOLUME
-
+import random
 
 
 
@@ -20,3 +20,10 @@ class GameAudio:
         self.level_complete_sfx.set_volume(GAME_VOLUME)
         self.title_screen_music = pygame.mixer.Sound("resources/audio/music/PhilosophicalSongTitle - RoccoW  Chiptune [No Copyright Music].mp3")
         self.title_screen_music.set_volume(GAME_VOLUME)
+
+    def PlayRandomSlideSfx(self):
+        """
+        Plays a random sliding sound effect.
+        """
+        sfx = random.choice(self.slide_sfxs)
+        sfx.play()

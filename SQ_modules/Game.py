@@ -60,19 +60,19 @@ class Game:
                 if event.key == Direction.LEFT.value and not self.gameboard_sprite_manager.player_sprite.moving:
                     self.gameboard_sprite_manager.Move(self.gameboard.MovePlayer(Direction.LEFT))
                     self.num_moves += 1
-                    self.game_audio.slide_sfxs[0].play()
+                    self.game_audio.PlayRandomSlideSfx()
                 if event.key == Direction.RIGHT.value and not self.gameboard_sprite_manager.player_sprite.moving:
                     self.gameboard_sprite_manager.Move(self.gameboard.MovePlayer(Direction.RIGHT))
                     self.num_moves += 1
-                    self.game_audio.slide_sfxs[0].play()
+                    self.game_audio.PlayRandomSlideSfx()
                 if event.key == Direction.UP.value and not self.gameboard_sprite_manager.player_sprite.moving:
                     self.gameboard_sprite_manager.Move(self.gameboard.MovePlayer(Direction.UP))
                     self.num_moves += 1
-                    self.game_audio.slide_sfxs[0].play()
+                    self.game_audio.PlayRandomSlideSfx()
                 if event.key == Direction.DOWN.value and not self.gameboard_sprite_manager.player_sprite.moving:
                     self.gameboard_sprite_manager.Move(self.gameboard.MovePlayer(Direction.DOWN))
                     self.num_moves += 1
-                    self.game_audio.slide_sfxs[0].play()
+                    self.game_audio.PlayRandomSlideSfx()
                 if self.isEditActive:
                     self.solution_moves = ShortestPath(self.gameboard)
 
