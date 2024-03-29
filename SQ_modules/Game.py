@@ -28,7 +28,7 @@ class Game:
     The controlling class for each "game" or "level" of slide quest.
     A game is born with each map and is destroyed once the player reaches the goal.
     """
-    @log
+    
     def __init__(self, screen: pygame.surface.Surface, level_manager: LevelIO, game_audio: GameAudio):
         
         logging.info("New Game created.")

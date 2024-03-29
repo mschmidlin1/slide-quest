@@ -26,7 +26,7 @@ class Window():
         self.level_manager = LevelIO()
         self.game_audio = GameAudio()
         self.game_audio.title_screen_music.play(fade_ms=5000, loops=-1)
-    @log
+    
     def new(self):
         """
         Creates a new pygame instance. Sets up the main surface.
