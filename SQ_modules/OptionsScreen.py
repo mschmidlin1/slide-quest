@@ -2,25 +2,21 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import pygame
-from SQ_modules.configs import TITLE_FONT, WINDOW_DIMENSIONS, TITLE_SCREEN_TEXT_COLOR, LEFT_CLICK
+from SQ_modules.configs import TITLE_FONT, WINDOW_DIMENSIONS, TITLE_SCREEN_TEXT_COLOR, LEFT_CLICK, TITLE_SCREEN_COLOR
 from SQ_modules.Sprites import TextSprite
 from SQ_modules.DataTypes import Point
 from SQ_modules.Button import Button
 from SQ_modules.GameEnums import TitleScreenButton
 
-class TitleScreen():
+class OptionsScreen():
     def __init__(self, screen):
         
         self.screen = screen
         self.click_type = None
 
-        self.background_image = pygame.transform.scale(
-            pygame.image.load('resources/images/mainmenu.png').convert(),
-            (WINDOW_DIMENSIONS[0], WINDOW_DIMENSIONS[1])
-        )
 
         self.title_sprite = TextSprite(
-            "Slide Quest!", 
+            "Options Yay!", 
             TITLE_FONT, 
             100, 
             Point(WINDOW_DIMENSIONS[0]//2, WINDOW_DIMENSIONS[1]//5),
@@ -29,41 +25,20 @@ class TitleScreen():
             outline_width=1
             )
         
-        self.options_button: Button = Button(screen, (255,255,255), x=600, y=600, width=200, height=100, text="options", hover_color=(0,255,255))
         
-        self.start_sprite = TextSprite(
-            "Press space to start.", 
-            TITLE_FONT, 
-            40, 
-            Point(WINDOW_DIMENSIONS[0]//2, WINDOW_DIMENSIONS[1] - WINDOW_DIMENSIONS[1]//4),
-            TITLE_SCREEN_TEXT_COLOR,
-            outline_color=(0,0,0),
-            outline_width=1
-            )
 
         self.title_screen_sprite_group = pygame.sprite.Group()
         self.title_screen_sprite_group.add(self.title_sprite)
-        self.title_screen_sprite_group.add(self.start_sprite)
 
     def update(self, events: list[pygame.event.Event]):
         """
         """
-        self.click_type = None
         self.title_screen_sprite_group.update()
-        self.options_button.update(events)
-
-
-        for event in events:
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == LEFT_CLICK:
-                    if self.options_button.is_over(event.pos):
-                        self.click_type = TitleScreenButton.OPTIONS
 
 
     def draw(self):
-        self.screen.blit(self.background_image, (0, 0))
+        self.screen.fill(TITLE_SCREEN_COLOR)
         self.title_screen_sprite_group.draw(self.screen)
-        self.options_button.draw()
         
 
 if __name__=="__main__":
@@ -71,9 +46,10 @@ if __name__=="__main__":
     screen = pygame.display.set_mode(WINDOW_DIMENSIONS)
     clock = pygame.time.Clock()
 
-    title_screen = TitleScreen(screen)
+    title_screen = OptionsScreen(screen)
 
     while True:
+        title_screen.draw()
         events = pygame.event.get()
         for event in events:
             if event.type == pygame.QUIT:

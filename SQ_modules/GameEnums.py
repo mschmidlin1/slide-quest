@@ -2,6 +2,15 @@ from enum import Enum
 import pygame
 import numpy as np
 
+
+class TitleScreenButton(Enum):
+    """
+    A class that represents the different buttons on the title screen.
+    """
+    OPTIONS = 0
+    PLAY = 1
+
+
 class Direction(Enum):
     """
     An Enum class that handles user input conversion from pygame.

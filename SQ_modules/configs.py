@@ -5,8 +5,12 @@ from SQ_modules.GameEnums import GameDifficulty
 from SQ_modules.DataTypes import Size
 import pygame
 
+
+#choose to turn of splash screen or not
+SPLASH_SCREEN_ON: bool = False
+
 #Audio settings
-GAME_VOLUME = 0.3 #0-1
+GAME_VOLUME = 0.0 #0-1
 
 
 #logging settings
