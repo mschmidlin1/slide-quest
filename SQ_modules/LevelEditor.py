@@ -21,7 +21,7 @@ class LevelEditor:
     self.offset
     self.initial_mouse_location
     """
-    @log
+    
     def __init__(self, gameboard: GameBoard, gameboard_sprite_manager: GameboardSpriteManager, difficulty: GameDifficulty, level_manager: LevelIO, screen: pygame.surface.Surface): #need from game, player, border_size, gameboard_sprite_group, gameboard, 
         self.screen = screen
         self.gameboard = gameboard

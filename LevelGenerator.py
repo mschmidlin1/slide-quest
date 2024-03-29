@@ -43,7 +43,7 @@ class LevelGenerator:
         self.empty_board = np.empty(self.board_dimensions, dtype=cell_dtype)
         self.empty_board.fill(CellType.ICE)
         self.resources = self.read_mapgen_resources()
-    @log
+    
     def read_mapgen_resources(self) -> dict[str, np.ndarray]:
         """
         Reads the mapgen resources from files.
@@ -58,7 +58,7 @@ class LevelGenerator:
             sub_map: np.ndarray = level_io.ReadBoard(full_path)
             resources[file] = sub_map
         return resources
-    @log
+    
     def calculate_block_probability(self, num_adjacent_blocks: int) -> float:
         """
         Given the number of neighbors that as cell has of the same type, calculate the probability that that cell will also be that type.
@@ -67,7 +67,7 @@ class LevelGenerator:
         for i in range(num_adjacent_blocks):
             probability += (1-probability)/self.probability_increase_ratio
         return min(probability, 1.0)
-    @log
+    
     def count_neighbors(self, board: np.ndarray, location: Point, cell_type: CellType) -> int:
         """
         This method counts the number of neighbors that have the same cell type as the given `cell_type`. 
@@ -85,7 +85,7 @@ class LevelGenerator:
                 if board[location.y+i, location.x+j] == cell_type:
                     num_neighbors += 1
         return num_neighbors
-    @log
+    
     def random_goal_pos(self, board: np.ndarray, rng: np.random.RandomState) -> Point:
         """
         Selects a random goal position from the board where the cell type is ICE using a specified random number generator.
@@ -110,7 +110,7 @@ class LevelGenerator:
             return None
         idx = rng.randint(0, len(possible_goal_positions))
         return possible_goal_positions[idx]
-    @log
+    
     def random_player_pos(self, board: np.ndarray, rng: np.random.RandomState) -> Point:
         """
         Selects a random player position from the board where the cell type is ICE, ensuring it does not coincide with the goal position, using a specified random number generator.
@@ -142,13 +142,13 @@ class LevelGenerator:
         if possible_player_positions[idx]==temp_gameboard.goal_pos:
             raise ValueError("player position was found to be goal position.")
         return possible_player_positions[idx]
-    @log
+    
     def contains(self, list1: list, list2: list) -> bool:
         """
         Determins if all the elements of list1 are contained in list2.
         """
         return set(list1).issubset(set(list2))
-    @log
+    
     def insert_feature(self, loc: Point, feature: np.ndarray, board: np.ndarray) -> np.ndarray:
         """
         Inserts a rectangular feature into a copy of the game board at a specified location and returns the copy.
@@ -182,7 +182,7 @@ class LevelGenerator:
         board_copy[loc.x:loc.x+nrows, loc.y:loc.y+ncols] = feature
         
         return board_copy
-    @log
+    
     def get_covered_points(self, loc: Point, feature: np.ndarray) -> list[Point]:
         """
         Computes and returns a list of Points covered by a rectangular feature placed on the gameboard,
@@ -204,7 +204,7 @@ class LevelGenerator:
                 points.append(Point(row_num, col_num))
         points.remove(loc)
         return points
-    @log
+    
     def generate_candidate(self, random_seed: int = None) -> GameBoard:
         """
         Generates a random game board with features, blocks, a goal, and a player position based on specified probabilities.
@@ -263,7 +263,7 @@ class LevelGenerator:
         if gameboard.player_pos == gameboard.Find_Goal_Pos():
             logging.error(f"Goal position and player position both have location: {gameboard.player_pos}")
         return gameboard
-    @log
+    
     def generate(self) -> tuple[int, GameBoard]:
         """
         Generates a valid game board along with its seed.
