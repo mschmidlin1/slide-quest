@@ -10,6 +10,7 @@ import logging
 from SQ_modules.LevelBackground import LevelBackground
 from SQ_modules.Sprites import Block, Goal, Ice, Player, SpriteLoader
 from SQ_modules.ShortestPath import ShortestPath
+from SQ_modules.GameAudio import GameAudio
 from SQ_modules.configs import ( 
     WHITE,
     WINDOW_DIMENSIONS,
@@ -27,11 +28,11 @@ class Game:
     The controlling class for each "game" or "level" of slide quest.
     A game is born with each map and is destroyed once the player reaches the goal.
     """
-    
-    def __init__(self, screen: pygame.surface.Surface, level_manager: LevelIO):
+    @log
+    def __init__(self, screen: pygame.surface.Surface, level_manager: LevelIO, game_audio: GameAudio):
         
         logging.info("New Game created.")
-
+        self.game_audio = game_audio
         self.screen = screen
         self.isEditActive = IS_EDIT_ON_DEFAULT
         self.difficulty: GameDifficulty = level_manager.current_difficulty
@@ -59,15 +60,19 @@ class Game:
                 if event.key == Direction.LEFT.value and not self.gameboard_sprite_manager.player_sprite.moving:
                     self.gameboard_sprite_manager.Move(self.gameboard.MovePlayer(Direction.LEFT))
                     self.num_moves += 1
+                    self.game_audio.PlayRandomSlideSfx()
                 if event.key == Direction.RIGHT.value and not self.gameboard_sprite_manager.player_sprite.moving:
                     self.gameboard_sprite_manager.Move(self.gameboard.MovePlayer(Direction.RIGHT))
                     self.num_moves += 1
+                    self.game_audio.PlayRandomSlideSfx()
                 if event.key == Direction.UP.value and not self.gameboard_sprite_manager.player_sprite.moving:
                     self.gameboard_sprite_manager.Move(self.gameboard.MovePlayer(Direction.UP))
                     self.num_moves += 1
+                    self.game_audio.PlayRandomSlideSfx()
                 if event.key == Direction.DOWN.value and not self.gameboard_sprite_manager.player_sprite.moving:
                     self.gameboard_sprite_manager.Move(self.gameboard.MovePlayer(Direction.DOWN))
                     self.num_moves += 1
+                    self.game_audio.PlayRandomSlideSfx()
                 if self.isEditActive:
                     self.solution_moves = ShortestPath(self.gameboard)
 
