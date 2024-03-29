@@ -5,6 +5,10 @@ from SQ_modules.GameEnums import GameDifficulty
 from SQ_modules.DataTypes import Size
 import pygame
 
+#Audio settings
+GAME_VOLUME = 0.3 #0-1
+
+
 #logging settings
 FILE_LOG_LEVEL = "DEBUG"
 STDOUT_LOG_LEVEL = "INFO"
