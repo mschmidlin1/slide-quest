@@ -25,7 +25,7 @@ class Window():
         self.level_complete_screen: LevelCompleteScreen = None
         self.level_manager = LevelIO()
         self.game_audio = GameAudio()
-        self.game_audio.title_screen_music.play()
+        self.game_audio.title_screen_music.play(fade_ms=5000, loops=-1)
     @log
     def new(self):
         """
@@ -96,7 +96,7 @@ class Window():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         self.title_screen = TitleScreen(self.screen)
-                        self.game_audio.title_screen_music.play()
+                        self.game_audio.title_screen_music.play(fade_ms=5000, loops=-1)
                     if event.key == pygame.K_r:
                         self.current_game = Game(self.screen, self.level_manager, self.game_audio)
 
@@ -108,7 +108,7 @@ class Window():
 
                     elif event.key == pygame.K_ESCAPE:
                         self.title_screen = TitleScreen(self.screen)
-                        self.game_audio.title_screen_music.play()
+                        self.game_audio.title_screen_music.play(fade_ms=5000, loops=-1)
                         self.level_complete_screen = None
 
         #pulled isComplete() out of the event loop as it would not check completion unless an event was detected

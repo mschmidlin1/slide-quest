@@ -2,8 +2,20 @@ import pygame
 import os
 from SQ_modules.configs import GAME_VOLUME
 import random
+import time
 
-
+def fade_out_sound(sound: pygame.mixer.Sound, fade_duration_ms: int):
+    original_volume = sound.get_volume()
+    steps = 20
+    sleep_time = fade_duration_ms / (steps * 1000.0)
+    
+    for step in range(steps, 0, -1):
+        new_volume = original_volume * (step / steps)
+        sound.set_volume(new_volume)
+        time.sleep(sleep_time)
+    
+    sound.stop()
+    sound.set_volume(original_volume)
 
 class GameAudio:
     def __init__(self):
@@ -27,3 +39,6 @@ class GameAudio:
         """
         sfx = random.choice(self.slide_sfxs)
         sfx.play()
+    
+    def FadeOutMusic(self, fade_duration_ms: int = 3000):
+        fade_out_sound(self.title_screen_music, fade_duration_ms)

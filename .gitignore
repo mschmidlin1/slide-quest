@@ -7,3 +7,4 @@ __pycache__/
 SQenv/
 .venv/
 build/
+.DS_Store
