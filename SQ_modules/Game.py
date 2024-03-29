@@ -27,7 +27,7 @@ class Game:
     The controlling class for each "game" or "level" of slide quest.
     A game is born with each map and is destroyed once the player reaches the goal.
     """
-    @log
+    
     def __init__(self, screen: pygame.surface.Surface, level_manager: LevelIO):
         
         logging.info("New Game created.")
@@ -49,7 +49,7 @@ class Game:
         self.num_moves = 0
         self.start_time = time.time()
 
-    @log
+    
     def move_player(self, events: list[pygame.event.Event]):
         """
         Moves the player if instructed by the user in the events argument.
@@ -71,11 +71,11 @@ class Game:
                 if self.isEditActive:
                     self.solution_moves = ShortestPath(self.gameboard)
 
-    @log
+    
     def load_all_resources(self):
         SpriteLoader.load_sprite_sheet(ENVIRONMENT_SPRITE_SHEET, sprite_positions)
 
-    @log
+    
     def isComplete(self):
         """
         Checks whether the game has been completed.
@@ -85,7 +85,7 @@ class Game:
         else:
             return False
     
-    @log
+    
     def totalTime(self) -> str:
         """
         Gets the total time the level has taken so far to complete. 
@@ -94,7 +94,7 @@ class Game:
         minutes, seconds = divmod(total_time, 60)
         return f"{int(minutes):02}:{int(seconds):02}"
     
-    @log
+    
     def draw(self):
         """
         Draw the necessary game elements on the screen. Draws all child elements of the game (level_background and levelEditor).
@@ -117,7 +117,7 @@ class Game:
             self.level_background.bottom_border_sprites.draw(self.screen)
 
 
-    @log
+    
     def update(self, events: list[pygame.event.Event]):
         """
         The Game.update() method takes a list of pygame events. From this the game will extract the necessary movement information for the player.
@@ -137,14 +137,14 @@ class Game:
                         self.isEditActive = not self.isEditActive
             
 
-    @log
+    
     def solution_str(self) -> str:
         """
         Turns the self.solution_moves list into a human readable list for display.
         """
 
         return ",".join([self.move_str(dir) for dir in self.solution_moves])
-    @log
+    
     def move_str(self, move: Direction) -> str:
         """
         Turns the Direction.MOVE enum into just a string of "MOVE".

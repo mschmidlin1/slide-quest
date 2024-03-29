@@ -15,7 +15,7 @@ class Window():
     """
     The manager of the pygame window and the main "screen" element. This class handles control of the screen to the various game screen the users sees. 
     """
-    @log
+    
     def __init__(self):
         self.new()
         self.splash_screen_shown = False  # Add this to track if the splash screen has been shown
@@ -23,7 +23,7 @@ class Window():
         self.current_game: Game = None
         self.level_complete_screen: LevelCompleteScreen = None
         self.level_manager = LevelIO()
-    @log
+    
     def new(self):
         """
         Creates a new pygame instance. Sets up the main surface.
@@ -34,13 +34,13 @@ class Window():
         pygame.display.set_icon(ICON)
         self.clock = pygame.time.Clock()
 
-    @log
+    
     def run_splash_screen(self):
         splash_screen = SplashScreen(self.screen)
         splash_screen.run()
         self.splash_screen_shown = True  # Mark splash screen as shown
 
-    @log
+    
     def run(self):
         """
         Main game loop.
@@ -59,7 +59,7 @@ class Window():
             self.draw()
             pygame.display.flip()
             self.clock.tick(60)
-    @log
+    
     def draw(self):
         """
         Draw window elements onto the screen.
@@ -70,7 +70,7 @@ class Window():
             self.level_complete_screen.draw()
         elif self.current_game is not None:
             self.current_game.draw()
-    @log
+    
     def update(self, events):
         """
         Check for user input events and handle them.

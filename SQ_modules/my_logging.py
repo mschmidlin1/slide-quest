@@ -49,12 +49,12 @@ def log(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         try:
-            logging.debug(f"Running function {func.__name__}")
+            #logging.debug(f"Running function {func.__name__}")
             result = func(*args, **kwargs)
-            logging.debug(f"Completed function {func.__name__}")
+            #logging.debug(f"Completed function {func.__name__}")
             return result
         except Exception as e:
-            logging.error(f"Exception raised in {func.__name__}. exception: {str(e)}")
+            #logging.error(f"Exception raised in {func.__name__}. exception: {str(e)}")
             raise e
     return wrapper
 
