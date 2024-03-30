@@ -115,6 +115,7 @@ class Window():
                         self.current_game = Game(self.screen, self.level_manager, self.game_audio)
                         self.level_complete_screen = None
 
+
                     elif event.key == pygame.K_ESCAPE:
                         self.title_screen = TitleScreen(self.screen)
                         self.game_audio.title_screen_music.play(fade_ms=5000, loops=-1)
