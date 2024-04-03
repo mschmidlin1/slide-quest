@@ -6,6 +6,7 @@ import re
 #necessary to import things from the SQ_modules folder
 sys.path.append(os.getcwd())
 from SQ_modules.GameBoard import GameBoard
+from SQ_modules.Metas import SingletonMeta
 from SQ_modules.my_logging import set_logger, log
 from SQ_modules.GameEnums import CellType, Str_to_CellType_vector_func, GameDifficulty, Game_Difficult_Str_Map
 from SQ_modules.DataTypes import Point, Cell
@@ -43,7 +44,7 @@ class MapgenIO:
         with open(filename, mode='w', newline='') as file:
             file.write(str(gameboard))
 
-class LevelIO:
+class LevelIO(metaclass=SingletonMeta):
     """
     Class for managing levels and completed levels in a SlideQuest.
 

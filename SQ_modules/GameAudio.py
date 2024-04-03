@@ -1,6 +1,7 @@
 import pygame
 import os
 from SQ_modules.configs import GAME_VOLUME
+from SQ_modules.Metas import SingletonMeta
 import random
 import time
 
@@ -17,21 +18,22 @@ def fade_out_sound(sound: pygame.mixer.Sound, fade_duration_ms: int):
     sound.stop()
     sound.set_volume(original_volume)
 
-class GameAudio:
+class GameAudio(metaclass=SingletonMeta):
     def __init__(self):
-
+        pygame.mixer.init()
+        self.volume = GAME_VOLUME
         slide_sounds_dir = "resources/audio/sounds/SlideSounds"
         self.slide_sfxs: list[pygame.mixer.Sound] = []
         for sound_file in os.listdir(slide_sounds_dir):
             sfx = pygame.mixer.Sound(os.path.join(slide_sounds_dir, sound_file))
-            sfx.set_volume(GAME_VOLUME)
+            sfx.set_volume(self.volume)
             self.slide_sfxs.append(sfx)
 
 
         self.level_complete_sfx = pygame.mixer.Sound("resources/audio/sounds/LevelCompleteSound.mp3")
-        self.level_complete_sfx.set_volume(GAME_VOLUME)
+        self.level_complete_sfx.set_volume(self.volume)
         self.title_screen_music = pygame.mixer.Sound("resources/audio/music/PhilosophicalSongTitle - RoccoW  Chiptune [No Copyright Music].mp3")
-        self.title_screen_music.set_volume(GAME_VOLUME)
+        self.title_screen_music.set_volume(self.volume)
 
     def PlayRandomSlideSfx(self):
         """
