@@ -3,7 +3,7 @@ from SQ_modules.GameBoard import GameBoard
 from SQ_modules.DataTypes import Point, Size, Cell
 from SQ_modules.LevelEditor import LevelEditor
 from SQ_modules.LevelIO import LevelIO
-from SQ_modules.GameEnums import Direction, GameDifficulty, CellType, sprite_positions
+from SQ_modules.GameEnums import Direction, GameDifficulty, CellType, sprite_positions, Screen
 from SQ_modules.my_logging import set_logger, log
 from SQ_modules.GameboardSpriteManager import GameboardSpriteManager
 import logging
@@ -11,6 +11,7 @@ from SQ_modules.LevelBackground import LevelBackground
 from SQ_modules.Sprites import Block, Goal, Ice, Player, SpriteLoader
 from SQ_modules.ShortestPath import ShortestPath
 from SQ_modules.GameAudio import GameAudio
+from SQ_modules.NavigationManager import NavigationManager
 from SQ_modules.configs import ( 
     WHITE,
     WINDOW_DIMENSIONS,
@@ -29,7 +30,7 @@ class Game:
     A game is born with each map and is destroyed once the player reaches the goal.
     """
     
-    def __init__(self, screen: pygame.surface.Surface, level_manager: LevelIO, game_audio: GameAudio):
+    def __init__(self, screen: pygame.surface.Surface, level_manager = LevelIO(), game_audio = GameAudio()):
         
         logging.info("New Game created.")
         self.game_audio = game_audio
@@ -48,6 +49,8 @@ class Game:
         self.level_background = LevelBackground(self.screen, level_manager.current_level, self.difficulty)
         self.level_background.fill_background()
         self.num_moves = 0
+        self.navigation_manager = NavigationManager()
+
         self.start_time = time.time()
 
     
@@ -140,7 +143,11 @@ class Game:
                 if event.key == pygame.K_F1:
                     if self.levelEditor.drag_type is None:#only let the level editor be turned off if a click and drag operation is not happening
                         self.isEditActive = not self.isEditActive
-            
+                if event.key == pygame.K_ESCAPE:
+                    self.navigation_manager.navigate_to(Screen.OPTIONS)
+        
+        if self.isComplete() and not self.gameboard_sprite_manager.player_sprite.moving:
+            self.navigation_manager.navigate_to(Screen.LEVEL_COMPLETE)
 
     
     def solution_str(self) -> str:

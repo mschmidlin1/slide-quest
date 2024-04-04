@@ -6,11 +6,13 @@ from SQ_modules.configs import TITLE_FONT, WINDOW_DIMENSIONS, TITLE_SCREEN_TEXT_
 from SQ_modules.Sprites import TextSprite
 from SQ_modules.DataTypes import Point
 from SQ_modules.Button import Button
-from SQ_modules.GameEnums import TitleScreenButton
+from SQ_modules.GameEnums import Screen
+from SQ_modules.Metas import SqScreenMeta
+from SQ_modules.NavigationManager import NavigationManager
 
-class OptionsScreen():
+class OptionsScreen(metaclass=SqScreenMeta):
     def __init__(self, screen):
-        
+        self.navigation_manager: NavigationManager = NavigationManager()
         self.screen = screen
         self.click_type = None
 
@@ -34,6 +36,18 @@ class OptionsScreen():
         """
         """
         self.title_screen_sprite_group.update()
+
+        for event in events:
+            # if event.type == pygame.MOUSEBUTTONDOWN:
+            #     if event.button == LEFT_CLICK:
+            #         if self.options_button.is_over(event.pos):
+            #             self.navigation_manager.navigate_to_options()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    if not self.navigation_manager.game_active:
+                        self.navigation_manager.navigate_to(Screen.TITLE)
+                    else:
+                        self.navigation_manager.navigate_to(Screen.GAME)
 
 
     def draw(self):
