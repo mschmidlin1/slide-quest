@@ -9,7 +9,7 @@ class NavigationManager(metaclass=SingletonMeta):
 
 
         self.current_screen: Screen = None
-
+        self.game_active: bool = False
 
 
     def navigate_to(self, screen_type: Screen):

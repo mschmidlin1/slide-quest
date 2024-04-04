@@ -44,7 +44,7 @@ class OptionsScreen(metaclass=SqScreenMeta):
             #             self.navigation_manager.navigate_to_options()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    if self.navigation_manager.current_game is None:
+                    if not self.navigation_manager.game_active:
                         self.navigation_manager.navigate_to(Screen.TITLE)
                     else:
                         self.navigation_manager.navigate_to(Screen.GAME)

@@ -64,6 +64,7 @@ class Window():
         self.current_screen = self.title_screen
         self.current_screen_type = Screen.TITLE
         self.navigation_manager.navigate_to(Screen.TITLE)
+        self.options_screen = OptionsScreen(self.screen)
 
         while True:
             events = pygame.event.get()
@@ -109,6 +110,7 @@ class Window():
             if self.current_game.isComplete():
                 self.level_complete_screen = LevelCompleteScreen(self.screen, self.current_game.num_moves, self.current_game.totalTime(), self.current_game.least_moves)
                 self.current_game = None
+                self.navigation_manager.game_active = False
             self.current_screen = self.level_complete_screen
             
 
@@ -116,6 +118,7 @@ class Window():
             self.current_screen_type = Screen.GAME
             if self.current_game is None:
                 self.current_game = Game(self.screen, self.level_manager, self.game_audio)
+                self.navigation_manager.game_active = True
             self.current_screen = self.current_game
                 
 
