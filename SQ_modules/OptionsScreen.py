@@ -2,7 +2,7 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import pygame
-from SQ_modules.configs import TITLE_FONT, WINDOW_DIMENSIONS, TITLE_SCREEN_TEXT_COLOR, LEFT_CLICK, TITLE_SCREEN_COLOR
+from SQ_modules.configs import TITLE_FONT, WINDOW_DIMENSIONS, TITLE_SCREEN_TEXT_COLOR, LEFT_CLICK, TITLE_SCREEN_COLOR, GAME_VOLUME
 from SQ_modules.Sprites import TextSprite
 from SQ_modules.DataTypes import Point, Size
 from SQ_modules.Button import Button
@@ -10,6 +10,7 @@ from SQ_modules.GameEnums import Screen
 from SQ_modules.Metas import SqScreenMeta
 from SQ_modules.NavigationManager import NavigationManager
 from SQ_modules.Slider import Slider
+from SQ_modules.GameAudio import GameAudio
 
 class OptionsScreen(metaclass=SqScreenMeta):
     def __init__(self, screen):
@@ -33,7 +34,9 @@ class OptionsScreen(metaclass=SqScreenMeta):
         self.title_screen_sprite_group = pygame.sprite.Group()
         self.title_screen_sprite_group.add(self.title_sprite)
 
-        self.volume_slider = Slider(self.screen, Point(500, 500), (255, 0, 255), (255, 0, 0), Size(200, 5), Size(10, 20), label='volume slider')
+        self.volume_slider = Slider(self.screen, GAME_VOLUME, Point(500, 500), (255, 0, 255), (255, 0, 0), Size(200, 5), Size(10, 20), font=TITLE_FONT, label='volume slider')
+
+        self.game_audio = GameAudio()
 
     def update(self, events: list[pygame.event.Event]):
         """
@@ -41,6 +44,7 @@ class OptionsScreen(metaclass=SqScreenMeta):
         self.title_screen_sprite_group.update()
         self.title_screen_button.update(events)
         self.volume_slider.update(events)
+        self.game_audio.update_volume(self.volume_slider.current_slider_percent)
 
         for event in events:
             if event.type == pygame.KEYDOWN:

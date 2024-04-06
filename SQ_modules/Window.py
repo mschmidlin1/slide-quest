@@ -124,44 +124,7 @@ class Window():
 
 
 
-            # if self.title_screen != None: #if you're currently on the title screen
-            #     if event.type == pygame.KEYDOWN:
-            #         if event.key == pygame.K_SPACE:
-            #             self.current_game = Game(self.screen, self.level_manager, self.game_audio)
-            #             self.title_screen = None
-            #             self.game_audio.title_screen_music.stop()
-                    
-                    
-            #     elif self.title_screen.click_type is not None:
-            #         if self.title_screen.click_type == Screen.OPTIONS:
-            #             self.options_screen = OptionsScreen(self.screen)
-            #             self.title_screen = None
-
-            # if self.current_game != None: #if you're currently playing the game
-            #     if event.type == pygame.KEYDOWN:
-            #         if event.key == pygame.K_ESCAPE:
-            #             self.title_screen = TitleScreen(self.screen)
-            #             self.game_audio.title_screen_music.play(fade_ms=5000, loops=-1)
-            #         if event.key == pygame.K_r:
-            #             self.current_game = Game(self.screen, self.level_manager, self.game_audio)
-
-            # if self.level_complete_screen != None: #if you're currently on the level complete screen
-            #     if event.type == pygame.KEYDOWN:
-            #         if event.key == pygame.K_SPACE:
-            #             self.current_game = Game(self.screen, self.level_manager, self.game_audio)
-            #             self.level_complete_screen = None
-
-
-            #         elif event.key == pygame.K_ESCAPE:
-            #             self.title_screen = TitleScreen(self.screen)
-            #             self.game_audio.title_screen_music.play(fade_ms=5000, loops=-1)
-            #             self.level_complete_screen = None
-            
-            # if self.options_screen is not None:
-            #     if event.type == pygame.KEYDOWN:
-            #         if event.key == pygame.K_ESCAPE:
-            #             self.title_screen = TitleScreen(self.screen)
-            #             self.options_screen = None
+           
 
 
     def update(self, events: list[pygame.event.Event]):
@@ -174,23 +137,6 @@ class Window():
                 sys.exit()
 
         self.current_screen.update(events)
-
-        #pulled isComplete() out of the event loop as it would not check completion unless an event was detected
-        # if self.current_game is not None:
-            
-            # if self.current_game.isComplete():
-            #         self.game_audio.level_complete_sfx.play()
-            #         self.level_complete_screen = LevelCompleteScreen(self.screen, self.current_game.num_moves, self.current_game.totalTime(), self.current_game.least_moves)
-            #         self.current_game = None
-            #         self.level_manager.next_level()
-        #     else:        
-        #         self.current_game.update(events)
-        
-        # if self.title_screen is not None:
-        #     self.title_screen.update(events)
-
-        # if self.options_screen is not None:
-        #     self.options_screen.update(events)
 
 
 

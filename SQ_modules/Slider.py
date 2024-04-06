@@ -4,7 +4,7 @@ from SQ_modules.DataTypes import Size, Point
 from SQ_modules.Sprites import TextSprite
 
 class Slider:
-    def __init__(self, screen, center_pos: Point, slider_color, knob_color, slider_size: Size, knob_size: Size, label: str = '', font = None, ):
+    def __init__(self, screen, initial_percent: float, center_pos: Point, slider_color, knob_color, slider_size: Size, knob_size: Size, font: str, label: str = ''):
         """
         x and y are the top left corner
         """
@@ -16,29 +16,32 @@ class Slider:
         self.knob_size = knob_size
         self.label = label
 
-        self.font = font
-        if self.font is None:
-            self.font = font = pygame.font.SysFont('comicsans', 60)
-
         self.dragging = False
 
-        self.current_slider_percent = GAME_VOLUME
+        self.current_slider_percent = initial_percent
 
         top_left = (self.center_pos.x - (self.slider_size.width//2), self.center_pos.y - (self.slider_size.height//2))
         width_height = (self.slider_size.width, self.slider_size.height)
         self.slider_rect = pygame.Rect(top_left, width_height)
 
-        top_left = (self.center_pos.x - (self.knob_size.width//2), self.center_pos.y - (self.knob_size.height//2))
+        center_x = self.calculate_nearest_pixel_pos(self.current_slider_percent) + self.slider_rect.left
+        left_x = center_x-(self.knob_size.width//2)
+
+        top_left = (left_x, self.center_pos.y - (self.knob_size.height//2))
         width_height = (self.knob_size.width, self.knob_size.height)
         self.knob_rect = pygame.Rect(top_left, width_height)
 
         self.percent_label_loc = Point(self.slider_rect.right+20, self.slider_rect.top)
-        self.percent_text_sprite = TextSprite(self.percent_str(), TITLE_FONT, 20, self.percent_label_loc, self.knob_color, anchor='center')
+        self.percent_text_sprite = TextSprite(self.percent_str(), font, 20, self.percent_label_loc, self.knob_color, anchor='center')
+
+        self.label_loc = Point(self.slider_rect.left, self.slider_rect.top-40)
+        self.slider_label_sprite = TextSprite(label, font, 40, self.label_loc, self.knob_color, anchor='topleft')
 
         self.mouse_offset = (0, 0)
 
         self.slider_sprite_group = pygame.sprite.Group()
         self.slider_sprite_group.add(self.percent_text_sprite)
+        self.slider_sprite_group.add(self.slider_label_sprite)
 
     def percent_str(self) -> str:
         """
