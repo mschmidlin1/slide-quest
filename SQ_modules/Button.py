@@ -108,7 +108,7 @@ class SqButton(Button):
     Inherits from the Button class and sets default colors that switch between a light background with dark text,
     to a dark background with light text upon hovering.
     """
-    def __init__(self, screen, center_pos: Point, width, height, font_size: int, text=''):
+    def __init__(self, screen, center_pos: Point, width, height, font_size: int, text='', font_file=None, border_radius=None):
         """
         Initializes a new SqButton object with a predefined color scheme and hover effect.
 
@@ -128,8 +128,10 @@ class SqButton(Button):
         outline_color = DARK_GRAY   # Dark Gray for the button outline
         hover_color = NAVY_BLUE     # Dark Blue for the button background on hover
         hover_font_color = LIGHT_BLUE  # Light Blue for the text on hover
-        font_file = TITLE_FONT      # The font file for the text
-        
+        if font_file==None:
+            font_file = TITLE_FONT      # The font file for the text
+        if border_radius==None:
+            border_radius=10
         # Initialize the superclass with the default color scheme and hover effect
         super().__init__(
             screen=screen,
@@ -144,5 +146,5 @@ class SqButton(Button):
             outline_color=outline_color,
             hover_color=hover_color,
             hover_font_color=hover_font_color,  # New parameter for hover text color
-            border_radius=10
+            border_radius=border_radius
         )
