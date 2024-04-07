@@ -1,0 +1,4 @@
+CellType.ICE,CellType.GROUND,CellType.ICE,CellType.BLOCK
+CellType.GROUND,CellType.BLOCK,CellType.GROUND,CellType.ICE
+CellType.ICE,CellType.GROUND,CellType.ICE,CellType.BLOCK
+CellType.BLOCK,CellType.ICE,CellType.BLOCK,CellType.ICE
