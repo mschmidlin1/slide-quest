@@ -5,12 +5,14 @@ import pygame
 from SQ_modules.configs import TITLE_FONT, WINDOW_DIMENSIONS, TITLE_SCREEN_COLOR, TITLE_SCREEN_TEXT_COLOR
 from SQ_modules.Sprites import TextSprite, Player
 from SQ_modules.DataTypes import Point
+from SQ_modules.NavigationManager import NavigationManager
+from SQ_modules.GameEnums import Screen
 
 class LevelCompleteScreen():
     def __init__(self, screen, num_moves: int, time_str: str, least_possible_moves: int):
         
         self.screen = screen
-
+        self.navigation_manager = NavigationManager()
 
         self.main_menu_sprite = TextSprite(
             "Press (Esc) for main menu", 
@@ -61,6 +63,15 @@ class LevelCompleteScreen():
         self.screen.fill(TITLE_SCREEN_COLOR)
         self.title_screen_sprite_group.update()
         self.title_screen_sprite_group.draw(self.screen)
+
+    def update(self, events: list[pygame.event.Event]):
+        """
+        Handles the events for the level complete screen.
+        """
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    self.navigation_manager.navigate_to(Screen.GAME)
 
 
 

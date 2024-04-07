@@ -5,8 +5,12 @@ from SQ_modules.GameEnums import GameDifficulty
 from SQ_modules.DataTypes import Size
 import pygame
 
+
+#choose to turn of splash screen or not
+SPLASH_SCREEN_ON: bool = False
+
 #Audio settings
-GAME_VOLUME = 0.3 #0-1
+GAME_VOLUME = 0.0 #0-1
 
 
 #logging settings
@@ -21,6 +25,7 @@ TITLE_FONT = "resources/fonts/m5x7.otf"
 PLAYER_SPRITE_SHEET = 'resources/sprites/player/adventurer-grey-scarf-Sheet.png'
 PLAYERSHADOW_SPRITE_SHEET = 'resources/sprites/player/player-shadow.png'
 ENVIRONMENT_SPRITE_SHEET = 'resources/sprites/environment/Spritesheet_revised_2.0.png'
+SNOWFLAKE_FONT = 'resources/fonts/KR Kinda Flakey.ttf'
 
 #window information
 
@@ -77,6 +82,14 @@ GOAL_COLOR = (255, 255, 0)
 GROUND_COLOR = (88, 57, 39)
 ICE_COLOR = (173, 216, 230)
 PALLET_HIGHLIGHT_COLOR = (230, 237, 28)
+DARK_GRAY = (43, 45, 47)
+NAVY_BLUE = (11, 42, 81)
+GRAY_BLUE = (47, 86, 122)
+LIGHT_BLUE = (67, 184, 214)
+MUTE_GREEN = (42, 77, 90)
+UGLY_PINK = (175, 115, 130)
+BLUE_ICE = (158, 227, 231)
+
 
 #other constants
 PLAYER_SPEED = .3

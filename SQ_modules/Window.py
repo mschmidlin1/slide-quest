@@ -4,10 +4,13 @@ from SQ_modules.LevelIO import LevelIO
 from SQ_modules.TitleScreen import TitleScreen
 from SQ_modules.LevelCompleteScreen import LevelCompleteScreen
 from SQ_modules.Game import Game
-from SQ_modules.configs import WINDOW_DIMENSIONS, WINDOW_TITLE, ICON
+from SQ_modules.configs import WINDOW_DIMENSIONS, WINDOW_TITLE, ICON, SPLASH_SCREEN_ON
 from SQ_modules.my_logging import set_logger, log
 from SQ_modules.SplashScreen import SplashScreen
 from SQ_modules.GameAudio import GameAudio
+from SQ_modules.GameEnums import Screen
+from SQ_modules.OptionsScreen import OptionsScreen
+from SQ_modules.NavigationManager import NavigationManager
 
 set_logger()
 
@@ -19,12 +22,13 @@ class Window():
     
     def __init__(self):
         self.new()
-        self.splash_screen_shown = False  # Add this to track if the splash screen has been shown
         self.title_screen: TitleScreen = None
         self.current_game: Game = None
         self.level_complete_screen: LevelCompleteScreen = None
+        self.options_screen: OptionsScreen = None
         self.level_manager = LevelIO()
         self.game_audio = GameAudio()
+        self.navigation_manager = NavigationManager()
         self.game_audio.title_screen_music.play(fade_ms=5000, loops=-1)
     
     def new(self):
@@ -40,9 +44,11 @@ class Window():
 
     
     def run_splash_screen(self):
+        """
+        Creates and instance of SplashScreen and runs it.
+        """
         splash_screen = SplashScreen(self.screen)
         splash_screen.run()
-        self.splash_screen_shown = True  # Mark splash screen as shown
 
     
     def run(self):
@@ -51,11 +57,14 @@ class Window():
         - updates events
         - draws sprites
         """
-        if not self.splash_screen_shown:  # Show the splash screen before anything else
+        if SPLASH_SCREEN_ON:
             self.run_splash_screen()    
 
-        if not self.title_screen and self.splash_screen_shown:  # Initialize title_screen after splash
-            self.title_screen = TitleScreen(self.screen)    
+        self.title_screen = TitleScreen(self.screen)    
+        self.current_screen = self.title_screen
+        self.current_screen_type = Screen.TITLE
+        self.navigation_manager.navigate_to(Screen.TITLE)
+        self.options_screen = OptionsScreen(self.screen)
 
         while True:
             events = pygame.event.get()
@@ -68,56 +77,68 @@ class Window():
         """
         Draw window elements onto the screen.
         """
-        if self.title_screen is not None:
-            self.title_screen.draw()
-        elif self.level_complete_screen is not None:
-            self.level_complete_screen.draw()
-        elif self.current_game is not None:
-            self.current_game.draw()
+        self.current_screen.draw()
+        # if self.title_screen is not None:
+        #     self.title_screen.draw()
+        # elif self.level_complete_screen is not None:
+        #     self.level_complete_screen.draw()
+        # elif self.current_game is not None:
+        #     self.current_game.draw()
+        # elif self.options_screen is not None:
+        #     self.options_screen.draw()
     
-    def update(self, events):
+
+    def handle_navigation(self):
+        """
+        Handles the overall controls for which game screens are active.
+        """
+        #do nothing if the current screen has not been changed
+        if self.current_screen_type == self.navigation_manager.current_screen:
+            return
+
+
+        if self.navigation_manager.current_screen == Screen.TITLE:
+            self.current_screen = self.title_screen
+            self.current_screen_type = Screen.TITLE
+
+        if self.navigation_manager.current_screen == Screen.OPTIONS:
+            self.current_screen = self.options_screen
+            self.current_screen_type = Screen.OPTIONS
+
+        if self.navigation_manager.current_screen == Screen.LEVEL_COMPLETE:
+            self.current_screen_type = Screen.LEVEL_COMPLETE
+            if self.current_game.isComplete():
+                self.level_complete_screen = LevelCompleteScreen(self.screen, self.current_game.num_moves, self.current_game.totalTime(), self.current_game.least_moves)
+                self.current_game = None
+                self.navigation_manager.game_active = False
+            self.current_screen = self.level_complete_screen
+            
+
+        if self.navigation_manager.current_screen == Screen.GAME:
+            self.current_screen_type = Screen.GAME
+            if self.current_game is None:
+                self.current_game = Game(self.screen, self.level_manager, self.game_audio)
+                self.navigation_manager.game_active = True
+            self.current_screen = self.current_game
+                
+
+
+
+           
+
+
+    def update(self, events: list[pygame.event.Event]):
         """
         Check for user input events and handle them.
         """
         for event in events:
-
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
 
-            if self.title_screen != None: #if you're currently on the title screen
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_SPACE:
-                        self.current_game = Game(self.screen, self.level_manager, self.game_audio)
-                        self.title_screen = None
-                        self.game_audio.title_screen_music.stop()
+        self.current_screen.update(events)
 
-            if self.current_game != None: #if you're currently playing the game
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
-                        self.title_screen = TitleScreen(self.screen)
-                        self.game_audio.title_screen_music.play(fade_ms=5000, loops=-1)
-                    if event.key == pygame.K_r:
-                        self.current_game = Game(self.screen, self.level_manager, self.game_audio)
 
-            if self.level_complete_screen != None: #if you're currently on the level complete screen
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_SPACE:
-                        self.current_game = Game(self.screen, self.level_manager, self.game_audio)
-                        self.level_complete_screen = None
 
-                    elif event.key == pygame.K_ESCAPE:
-                        self.title_screen = TitleScreen(self.screen)
-                        self.game_audio.title_screen_music.play(fade_ms=5000, loops=-1)
-                        self.level_complete_screen = None
-
-        #pulled isComplete() out of the event loop as it would not check completion unless an event was detected
-        if self.current_game is not None:
-            
-            if self.current_game.isComplete():
-                    self.game_audio.level_complete_sfx.play()
-                    self.level_complete_screen = LevelCompleteScreen(self.screen, self.current_game.num_moves, self.current_game.totalTime(), self.current_game.least_moves)
-                    self.current_game = None
-                    self.level_manager.next_level()
-            else:        
-                self.current_game.update(events)
+        #### Handle Window events #####
+        self.handle_navigation()
