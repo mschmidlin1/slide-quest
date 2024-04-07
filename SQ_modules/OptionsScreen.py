@@ -29,13 +29,13 @@ class OptionsScreen(metaclass=SqScreenMeta):
             outline_width=1
             )
         
-        self.title_screen_button: Button = Button(screen, (255,255,255), Point(WINDOW_DIMENSIONS[0]//2, WINDOW_DIMENSIONS[1] - WINDOW_DIMENSIONS[1]//8), width=500, height=100, font_size=40, text="Title Screen", font_file=TITLE_FONT, hover_color=(0,255,255))
+        self.title_screen_button: Button = Button(screen, (255,255,255), Point(WINDOW_DIMENSIONS[0]//2, WINDOW_DIMENSIONS[1] - WINDOW_DIMENSIONS[1]//8), width=350, height=100, font_size=40, text="Title Screen", font_file=TITLE_FONT, hover_color=(0,255,255))
 
         self.title_screen_sprite_group = pygame.sprite.Group()
         self.title_screen_sprite_group.add(self.title_sprite)
 
-        self.music_volume_slider = Slider(self.screen, GAME_VOLUME, Point(500, 300), DARK_GRAY, WHITE, Size(200, 5), Size(10, 20), font=TITLE_FONT, font_size=45, label='Music Volume')
-        self.sfx_volume_slider = Slider(self.screen, GAME_VOLUME, Point(500, 400), DARK_GRAY, WHITE, Size(200, 5), Size(10, 20), font=TITLE_FONT, font_size=45, label='SFX Volume')
+        self.music_volume_slider = Slider(self.screen, GAME_VOLUME, Point(WINDOW_DIMENSIONS[0]//2, WINDOW_DIMENSIONS[1]//3), DARK_GRAY, WHITE, Size(200, 5), Size(10, 20), font=TITLE_FONT, font_size=45, label='Music Volume')
+        self.sfx_volume_slider = Slider(self.screen, GAME_VOLUME, Point(WINDOW_DIMENSIONS[0]//2, WINDOW_DIMENSIONS[1]//2), DARK_GRAY, WHITE, Size(200, 5), Size(10, 20), font=TITLE_FONT, font_size=45, label='SFX Volume')
 
         self.game_audio = GameAudio()
 

@@ -33,7 +33,7 @@ class TitleScreen(metaclass=SqScreenMeta):
             outline_width=1
             )
         
-        self.options_button: Button = Button(screen, (255,255,255), Point(600, 600), width=200, height=100, font_size=40, text="options", font_file=TITLE_FONT,  hover_color=(0,255,255))
+        self.options_button: Button = Button(screen, (255,255,255), Point(WINDOW_DIMENSIONS[0]//7, WINDOW_DIMENSIONS[1] - WINDOW_DIMENSIONS[1]//12), width=200, height=100, font_size=80, text="Options", font_file=TITLE_FONT,  hover_color=(0,255,255))
         
         self.start_sprite = TextSprite(
             "Press space to start.", 
