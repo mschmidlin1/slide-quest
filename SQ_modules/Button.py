@@ -103,11 +103,14 @@ class Button:
 
 class SqButton(Button):
     """
-        Initializes a new SqButton object with a predefined color scheme.
+    Initializes a new SqButton object with a predefined color scheme that inverts on hover.
+    
+    Inherits from the Button class and sets default colors that switch between a light background with dark text,
+    to a dark background with light text upon hovering.
     """
     def __init__(self, screen, center_pos: Point, width, height, font_size: int, text=''):
         """
-        Initializes a new SqButton object with a predefined color scheme.
+        Initializes a new SqButton object with a predefined color scheme and hover effect.
 
         Inherits from the Button class and sets default colors based on a winter-themed color palette.
 
@@ -120,12 +123,14 @@ class SqButton(Button):
         - text (str, optional): The text to display on the button. Defaults to an empty string.
         """
         # Default color scheme based on the provided winter-themed image
-        primary_color = LIGHT_BLUE       # Light Blue
-        text_color = NAVY_BLUE           # Dark Blue
-        outline_color = DARK_GRAY        # Grey Blue
-        hover_color = BLUE_ICE           # Snow White
-        font_file = TITLE_FONT
-        # Initialize the superclass with the default color scheme
+        primary_color = LIGHT_BLUE  # Light Blue for the button background
+        text_color = NAVY_BLUE      # Dark Blue for the text
+        outline_color = DARK_GRAY   # Dark Gray for the button outline
+        hover_color = NAVY_BLUE     # Dark Blue for the button background on hover
+        hover_font_color = LIGHT_BLUE  # Light Blue for the text on hover
+        font_file = TITLE_FONT      # The font file for the text
+        
+        # Initialize the superclass with the default color scheme and hover effect
         super().__init__(
             screen=screen,
             color=primary_color,
@@ -138,5 +143,6 @@ class SqButton(Button):
             font_color=text_color,
             outline_color=outline_color,
             hover_color=hover_color,
+            hover_font_color=hover_font_color,  # New parameter for hover text color
             border_radius=10
         )
