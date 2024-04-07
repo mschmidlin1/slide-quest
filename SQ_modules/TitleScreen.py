@@ -2,10 +2,10 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import pygame
-from SQ_modules.configs import TITLE_FONT, WINDOW_DIMENSIONS, TITLE_SCREEN_TEXT_COLOR, LEFT_CLICK
+from SQ_modules.configs import TITLE_FONT, WINDOW_DIMENSIONS, TITLE_SCREEN_TEXT_COLOR, LEFT_CLICK, BLUE_ICE, GRAY_BLUE, NAVY_BLUE, UGLY_PINK, MUTE_GREEN, LIGHT_BLUE
 from SQ_modules.Sprites import TextSprite
 from SQ_modules.DataTypes import Point
-from SQ_modules.Button import Button
+from SQ_modules.Button import Button, SqButton
 from SQ_modules.GameEnums import Screen
 from SQ_modules.Metas import SqScreenMeta
 from SQ_modules.NavigationManager import NavigationManager
@@ -33,7 +33,7 @@ class TitleScreen(metaclass=SqScreenMeta):
             outline_width=1
             )
         
-        self.options_button: Button = Button(screen, (255,255,255), Point(WINDOW_DIMENSIONS[0]//7, WINDOW_DIMENSIONS[1] - WINDOW_DIMENSIONS[1]//12), width=200, height=100, font_size=80, text="Options", font_file=TITLE_FONT,  hover_color=(0,255,255))
+        self.options_button: SqButton = SqButton(screen, Point(WINDOW_DIMENSIONS[0]//7, WINDOW_DIMENSIONS[1] - WINDOW_DIMENSIONS[1]//12), width=200, height=80, font_size=40, text="Options")
         
         self.start_sprite = TextSprite(
             "Press space to start.", 

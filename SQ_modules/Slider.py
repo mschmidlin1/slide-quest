@@ -4,7 +4,7 @@ from SQ_modules.DataTypes import Size, Point
 from SQ_modules.Sprites import TextSprite
 
 class Slider:
-    def __init__(self, screen, initial_percent: float, center_pos: Point, slider_color, knob_color, slider_size: Size, knob_size: Size, font: str, font_size: int, label: str = ''):
+    def __init__(self, screen, initial_percent: float, center_pos: Point, slider_color, knob_color, slider_size: Size, knob_size: Size, font: str, font_size: int, label: str = '', knob_radius=2):
         """
         Initializes a new Slider object.
 
@@ -30,6 +30,7 @@ class Slider:
         self.knob_size = knob_size
         self.label = label
         self.font_size = font_size
+        self.knob_radius = knob_radius
 
         self.dragging = False
 
@@ -118,7 +119,7 @@ class Slider:
         """
 
         pygame.draw.rect(self.screen, self.slider_color, self.slider_rect)
-        pygame.draw.rect(self.screen, self.knob_color, self.knob_rect)
+        pygame.draw.rect(self.screen, self.knob_color, self.knob_rect, border_radius=self.knob_radius)
         self.slider_sprite_group.draw(self.screen)
 
     def update(self, events: list[pygame.event.Event]):

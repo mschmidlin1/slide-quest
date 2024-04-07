@@ -1,9 +1,10 @@
 import pygame
 from SQ_modules.DataTypes import Point
 from SQ_modules.Sprites import TextSprite
+from SQ_modules.configs import  BLUE_ICE, GRAY_BLUE, NAVY_BLUE, UGLY_PINK, MUTE_GREEN, LIGHT_BLUE, TITLE_FONT, DARK_GRAY
 
 class Button:
-    def __init__(self, screen, color, center_pos: Point, width, height, font_file: str, font_size: int, text='', font_color=(0, 0, 0), outline_color=None, hover_color=None):
+    def __init__(self, screen, color, center_pos: Point, width, height, font_file: str, font_size: int, text='', font_color=(0, 0, 0), outline_color=None, hover_color=None, border_radius=10):
         """
         Initializes a new Button object.
 
@@ -34,6 +35,7 @@ class Button:
         self.hover_color = hover_color if hover_color is not None else color
         self.font_file = font_file
         self.font_size = font_size
+        self.border_radius = border_radius
 
         # Calculate the top left position based on the center position
         self.top_left = Point(center_pos.x - (width // 2), center_pos.y - (height // 2))
@@ -65,10 +67,10 @@ class Button:
         """
         # Draw the button's outline if specified
         if self.outline_color:
-            pygame.draw.rect(self.screen, self.outline_color, (self.top_left.x - 2, self.top_left.y - 2, self.width + 4, self.height + 4))
+            pygame.draw.rect(self.screen, self.outline_color, (self.top_left.x - 2, self.top_left.y - 2, self.width + 4, self.height + 4), border_radius=self.border_radius+2)
 
         # Draw the button's background
-        pygame.draw.rect(self.screen, self.color, (self.top_left.x, self.top_left.y, self.width, self.height))
+        pygame.draw.rect(self.screen, self.color, (self.top_left.x, self.top_left.y, self.width, self.height), border_radius=self.border_radius)
 
         # Draw the button's text label
         self.label_sprite_group.draw(self.screen)
@@ -86,3 +88,47 @@ class Button:
         for event in events:
             if event.type == pygame.MOUSEMOTION:
                 self.color = self.hover_color if self.is_over(event.pos) else self.color_copy
+
+
+
+
+
+class SqButton(Button):
+    """
+        Initializes a new SqButton object with a predefined color scheme.
+    """
+    def __init__(self, screen, center_pos: Point, width, height, font_size: int, text=''):
+        """
+        Initializes a new SqButton object with a predefined color scheme.
+
+        Inherits from the Button class and sets default colors based on a winter-themed color palette.
+
+        Parameters:
+        - screen: The pygame surface on which the button will be drawn.
+        - center_pos (Point): The center position of the button on the screen.
+        - width: The width of the button.
+        - height: The height of the button.
+        - font_size (int): The size of the font.
+        - text (str, optional): The text to display on the button. Defaults to an empty string.
+        """
+        # Default color scheme based on the provided winter-themed image
+        primary_color = LIGHT_BLUE       # Light Blue
+        text_color = NAVY_BLUE           # Dark Blue
+        outline_color = DARK_GRAY        # Grey Blue
+        hover_color = BLUE_ICE           # Snow White
+        font_file = TITLE_FONT
+        # Initialize the superclass with the default color scheme
+        super().__init__(
+            screen=screen,
+            color=primary_color,
+            center_pos=center_pos,
+            width=width,
+            height=height,
+            font_file=font_file,
+            font_size=font_size,
+            text=text,
+            font_color=text_color,
+            outline_color=outline_color,
+            hover_color=hover_color,
+            border_radius=10
+        )

@@ -2,10 +2,10 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import pygame
-from SQ_modules.configs import TITLE_FONT, WINDOW_DIMENSIONS, TITLE_SCREEN_TEXT_COLOR, LEFT_CLICK, TITLE_SCREEN_COLOR, GAME_VOLUME, WHITE, DARK_GRAY, TITLE_FONT
+from SQ_modules.configs import TITLE_FONT, WINDOW_DIMENSIONS, TITLE_SCREEN_TEXT_COLOR, LEFT_CLICK, TITLE_SCREEN_COLOR, GAME_VOLUME, WHITE, DARK_GRAY, TITLE_FONT, MUTE_GREEN
 from SQ_modules.Sprites import TextSprite
 from SQ_modules.DataTypes import Point, Size
-from SQ_modules.Button import Button
+from SQ_modules.Button import Button, SqButton
 from SQ_modules.GameEnums import Screen
 from SQ_modules.Metas import SqScreenMeta
 from SQ_modules.NavigationManager import NavigationManager
@@ -29,7 +29,7 @@ class OptionsScreen(metaclass=SqScreenMeta):
             outline_width=1
             )
         
-        self.title_screen_button: Button = Button(screen, (255,255,255), Point(WINDOW_DIMENSIONS[0]//2, WINDOW_DIMENSIONS[1] - WINDOW_DIMENSIONS[1]//8), width=350, height=100, font_size=40, text="Title Screen", font_file=TITLE_FONT, hover_color=(0,255,255))
+        self.title_screen_button: SqButton = SqButton(screen, Point(WINDOW_DIMENSIONS[0]//2, WINDOW_DIMENSIONS[1] - WINDOW_DIMENSIONS[1]//8), width=350, height=70, font_size=40, text="Title Screen")
 
         self.title_screen_sprite_group = pygame.sprite.Group()
         self.title_screen_sprite_group.add(self.title_sprite)
@@ -64,7 +64,7 @@ class OptionsScreen(metaclass=SqScreenMeta):
                         self.navigation_manager.navigate_to(Screen.TITLE)
 
     def draw(self):
-        self.screen.fill(TITLE_SCREEN_COLOR)
+        self.screen.fill(MUTE_GREEN)
         self.title_screen_sprite_group.draw(self.screen)
         self.title_screen_button.draw()
         self.music_volume_slider.draw()
