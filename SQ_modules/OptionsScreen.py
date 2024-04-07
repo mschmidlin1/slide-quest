@@ -2,7 +2,7 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import pygame
-from SQ_modules.configs import TITLE_FONT, WINDOW_DIMENSIONS, TITLE_SCREEN_TEXT_COLOR, LEFT_CLICK, TITLE_SCREEN_COLOR, GAME_VOLUME
+from SQ_modules.configs import TITLE_FONT, WINDOW_DIMENSIONS, TITLE_SCREEN_TEXT_COLOR, LEFT_CLICK, TITLE_SCREEN_COLOR, GAME_VOLUME, WHITE, DARK_GRAY, TITLE_FONT
 from SQ_modules.Sprites import TextSprite
 from SQ_modules.DataTypes import Point, Size
 from SQ_modules.Button import Button
@@ -20,21 +20,22 @@ class OptionsScreen(metaclass=SqScreenMeta):
 
 
         self.title_sprite = TextSprite(
-            "Options Yay!", 
+            "Options", 
             TITLE_FONT, 
             100, 
-            Point(WINDOW_DIMENSIONS[0]//2, WINDOW_DIMENSIONS[1]//5),
+            Point(WINDOW_DIMENSIONS[0]//2, WINDOW_DIMENSIONS[1]//8),
             TITLE_SCREEN_TEXT_COLOR,
             outline_color=(0,0,0),
             outline_width=1
             )
         
-        self.title_screen_button: Button = Button(screen, (255,255,255), x=600, y=600, width=200, height=100, text="Title Screen", hover_color=(0,255,255))
+        self.title_screen_button: Button = Button(screen, (255,255,255), Point(WINDOW_DIMENSIONS[0]//2, WINDOW_DIMENSIONS[1] - WINDOW_DIMENSIONS[1]//8), width=500, height=100, font_size=40, text="Title Screen", font_file=TITLE_FONT, hover_color=(0,255,255))
 
         self.title_screen_sprite_group = pygame.sprite.Group()
         self.title_screen_sprite_group.add(self.title_sprite)
 
-        self.volume_slider = Slider(self.screen, GAME_VOLUME, Point(500, 500), (255, 0, 255), (255, 0, 0), Size(200, 5), Size(10, 20), font=TITLE_FONT, label='volume slider')
+        self.music_volume_slider = Slider(self.screen, GAME_VOLUME, Point(500, 300), DARK_GRAY, WHITE, Size(200, 5), Size(10, 20), font=TITLE_FONT, font_size=45, label='Music Volume')
+        self.sfx_volume_slider = Slider(self.screen, GAME_VOLUME, Point(500, 400), DARK_GRAY, WHITE, Size(200, 5), Size(10, 20), font=TITLE_FONT, font_size=45, label='SFX Volume')
 
         self.game_audio = GameAudio()
 
@@ -43,8 +44,11 @@ class OptionsScreen(metaclass=SqScreenMeta):
         """
         self.title_screen_sprite_group.update()
         self.title_screen_button.update(events)
-        self.volume_slider.update(events)
-        self.game_audio.update_volume(self.volume_slider.current_slider_percent)
+        self.music_volume_slider.update(events)
+        self.sfx_volume_slider.update(events)
+        self.game_audio.update_music_volume(self.music_volume_slider.current_slider_percent)
+        self.game_audio.update_sfx_volume(self.sfx_volume_slider.current_slider_percent)
+
 
         for event in events:
             if event.type == pygame.KEYDOWN:
@@ -63,7 +67,8 @@ class OptionsScreen(metaclass=SqScreenMeta):
         self.screen.fill(TITLE_SCREEN_COLOR)
         self.title_screen_sprite_group.draw(self.screen)
         self.title_screen_button.draw()
-        self.volume_slider.draw()
+        self.music_volume_slider.draw()
+        self.sfx_volume_slider.draw()
 
         
 

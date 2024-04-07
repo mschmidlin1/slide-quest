@@ -45,7 +45,10 @@ class GameAudio(metaclass=SingletonMeta):
     def FadeOutMusic(self, fade_duration_ms: int = 3000):
         fade_out_sound(self.title_screen_music, fade_duration_ms)
     
-    def update_volume(self, volume: float):
-        self.volume = volume
-        self.level_complete_sfx.set_volume(self.volume)
-        self.title_screen_music.set_volume(self.volume)
+    def update_sfx_volume(self, volume: float):
+        self.level_complete_sfx.set_volume(volume)
+        for sfx in self.slide_sfxs:
+            sfx.set_volume(volume)
+
+    def update_music_volume(self, volume: float):
+        self.title_screen_music.set_volume(volume)
