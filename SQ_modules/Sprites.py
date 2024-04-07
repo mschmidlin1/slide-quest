@@ -263,6 +263,7 @@ class SelectorTool(pygame.sprite.Sprite):
 class TextSprite(pygame.sprite.Sprite):
     def __init__(self, text: str, font_file: str, font_size: int, location: Point, color: tuple = (0,0,0), anchor: str = 'center', outline_color: tuple = None, outline_width: int = 2):
         super().__init__()
+        self.text = text
         self.font = pygame.font.Font(font_file, font_size)
         self.color = color
         self.image = self.font.render(text, True, color)
@@ -293,6 +294,7 @@ class TextSprite(pygame.sprite.Sprite):
 
         
     def update_text(self, text: str):
+        self.text = text
         self.image = self.render_text_with_outline(text)
         self.rect = self.image.get_rect()
         if self.anchor == 'center':
@@ -307,6 +309,12 @@ class TextSprite(pygame.sprite.Sprite):
             self.rect.bottomright = self.location
         else:
             raise ValueError("Invalid anchor point")
+
+    def update_text_color(self, color):
+        self.color = color
+        self.image = self.font.render(self.text, True, color)
+        self.rect = self.image.get_rect()
+        self.update_text(self.text)
 
 # class TitleScreenPlayerSprite(pygame.sprite.Sprite):
 #     def __init__(self, center_location: Point):
