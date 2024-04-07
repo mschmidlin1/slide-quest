@@ -30,6 +30,8 @@ class OptionsScreen(metaclass=SqScreenMeta):
             )
         
         self.title_screen_button: SqButton = SqButton(screen, Point(WINDOW_DIMENSIONS[0]//2, WINDOW_DIMENSIONS[1] - WINDOW_DIMENSIONS[1]//8), width=350, height=70, font_size=40, text="Title Screen")
+        self.back_button: SqButton = SqButton(screen, Point(50, 50), width=50, height=50, font_size=70, text="<<")
+
 
         self.title_screen_sprite_group = pygame.sprite.Group()
         self.title_screen_sprite_group.add(self.title_sprite)
@@ -44,6 +46,7 @@ class OptionsScreen(metaclass=SqScreenMeta):
         """
         self.title_screen_sprite_group.update()
         self.title_screen_button.update(events)
+        self.back_button.update(events)
         self.music_volume_slider.update(events)
         self.sfx_volume_slider.update(events)
         self.game_audio.update_music_volume(self.music_volume_slider.current_slider_percent)
@@ -62,6 +65,11 @@ class OptionsScreen(metaclass=SqScreenMeta):
                 if event.button == LEFT_CLICK:
                     if self.title_screen_button.is_over(event.pos):
                         self.navigation_manager.navigate_to(Screen.TITLE)
+                    if self.back_button.is_over(event.pos):
+                        if not self.navigation_manager.game_active:
+                            self.navigation_manager.navigate_to(Screen.TITLE)
+                        else:
+                            self.navigation_manager.navigate_to(Screen.GAME)
 
     def draw(self):
         self.screen.fill(MUTE_GREEN)
@@ -69,6 +77,7 @@ class OptionsScreen(metaclass=SqScreenMeta):
         self.title_screen_button.draw()
         self.music_volume_slider.draw()
         self.sfx_volume_slider.draw()
+        self.back_button.draw()
 
         
 
