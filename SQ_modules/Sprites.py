@@ -66,7 +66,7 @@ class Player(pygame.sprite.Sprite):
         self.difficulty = difficulty
         self.border_size = Border_Size_Lookup[difficulty]
         self.gameboard_loc = gameboard_loc
-        self.sprite_size = (50, 37)  # The size of a single sprite
+        self.sprite_size = (32, 32)  # The size of a single sprite
         self.setup_sprites()  # Setup sprite imaging
         self.rect = self.image.get_rect()
         self.rect.center = CellToPoint(gameboard_loc, self.difficulty)
@@ -85,7 +85,7 @@ class Player(pygame.sprite.Sprite):
 
         self.shadow_sprite = pygame.transform.scale(self.shadow_sprite, (32, 32))
 
-        self.idle_frames = self.load_frames(4)  # Load the first four frames for idle animation
+        self.idle_frames = self.load_frames(3)  # Load the first four frames for idle animation
         self.current_frame = 0
         self.image = self.idle_frames[self.current_frame]  # Start with the first frame
 
@@ -94,8 +94,14 @@ class Player(pygame.sprite.Sprite):
         Slices the sprite sheet into individual frames.
         """
         frames = []
+
+        x_start = 64
+        y_start = 140
+        x_offset = 128
+
         for i in range(number_of_frames):
-            frame = self.sprite_sheet.subsurface((i * self.sprite_size[0], 0, self.sprite_size[0], self.sprite_size[1]))
+            current_x = x_start + i * x_offset
+            frame = self.sprite_sheet.subsurface((current_x, y_start, self.sprite_size[0], self.sprite_size[1]))
             frames.append(frame)
         return frames
 
@@ -115,8 +121,8 @@ class Player(pygame.sprite.Sprite):
         Custom drawing of the player sprite to control its visual representation.
         """
         # Custom drawing logic (for example, aligning the bottom middle of the sprite)
-        image_bottom_middle = (self.rect.centerx - self.image.get_width() / 2,
-                               self.rect.centery - self.image.get_height())
+        image_bottom_middle = (self.rect.centerx- self.image.get_width() / 2,
+                               self.rect.centery - self.image.get_height() / 2)
         
         # Calculate the position for the shadow sprite
         # Assuming the shadow should be centered directly under the player sprite
