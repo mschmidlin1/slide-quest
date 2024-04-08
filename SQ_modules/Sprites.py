@@ -81,9 +81,7 @@ class Player(pygame.sprite.Sprite):
         Loads the sprite sheet, slices it into frames, and sets the initial sprite image.
         """
         self.sprite_sheet = pygame.image.load(PLAYER_SPRITE_SHEET).convert_alpha()  # Load the sprite sheet
-        self.shadow_sprite = pygame.image.load(PLAYERSHADOW_SPRITE_SHEET).convert_alpha()  # Load the sprite sheet
-
-        self.shadow_sprite = pygame.transform.scale(self.shadow_sprite, (32, 32))
+        self.shadow_sprite = self.sprite_sheet.subsurface((352, 140, self.sprite_size[0] / 2, self.sprite_size[1]))
 
         self.idle_frames = self.load_frames(3)  # Load the first four frames for idle animation
         self.current_frame = 0
@@ -127,7 +125,7 @@ class Player(pygame.sprite.Sprite):
         # Calculate the position for the shadow sprite
         # Assuming the shadow should be centered directly under the player sprite
         shadow_pos = (self.rect.centerx - self.shadow_sprite.get_width() / 2,
-                    (self.rect.centery - 3) - self.shadow_sprite.get_height() / 2)
+                    (self.rect.centery + 3) - self.shadow_sprite.get_height() / 2)
 
         # Blit the shadow sprite first
         screen.blit(self.shadow_sprite, shadow_pos)
