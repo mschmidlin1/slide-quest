@@ -95,11 +95,11 @@ class GameboardSpriteManager:
 
         return SpriteType_To_CellType(type(self.GetSprite(cell)))
 
-    def Move(self, cell: Cell):
+    def Move(self, cell: Cell, direction):
         """
         Moves the player in a given direction.
         """
-        self.player_sprite.move(cell)
+        self.player_sprite.move(cell, direction)
 
     def SetSprite(self, cell: Cell, cell_type: CellType) -> None:
         """

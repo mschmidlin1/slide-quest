@@ -5,18 +5,15 @@ from SQ_modules.GameEnums import GameDifficulty
 from SQ_modules.DataTypes import Size
 import pygame
 
-
 #choose to turn of splash screen or not
 SPLASH_SCREEN_ON: bool = False
 
 #Audio settings
 GAME_VOLUME = 0.0 #0-1
 
-
 #logging settings
 FILE_LOG_LEVEL = "DEBUG"
 STDOUT_LOG_LEVEL = "INFO"
-
 
 #game settings
 WINDOW_TITLE = "Slide Quest"
@@ -28,8 +25,6 @@ ENVIRONMENT_SPRITE_SHEET = 'resources/sprites/environment/Spritesheet_revised_2.
 SNOWFLAKE_FONT = 'resources/fonts/KR Kinda Flakey.ttf'
 
 #window information
-
-
 WINDOW_DIMENSIONS = Size(width=960, height=960) #must be set to a multiple of 64
 CELL_DIMENSIONS = Size(width=32,  height=32)
 BEGINNER_DIMENSIONS = Size(width=12, height=12)
@@ -68,9 +63,6 @@ Board_Size_Lookup = {
 #Defaul to edit on or edit off
 IS_EDIT_ON_DEFAULT = False
 
-#cell information
-
-
 #define colors
 TITLE_SCREEN_COLOR = (37, 150, 190)
 TITLE_SCREEN_TEXT_COLOR = (255, 255, 255)
@@ -92,7 +84,8 @@ BLUE_ICE = (158, 227, 231)
 
 
 #other constants
-PLAYER_SPEED = .3
+PLAYER_SPEED = .1
+COMPLETION_DELAY = 2000
 
 #settings
 LEFT_CLICK = 1
