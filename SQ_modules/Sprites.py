@@ -74,45 +74,95 @@ class Player(pygame.sprite.Sprite):
         self.moving = False
         self.speed = PLAYER_SPEED
         self.last_update = pygame.time.get_ticks()
-        self.frame_rate = 600  # Milliseconds per frame
+        self.frame_rate = 200  # Milliseconds per frame
 
     def setup_sprites(self):
         """
         Loads the sprite sheet, slices it into frames, and sets the initial sprite image.
         """
         self.sprite_sheet = pygame.image.load(PLAYER_SPRITE_SHEET).convert_alpha()  # Load the sprite sheet
-        self.shadow_sprite = self.sprite_sheet.subsurface((352, 140, self.sprite_size[0] / 2, self.sprite_size[1]))
+        self.shadow_sprite = self.sprite_sheet.subsurface((352, 140, self.sprite_size[0] / 2, self.sprite_size[1])) #magic numbers until I can annotate them better
 
-        self.idle_frames = self.load_frames(3)  # Load the first four frames for idle animation
+        # Load frame sets for each direction
+
+        #idle
+        self.idle_front_frames = self.load_frames(3, 64, 140)
+        self.idle_back_frames = self.load_frames(3, 0, 140)
+        self.idle_side_frames = self.load_frames(3, 32, 140)
+
+        #ground walking
+        self.mvmt_up_grnd_frames = self.load_frames(8, 0, 24)
+        self.mvmt_down_grnd_frames = self.load_frames(8, 64, 0)
+        self.mvmt_side_grnd_frames = self.load_frames(8, 32, 0)
+
+        #ice sliding
+        self.mvmt_up_ice_frames = self.load_frames(8, 0, 0)
+        self.mvmt_down_ice_frames = self.load_frames(8, 96, 0)
+        self.mvmt_side_ice_frames = self.load_frames(8, 32, 24)
+
+        #initialize on player front idle
+        self.idle_frames = self.idle_front_frames # Load the first four frames for idle animation
         self.current_frame = 0
         self.image = self.idle_frames[self.current_frame]  # Start with the first frame
 
-    def load_frames(self, number_of_frames: int):
+    def change_direction(self, direction):
+        if direction == "LEFT":
+            self.current_frames = [pygame.transform.flip(frame, True, False) for frame in self.right_frames]
+        elif direction == "RIGHT":
+            self.current_frames = self.right_frames
+        elif direction == "UP":
+            self.current_frames = self.up_frames
+        elif direction == "DOWN":
+            self.current_frames = self.down_frames
+
+        self.current_frame = 0  # Reset to the first frame of the new direction
+        self.image = self.current_frames[self.current_frame]
+
+    def load_frames(self, number_of_frames: int, x_start = 0, y_start= 0):
         """
         Slices the sprite sheet into individual frames.
         """
         frames = []
+        frame_width, frame_height = self.sprite_size
 
-        x_start = 64
-        y_start = 140
         x_offset = 128
+        gap = 32  # The gap between lines of sprites
+        rows = 2  # Number of rows to alternate between
 
-        for i in range(number_of_frames):
-            current_x = x_start + i * x_offset
-            frame = self.sprite_sheet.subsurface((current_x, y_start, self.sprite_size[0], self.sprite_size[1]))
-            frames.append(frame)
-        return frames
+        if number_of_frames == 3:
 
-    def update_sprite(self):
-        """
-        Update the sprite image based on the player's state. For example, cycle through
-        idle frames or switch to a moving animation.
-        """
-        current_time = pygame.time.get_ticks()
-        if current_time - self.last_update > self.frame_rate:
-            self.last_update = current_time
-            self.current_frame = (self.current_frame + 1) % len(self.idle_frames)
-            self.image = self.idle_frames[self.current_frame]
+            for i in range(number_of_frames):
+                current_x = x_start + i * x_offset
+                frame = self.sprite_sheet.subsurface((current_x, y_start, self.sprite_size[0], self.sprite_size[1]))
+                frames.append(frame)
+
+            return frames
+        
+        if number_of_frames == 8:
+
+            for i in range(number_of_frames):
+                row = (i % rows)  # Alternate rows
+                column = (i // rows)  # Move to the next column after completing each row
+
+                current_x = x_start + column * x_offset
+                current_y = y_start + row * (frame_height + gap)
+
+                frame = self.sprite_sheet.subsurface((current_x, current_y, frame_width, frame_height))
+                frames.append(frame)
+
+            return frames
+
+    # def update_sprite(self):
+    #     """
+    #     Update the sprite image based on the player's state. This method now dynamically selects the correct
+    #     frame set to cycle through based on the player's current action and direction, stored in self.current_frames.
+    #     """
+    #     current_time = pygame.time.get_ticks()
+    #     if current_time - self.last_update > self.frame_rate:
+    #         self.last_update = current_time
+    #         # Cycle through the current frame set
+    #         self.current_frame = (self.current_frame + 1) % len(self.current_frames)
+    #         self.image = self.current_frames[self.current_frame]
 
     def draw_player(self, screen):
         """
