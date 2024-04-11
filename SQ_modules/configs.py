@@ -7,10 +7,10 @@ import pygame
 
 
 #choose to turn of splash screen or not
-SPLASH_SCREEN_ON: bool = False
+SPLASH_SCREEN_ON: bool = True
 
 #Audio settings
-GAME_VOLUME = 0.0 #0-1
+GAME_VOLUME = 0.2 #0-1
 
 
 #logging settings

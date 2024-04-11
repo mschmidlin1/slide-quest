@@ -3,7 +3,7 @@ from SQ_modules.configs import Board_Size_Lookup
 from SQ_modules.GameBoard import GameBoard
 from SQ_modules.LevelIO import LevelIO
 from SQ_modules.ShortestPath import ShortestPath
-from SQ_modules.LevelIO import LevelIO
+from SQ_modules.LevelIO import LevelIO, MapgenIO
 import numpy as np
 from SQ_modules.DataTypes import Point
 import random
@@ -42,22 +42,7 @@ class LevelGenerator:
         self.probability_increase_ratio = 1.65 #decrease this number to increase size of blobs
         self.empty_board = np.empty(self.board_dimensions, dtype=cell_dtype)
         self.empty_board.fill(CellType.ICE)
-        self.resources = self.read_mapgen_resources()
-    
-    def read_mapgen_resources(self) -> dict[str, np.ndarray]:
-        """
-        Reads the mapgen resources from files.
-
-        Returns a dictionary where the keys are strings (file names) and the values are np.ndarrays of dtype CellType.
-        """
-        level_io = LevelIO()
-        resource_files = os.listdir("mapgen_resources")
-        resources = {}
-        for file in resource_files:
-            full_path = os.path.join("mapgen_resources", file)
-            sub_map: np.ndarray = level_io.ReadBoard(full_path)
-            resources[file] = sub_map
-        return resources
+        self.resources = MapgenIO.ReadMapgen()
     
     def calculate_block_probability(self, num_adjacent_blocks: int) -> float:
         """

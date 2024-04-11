@@ -34,6 +34,10 @@ class GameAudio(metaclass=SingletonMeta):
         self.level_complete_sfx.set_volume(self.volume)
         self.title_screen_music = pygame.mixer.Sound("resources/audio/music/PhilosophicalSongTitle - RoccoW  Chiptune [No Copyright Music].mp3")
         self.title_screen_music.set_volume(self.volume)
+        self.button_click_sfx = pygame.mixer.Sound("resources/audio/sounds/multi-pop.mp3")
+        self.button_click_sfx.set_volume(self.volume)
+        self.splash_screen_sounds = pygame.mixer.Sound("resources/audio/sounds/vibes-windy-whoosh-magical-chimes.mp3")
+        self.splash_screen_sounds.set_volume(self.volume)
 
     def PlayRandomSlideSfx(self):
         """
@@ -49,6 +53,8 @@ class GameAudio(metaclass=SingletonMeta):
         self.level_complete_sfx.set_volume(volume)
         for sfx in self.slide_sfxs:
             sfx.set_volume(volume)
+        self.button_click_sfx.set_volume(volume)
+        self.splash_screen_sounds.set_volume(volume)
 
     def update_music_volume(self, volume: float):
         self.title_screen_music.set_volume(volume)

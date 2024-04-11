@@ -29,7 +29,7 @@ class Window():
         self.level_manager = LevelIO()
         self.game_audio = GameAudio()
         self.navigation_manager = NavigationManager()
-        self.game_audio.title_screen_music.play(fade_ms=5000, loops=-1)
+        
     
     def new(self):
         """
@@ -47,6 +47,7 @@ class Window():
         """
         Creates and instance of SplashScreen and runs it.
         """
+        self.game_audio.splash_screen_sounds.play()
         splash_screen = SplashScreen(self.screen)
         splash_screen.run()
 
@@ -60,6 +61,7 @@ class Window():
         if SPLASH_SCREEN_ON:
             self.run_splash_screen()    
 
+        self.game_audio.title_screen_music.play(fade_ms=5000, loops=-1)
         self.title_screen = TitleScreen(self.screen)    
         self.current_screen = self.title_screen
         self.current_screen_type = Screen.TITLE
@@ -96,7 +98,7 @@ class Window():
         if self.current_screen_type == self.navigation_manager.current_screen:
             return
 
-
+        self.game_audio.button_click_sfx.play()
         if self.navigation_manager.current_screen == Screen.TITLE:
             self.current_screen = self.title_screen
             self.current_screen_type = Screen.TITLE

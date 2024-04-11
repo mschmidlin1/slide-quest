@@ -15,6 +15,48 @@ cell_dtype = np.dtype(CellType)
 set_logger()
 
 
+#region Static IO Functions
+def ReadMapCsv(filename: str) -> np.ndarray:
+    """
+    Reads the celltypes from a csv file and loads them into a numpy array.
+    """
+    with open(filename, mode='r', newline='') as f:
+        all_lines = f.readlines()
+
+    string_cells = []
+    for line in all_lines:
+        line = line.strip()
+        string_cells.append(line.split(','))
+    string_cells = np.array(string_cells)
+    gameboard = Str_to_CellType_vector_func(string_cells)
+    gameboard = gameboard.astype(cell_dtype)
+    return gameboard
+
+
+def GetStrDateTime() -> str:
+    """
+    This method gets the current datetime string and returns it.
+    """
+    return datetime.now().__str__().replace(":",".")
+
+def eliminate_duplicates_dict(arr_dict: dict[str, np.ndarray]) -> dict[str, np.ndarray]:
+    """
+    Eliminates the duplicates from a dictionary.
+    """
+    seen = {}
+    unique_dict = {}
+    for file_path, arr in arr_dict.items():
+        # Generate a hashable signature for each array.
+        signature = (arr.shape, arr.tobytes())
+        if signature not in seen:
+            seen[signature] = True
+            unique_dict[file_path] = arr
+    return unique_dict
+
+#endregion
+
+
+
 
 class MapgenIO:
     """
@@ -39,10 +81,27 @@ class MapgenIO:
         if not os.path.exists(root_dir):
             os.mkdir(root_dir)
 
-        str_dttm = LevelIO.str_dttm()
+        str_dttm = GetStrDateTime()
         filename = os.path.join(root_dir, "sub-map_"+str_dttm+".csv")
         with open(filename, mode='w', newline='') as file:
             file.write(str(gameboard))
+    @staticmethod
+    def ReadMapgen() -> dict[str, np.ndarray]:
+        """
+        Reads all the mapgen sub-maps from the MapgenResources folder and returns them as a dictionary of the format {filename, map-array}
+        Eliminates duplicates if there are any.
+        """
+        root_dir = "mapgen_resources"
+        files = os.listdir(root_dir)
+        file_paths = [os.path.join(root_dir, file) for file in files]
+        
+        resources = dict()
+        for path in file_paths:
+            resources[path] = ReadMapCsv(path)
+
+        return eliminate_duplicates_dict(resources)
+
+
 
 class LevelIO(metaclass=SingletonMeta):
     """
@@ -169,7 +228,7 @@ class LevelIO(metaclass=SingletonMeta):
         Saves the board and the player pos to an new level file.
         """
         level_str = os.path.basename(self.current_level)[0] + '_'
-        str_dttm = str_dttm()
+        str_dttm = GetStrDateTime()
         player_file = level_str + str_dttm + "-player.txt"
         map_file = level_str + str_dttm + ".csv"
         player_file = os.path.join(self.levels_root_dir, player_file)
@@ -191,18 +250,8 @@ class LevelIO(metaclass=SingletonMeta):
         """
         if filename is None:
             filename = self.current_level
-        with open(filename, mode='r', newline='') as f:
-            all_lines = f.readlines()
-
-        string_cells = []
-        for line in all_lines:
-            line = line.strip()
-            string_cells.append(line.split(','))
-        string_cells = np.array(string_cells)
-        gameboard = Str_to_CellType_vector_func(string_cells)
-        gameboard = gameboard.astype(cell_dtype)
-
-        return gameboard
+        
+        return ReadMapCsv(filename)
     
     def ReadPlayerPos(self, filename: str = None) -> Cell:
         """
@@ -226,9 +275,4 @@ class LevelIO(metaclass=SingletonMeta):
         player_pos = self.ReadPlayerPos(self.get_player_file())
         return gameboard, player_pos
     
-    @staticmethod
-    def str_dttm() -> str:
-        """
-        This method gets the current datetime string and returns it.
-        """
-        return datetime.now().__str__().replace(":",".")
+
