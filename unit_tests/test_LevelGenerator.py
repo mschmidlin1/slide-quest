@@ -4,8 +4,9 @@ import os
 import numpy as np
 #necessary to import things from the SQ_modules folder
 sys.path.append(os.getcwd())
-from SQ_modules.DataTypes import Point
-from LevelGenerator import LevelGenerator
+from SQ_modules.DataTypes import Cell
+from SQ_modules.LevelGenerator import LevelGenerator
+from SQ_modules.GameBoard import GameBoard
 from SQ_modules.GameEnums import GameDifficulty, CellType
 cell_dtype = np.dtype(CellType)
 class Test_Constructor(unittest.TestCase):
@@ -62,7 +63,7 @@ class Test_Constructor(unittest.TestCase):
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],     
         ], dtype=cell_dtype)
-        num = generator.count_neighbors(gameboard, Point(x=1, y=1), CellType.BLOCK)
+        num = generator.count_neighbors(gameboard, Cell(col=1, row=1), CellType.BLOCK)
         self.assertEqual(num, 0)
 
     def test_count_neighboors_1(self):
@@ -79,7 +80,7 @@ class Test_Constructor(unittest.TestCase):
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],     
         ], dtype=cell_dtype)
-        num = generator.count_neighbors(gameboard, Point(x=1, y=1), CellType.BLOCK)
+        num = generator.count_neighbors(gameboard, Cell(1, 1), CellType.BLOCK)
         self.assertEqual(num, 1)
 
     def test_count_neighboors_2(self):
@@ -96,7 +97,7 @@ class Test_Constructor(unittest.TestCase):
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],     
         ], dtype=cell_dtype)
-        num = generator.count_neighbors(gameboard, Point(x=1, y=1), CellType.BLOCK)
+        num = generator.count_neighbors(gameboard, Cell(1, 1), CellType.BLOCK)
         self.assertEqual(num, 2)
 
     def test_count_neighboors_8(self):
@@ -113,7 +114,7 @@ class Test_Constructor(unittest.TestCase):
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],     
         ], dtype=cell_dtype)
-        num = generator.count_neighbors(gameboard, Point(x=1, y=1), CellType.BLOCK)
+        num = generator.count_neighbors(gameboard, Cell(1, 1), CellType.BLOCK)
         self.assertEqual(num, 8)
 
     def test_count_neighboors_top_left(self):
@@ -130,7 +131,7 @@ class Test_Constructor(unittest.TestCase):
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],     
         ], dtype=cell_dtype)
-        num = generator.count_neighbors(gameboard, Point(x=0, y=0), CellType.BLOCK)
+        num = generator.count_neighbors(gameboard, Cell(0, 0), CellType.BLOCK)
         self.assertEqual(num, 2)
 
     def test_count_neighboors_bottom_right(self):
@@ -147,7 +148,7 @@ class Test_Constructor(unittest.TestCase):
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.BLOCK, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],     
         ], dtype=cell_dtype)
-        num = generator.count_neighbors(gameboard, Point(x=9, y=9), CellType.BLOCK)
+        num = generator.count_neighbors(gameboard, Cell(9, 9), CellType.BLOCK)
         self.assertEqual(num, 1)
 
 
@@ -165,8 +166,8 @@ class Test_Constructor(unittest.TestCase):
             [CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK,],
             [CellType.BLOCK, CellType.ICE, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK,],     
         ], dtype=cell_dtype)
-        goal_pos = generator.random_goal_pos(gameboard)
-        self.assertEqual(goal_pos, Point(1, 9))
+        goal_pos = generator.random_goal_pos(gameboard, np.random.RandomState(1))
+        self.assertEqual(goal_pos, Cell(col=1, row=9))
 
 
     def test_random_goal_pos_33(self):
@@ -183,8 +184,8 @@ class Test_Constructor(unittest.TestCase):
             [CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK,],
             [CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK,],     
         ], dtype=cell_dtype)
-        goal_pos = generator.random_goal_pos(gameboard)
-        self.assertEqual(goal_pos, Point(3, 3))
+        goal_pos = generator.random_goal_pos(gameboard, np.random.RandomState(1))
+        self.assertEqual(goal_pos, Cell(3, 3))
 
     def test_random_player_pos_33(self):
         generator = LevelGenerator(difficulty=GameDifficulty.BEGINNER)
@@ -200,8 +201,8 @@ class Test_Constructor(unittest.TestCase):
             [CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK,],
             [CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK,],     
         ], dtype=cell_dtype)
-        player_pos = generator.random_player_pos(gameboard)
-        self.assertEqual(player_pos, Point(3, 3))
+        player_pos = generator.random_player_pos(gameboard, np.random.RandomState(1))
+        self.assertEqual(player_pos, Cell(3, 3))
     def test_contins_both_empty(self):
         generator = LevelGenerator(difficulty=GameDifficulty.BEGINNER)
         self.assertTrue(generator.contains([], []))
@@ -226,16 +227,16 @@ class Test_Constructor(unittest.TestCase):
             [CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK,],
             [CellType.BLOCK, CellType.BLOCK, CellType.BLOCK, CellType.BLOCK,],  
         ], dtype=cell_dtype)
-        loc = Point(0, 0)
+        loc = Cell(0, 0)
         covered_points = generator.get_covered_points(loc, feature)
         self.assertEqual(15, len(covered_points))
-        self.assertIn(Point(1, 0), covered_points)
-        self.assertIn(Point(3, 3), covered_points)
+        self.assertIn(Cell(col=1, row=0), covered_points)
+        self.assertIn(Cell(3, 3), covered_points)
     def test_get_covered_points_empty(self):
         generator = LevelGenerator(difficulty=GameDifficulty.BEGINNER)
         feature = np.array([[]
         ], dtype=cell_dtype)
-        loc = Point(0, 0)
+        loc = Cell(0, 0)
         with self.assertRaises(ValueError):
             covered_points = generator.get_covered_points(loc, feature)
     def test_get_covered_points_3x3(self):
@@ -245,16 +246,16 @@ class Test_Constructor(unittest.TestCase):
             [CellType.BLOCK, CellType.BLOCK, CellType.BLOCK,],
             [CellType.BLOCK, CellType.BLOCK, CellType.BLOCK,],  
         ], dtype=cell_dtype)
-        loc = Point(0, 0)
+        loc = Cell(0, 0)
         covered_points = generator.get_covered_points(loc, feature)
         self.assertEqual(8, len(covered_points))
-        self.assertIn(Point(1, 0), covered_points)
-        self.assertIn(Point(2, 2), covered_points)
+        self.assertIn(Cell(1, 0), covered_points)
+        self.assertIn(Cell(2, 2), covered_points)
     def test_get_covered_points_dimensions(self):
         generator = LevelGenerator(difficulty=GameDifficulty.BEGINNER)
         feature = np.array([CellType.ICE, CellType.BLOCK, CellType.BLOCK,
         ], dtype=cell_dtype)
-        loc = Point(0, 0)
+        loc = Cell(0, 0)
         with self.assertRaises(ValueError):
             covered_points = generator.get_covered_points(loc, feature)
     def test_get_covered_points_3x5(self):
@@ -266,18 +267,18 @@ class Test_Constructor(unittest.TestCase):
             [CellType.ICE, CellType.BLOCK, CellType.BLOCK,],
             [CellType.ICE, CellType.BLOCK, CellType.BLOCK,],  
         ], dtype=cell_dtype)
-        loc = Point(0, 0)
+        loc = Cell(0, 0)
         covered_points = generator.get_covered_points(loc, feature)
         self.assertEqual(14, len(covered_points))
-        self.assertIn(Point(1, 0), covered_points)
-        self.assertIn(Point(2, 2), covered_points)
+        self.assertIn(Cell(0, 1), covered_points)
+        self.assertIn(Cell(2, 2), covered_points)
     def test_insert_feature_2x2(self):
         generator = LevelGenerator(difficulty=GameDifficulty.BEGINNER)
         feature = np.array([
             [CellType.BLOCK, CellType.BLOCK,],
             [CellType.BLOCK, CellType.BLOCK,],
         ], dtype=cell_dtype)
-        loc = Point(0, 0)
+        loc = Cell(0, 0)
         board = np.array([
             [CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE,],
@@ -291,7 +292,7 @@ class Test_Constructor(unittest.TestCase):
         generator = LevelGenerator(difficulty=GameDifficulty.BEGINNER)
         feature = np.array([
         ], dtype=cell_dtype)
-        loc = Point(0, 0)
+        loc = Cell(0, 0)
         board = np.array([
             [CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE,],
@@ -306,7 +307,7 @@ class Test_Constructor(unittest.TestCase):
             [CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE,],
         ], dtype=cell_dtype)
-        loc = Point(0, 0)
+        loc = Cell(0, 0)
         board = np.array([
             [CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE,],
@@ -321,7 +322,7 @@ class Test_Constructor(unittest.TestCase):
             [CellType.BLOCK, CellType.BLOCK,],
             [CellType.BLOCK, CellType.BLOCK,],
         ], dtype=cell_dtype)
-        loc = Point(0, 0)
+        loc = Cell(0, 0)
         board = np.array([
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
@@ -338,5 +339,22 @@ class Test_Constructor(unittest.TestCase):
         self.assertEqual((10,10), new_board.shape)
         self.assertEqual(CellType.BLOCK, new_board[0,0])
         self.assertNotEqual(CellType.ICE, new_board[1,1])
+
+class Test_generate_candidate(unittest.TestCase):
+    def test_seed_1(self):
+        generator = LevelGenerator(difficulty=GameDifficulty.BEGINNER)
+        board: GameBoard = generator.generate_candidate(random_seed=1)
+
+        other_board: GameBoard = generator.generate_candidate(random_seed=1)
+        self.assertEqual(board, other_board)
+
+
+class Test_generate(unittest.TestCase):
+    def test_generate(self):
+        generator = LevelGenerator(difficulty=GameDifficulty.BEGINNER)
+        seed, gamebaord = generator.generate()
+        self.assertTrue(True)
+        
+
 if __name__ == '__main__':
     unittest.main()

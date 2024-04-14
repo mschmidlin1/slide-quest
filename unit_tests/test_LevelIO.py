@@ -7,7 +7,7 @@ import numpy as np
 sys.path.append(os.getcwd())
 from SQ_modules.LevelIO import LevelIO, eliminate_duplicates_dict
 
-class TestEliminateDuplicatesDict(unittest.TestCase):
+class Test_EliminateDuplicatesDict(unittest.TestCase):
 
     def test_empty_dict(self):
         self.assertEqual(eliminate_duplicates_dict({}), {})

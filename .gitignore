@@ -8,3 +8,5 @@ SQenv/
 .venv/
 build/
 .DS_Store
+
+save_data.pkl

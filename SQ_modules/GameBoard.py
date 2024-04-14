@@ -195,7 +195,11 @@ class GameBoard:
         """
         return self.gameboard[upper_left.row:lower_right.row+1,upper_left.col:lower_right.col+1]
 
-
+    def __eq__(self, other) -> bool:
+        if np.array_equal(self.gameboard, other.gameboard) and self.player_pos==other.player_pos and self.goal_pos==other.goal_pos:
+            return True
+        else:
+            return False
 
 
 if __name__=="__main__":
