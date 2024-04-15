@@ -249,22 +249,19 @@ class LevelGenerator:
             logging.error(f"Goal position and player position both have location: {gameboard.player_pos}")
         return gameboard
     
-    def generate(self) -> tuple[int, GameBoard]:
+    def generate(self, starting_num=0) -> tuple[int, GameBoard]:
         """
         Generates a valid game board along with its seed.
 
         This method repeatedly attempts to generate a game board using random seeds until it finds a configuration where both the player and goal positions are set, and the map is solvable (i.e., there exists a path between the player and goal).
+        It first checks the "starting_num" as a seed and indexes by 1 until a valid seed is found.
 
         Returns:
         tuple[int, GameBoard]: A tuple containing the seed used to generate the playable game board and the game board itself.
-
-        Notes:
-        - The method internally generates candidate game boards using randomly selected seeds within a predefined range.
-        - It verifies each candidate to ensure that player and goal positions can be placed and that the map is not impossible to solve.
-        - Upon finding a valid configuration, it returns the seed and the corresponding game board.
         """
+        candidate_seed = starting_num - 1
         while True:
-            candidate_seed = np.random.randint(0, 100000)
+            candidate_seed += 1
             candidate = self.generate_candidate(candidate_seed)
             if candidate is None:
                 logging.info(f"Candidate failed as player or goal position could not be found.(seed={candidate_seed})")

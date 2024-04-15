@@ -1,9 +1,25 @@
 import unittest
-from SQ_modules.UserData import UserData
+from SQ_modules.UserData import UserData, Seed
 from SQ_modules.configs import GAME_VOLUME
 import os
 from SQ_modules.Metas import SingletonMeta
-from SQ_modules.GameEnums import GameDifficulty
+from SQ_modules.GameEnums import GameDifficulty, Direction
+
+class Test_Seed(unittest.TestCase):
+    def test_construct(self):
+        seed = Seed(1, [Direction.UP], False, 0.0, 0)
+        self.assertTrue(True)
+
+    def test_eq(self):
+        seed = Seed(1, [Direction.UP], False, 0.0, 0)
+        seed1 = Seed(1, [Direction.DOWN], True, 1.0, 1)
+        self.assertEqual(seed, seed1)
+        
+    def test_not_eq(self):
+        seed = Seed(1, [Direction.UP], False, 0.0, 0)
+        seed1 = Seed(2, [Direction.UP], False, 0.0, 0)
+        self.assertNotEqual(seed, seed1)
+        
 
 class Test_UserData(unittest.TestCase):
     

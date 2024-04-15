@@ -1,40 +1,26 @@
+from dataclasses import dataclass
+from SQ_modules.Seed import Seed
 from SQ_modules.Metas import SingletonMeta
 import os
 from SQ_modules.configs import GAME_VOLUME
-from SQ_modules.GameEnums import GameDifficulty
+from SQ_modules.GameEnums import GameDifficulty, Direction
 import pickle
 from SQ_modules.my_logging import set_logger
 import logging
 set_logger()
 
 
+
+
+
 class UserData(metaclass=SingletonMeta):
-    """
-    A singleton class for managing user data in a game.
-
-    Attributes:
-        file_name (str): The name of the file where user data is saved.
-        music_volume (float): The music volume level.
-        sfx_volume (float): The sound effects volume level.
-        completed_seeds (Dict[GameDifficulty, Set[int]]): A dictionary tracking completed levels, categorized by difficulty.
-        user_data (dict): A dictionary containing all user data including volume levels and completed maps.
-
-    Methods:
-        write(): Save the user_data dictionary to a file.
-        read(): Load the user_data dictionary from a file.
-        update_music_volume(volume): Set the music volume and save the change.
-        update_sfx_volume(volume): Set the sound effects volume and save the change.
-        add_completed_level(difficulty, seed): Mark a level as completed and save the change.
-    """
     file_name: str = "save_data.pkl"
     music_volume: float
     sfx_volume: float
-    completed_seeds: dict[GameDifficulty, set[int]]
+    seed_data: dict[GameDifficulty, set[Seed]]
     user_data: dict
     def __init__(self):
-        """Initialize the UserData object, loading existing data from file or creating new default values."""
-
-        self.completed_seeds = {difficulty: set() for difficulty in GameDifficulty}
+        self.seed_data = {difficulty: set() for difficulty in GameDifficulty}
         self.music_volume = GAME_VOLUME
         self.sfx_volume = GAME_VOLUME
 
@@ -45,7 +31,8 @@ class UserData(metaclass=SingletonMeta):
                         "music": self.music_volume,
                         "sfx": self.sfx_volume
                     },
-                    "completed_maps": self.completed_seeds
+                    "maps": self.seed_data,
+                    "current_seed": {difficulty: Seed(0, [], False, False, 0, 0) for difficulty in GameDifficulty}
                 }
             self.write()
         else:
@@ -53,7 +40,6 @@ class UserData(metaclass=SingletonMeta):
     
 
     def write(self):
-        """Save the current state of user_data to a file."""
         try:
             with open(self.file_name, 'wb') as f:
                 pickle.dump(self.user_data, f)
@@ -61,7 +47,6 @@ class UserData(metaclass=SingletonMeta):
             logging.info(f"Error writing to file: {e}")
 
     def read(self):
-        """Load user data from the file."""
         try:
             with open(self.file_name, 'rb') as f:
                 loaded_data = pickle.load(f)
@@ -70,16 +55,31 @@ class UserData(metaclass=SingletonMeta):
             logging.info(f"Error reading from file: {e}")
     
     def update_music_volume(self, volume: float):
-        """Update the music volume level in the user data and write to file."""
         self.user_data['volume_levels']['music'] = volume
-        self.write()
+        self.write()#move write to application close
 
     def update_sfx_volume(self, volume: float):
-        """Update the sound effects volume level in the user data and write to file."""
         self.user_data['volume_levels']['sfx'] = volume
-        self.write()
+        self.write()#move write to application close
 
-    def add_completed_level(self, difficulty: GameDifficulty, seed: int):
-        """Record a completed level by difficulty and seed in the user data and write to file."""
-        self.user_data['completed_maps'][difficulty].add(seed)
-        self.write()
+    def add_map(self, difficulty: GameDifficulty, seed: Seed):
+        self.user_data['maps'][difficulty].add(seed)
+        self.write()#move write to application close
+    
+    def replace_map(self, difficulty: GameDifficulty, seed: Seed):
+        """
+        Replaces the map seed data with the given map seed data.
+        If the seed does not in the save data it will just be added.
+        This would be used if you want to update the best time or if a map has been completed for example.
+        """
+
+        if seed in self.user_data['maps'][difficulty]:
+            self.user_data['maps'][difficulty].remove(seed)
+        self.add_map(difficulty, seed)
+        self.write()#move write to application close
+    
+    def set_current_seed(self, difficulty: GameDifficulty, seed: Seed):
+        self.user_data['current_seed'][difficulty] = seed
+    def get_current_seed(self, difficulty: GameDifficulty) -> Seed:
+        return self.user_data['current_seed'][difficulty]
+
