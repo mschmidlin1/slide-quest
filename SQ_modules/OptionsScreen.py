@@ -11,13 +11,14 @@ from SQ_modules.Metas import SqScreenMeta
 from SQ_modules.NavigationManager import NavigationManager
 from SQ_modules.Slider import Slider
 from SQ_modules.GameAudio import GameAudio
+from SQ_modules.UserData import UserData
 
 class OptionsScreen(metaclass=SqScreenMeta):
     def __init__(self, screen):
         self.navigation_manager: NavigationManager = NavigationManager()
         self.screen = screen
         self.click_type = None
-
+        self.user_data = UserData()
 
         self.title_sprite = TextSprite(
             "Options", 
@@ -51,6 +52,8 @@ class OptionsScreen(metaclass=SqScreenMeta):
         self.sfx_volume_slider.update(events)
         self.game_audio.update_music_volume(self.music_volume_slider.current_slider_percent)
         self.game_audio.update_sfx_volume(self.sfx_volume_slider.current_slider_percent)
+        self.user_data.update_music_volume(self.music_volume_slider.current_slider_percent)
+        self.user_data.update_sfx_volume(self.sfx_volume_slider.current_slider_percent)
 
 
         for event in events:
