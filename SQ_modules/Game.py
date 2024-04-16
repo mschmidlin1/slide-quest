@@ -20,7 +20,7 @@ from SQ_modules.configs import (
     IS_EDIT_ON_DEFAULT,
     Border_Size_Lookup,
     ENVIRONMENT_SPRITE_SHEET)
-
+import copy
 import time
 set_logger()
 
@@ -30,23 +30,22 @@ class Game:
     A game is born with each map and is destroyed once the player reaches the goal.
     """
     
-    def __init__(self, screen: pygame.surface.Surface, level_manager = LevelIO(), game_audio = GameAudio()):
+    def __init__(self, screen: pygame.surface.Surface, gameboard: GameBoard):
         
         logging.info("New Game created.")
-        self.game_audio = game_audio
+        self.game_audio = GameAudio()
         self.screen = screen
         self.isEditActive = IS_EDIT_ON_DEFAULT
-        self.difficulty: GameDifficulty = level_manager.current_difficulty
-        self.border_size: Size = Border_Size_Lookup[self.difficulty]
-        gameboard_array, player_pos = level_manager.Read()
-        self.gameboard = GameBoard(gameboard_array, player_pos)
+        self.gameboard = gameboard
+        self.border_size: Size = Border_Size_Lookup[self.gameboard.difficulty]
         self.solution_moves = ShortestPath(self.gameboard)
+        self.shortest_path = copy.deepcopy(self.solution_moves)#save the original shortest path so the solution_moves can be updated as the player moves around
         self.least_moves = len(self.solution_moves)
         self.load_all_resources()
-        self.gameboard_sprite_manager = GameboardSpriteManager(self.gameboard, self.difficulty, self.screen)
+        self.gameboard_sprite_manager = GameboardSpriteManager(self.gameboard, self.screen)
 
-        self.levelEditor = LevelEditor(self.gameboard, self.gameboard_sprite_manager, self.difficulty, level_manager, self.screen)
-        self.level_background = LevelBackground(self.screen, level_manager.current_level, self.difficulty)
+        self.levelEditor = LevelEditor(self.gameboard, self.gameboard_sprite_manager, self.screen)
+        self.level_background = LevelBackground(self.screen, "level text goes here", self.gameboard.difficulty)
         self.level_background.fill_background()
         self.num_moves = 0
         self.navigation_manager = NavigationManager()
@@ -93,6 +92,11 @@ class Game:
         else:
             return False
     
+    def total_time(self) -> float:
+        """
+        Gets the total time the level has taken so far to complete.
+        """
+        return time.time() - self.start_time
     
     def totalTime(self) -> str:
         """

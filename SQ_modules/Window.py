@@ -11,6 +11,8 @@ from SQ_modules.GameAudio import GameAudio
 from SQ_modules.GameEnums import Screen
 from SQ_modules.OptionsScreen import OptionsScreen
 from SQ_modules.NavigationManager import NavigationManager
+from SQ_modules.LevelManager import LevelManager
+from SQ_modules.UserData import UserData
 
 set_logger()
 
@@ -26,9 +28,10 @@ class Window():
         self.current_game: Game = None
         self.level_complete_screen: LevelCompleteScreen = None
         self.options_screen: OptionsScreen = None
-        self.level_manager = LevelIO()
+        self.level_manager = LevelManager()
         self.game_audio = GameAudio()
         self.navigation_manager = NavigationManager()
+        self.user_data = UserData()
         
     
     def new(self):
@@ -80,14 +83,6 @@ class Window():
         Draw window elements onto the screen.
         """
         self.current_screen.draw()
-        # if self.title_screen is not None:
-        #     self.title_screen.draw()
-        # elif self.level_complete_screen is not None:
-        #     self.level_complete_screen.draw()
-        # elif self.current_game is not None:
-        #     self.current_game.draw()
-        # elif self.options_screen is not None:
-        #     self.options_screen.draw()
     
 
     def handle_navigation(self):
@@ -110,16 +105,19 @@ class Window():
         if self.navigation_manager.current_screen == Screen.LEVEL_COMPLETE:
             self.current_screen_type = Screen.LEVEL_COMPLETE
             if self.current_game.isComplete():
+                self.level_manager.save_seed(self.current_game.shortest_path, True, self.current_game.total_time(), self.current_game.num_moves) #save the time and number of moves etc... This gets saved to the user data.
                 self.level_complete_screen = LevelCompleteScreen(self.screen, self.current_game.num_moves, self.current_game.totalTime(), self.current_game.least_moves)
                 self.current_game = None
                 self.navigation_manager.game_active = False
+
             self.current_screen = self.level_complete_screen
             
 
         if self.navigation_manager.current_screen == Screen.GAME:
             self.current_screen_type = Screen.GAME
             if self.current_game is None:
-                self.current_game = Game(self.screen, self.level_manager, self.game_audio)
+                self.level_manager.next_seed()
+                self.current_game = Game(self.screen, self.level_manager.get_current_gameboard())
                 self.navigation_manager.game_active = True
             self.current_screen = self.current_game
                 
@@ -135,12 +133,14 @@ class Window():
         """
         for event in events:
             if event.type == pygame.QUIT:
+                self.user_data.write()
                 pygame.quit()
                 sys.exit()
 
+        #pass events to which ever screen is current
         self.current_screen.update(events)
 
 
 
-        #### Handle Window events #####
+        #### Handle screen navigation #####
         self.handle_navigation()

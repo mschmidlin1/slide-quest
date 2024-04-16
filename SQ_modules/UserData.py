@@ -56,15 +56,12 @@ class UserData(metaclass=SingletonMeta):
     
     def update_music_volume(self, volume: float):
         self.user_data['volume_levels']['music'] = volume
-        self.write()#move write to application close
 
     def update_sfx_volume(self, volume: float):
         self.user_data['volume_levels']['sfx'] = volume
-        self.write()#move write to application close
 
     def add_map(self, difficulty: GameDifficulty, seed: Seed):
         self.user_data['maps'][difficulty].add(seed)
-        self.write()#move write to application close
     
     def replace_map(self, difficulty: GameDifficulty, seed: Seed):
         """
@@ -76,7 +73,6 @@ class UserData(metaclass=SingletonMeta):
         if seed in self.user_data['maps'][difficulty]:
             self.user_data['maps'][difficulty].remove(seed)
         self.add_map(difficulty, seed)
-        self.write()#move write to application close
     
     def set_current_seed(self, difficulty: GameDifficulty, seed: Seed):
         self.user_data['current_seed'][difficulty] = seed

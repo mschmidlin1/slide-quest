@@ -114,7 +114,7 @@ class LevelGenerator:
         Raises:
         ValueError: If the randomly selected player position coincides with the goal position.
         """
-        temp_gameboard = GameBoard(board, Cell(0, 0))
+        temp_gameboard = GameBoard(board, Cell(0, 0), self.difficulty)
         width, height = board.shape
         possible_player_positions = []
         for col in range(width):
@@ -244,7 +244,7 @@ class LevelGenerator:
             return None
         if player_pos == goal_pos:
             logging.error(f"Goal position and player position both have location: {player_pos}")
-        gameboard = GameBoard(board, player_pos)
+        gameboard = GameBoard(board, player_pos, self.difficulty)
         if gameboard.player_pos == gameboard.Find_Goal_Pos():
             logging.error(f"Goal position and player position both have location: {gameboard.player_pos}")
         return gameboard
