@@ -73,4 +73,7 @@ class Seed:
             int: The hash value of the seed attribute.
         """
         return hash(self.number)
+    
+    def __str__(self) -> str:
+        return f"Seed(Number: {self.number}   Completed: {self.completed}   Is_Possible: {self.is_possible})"
 

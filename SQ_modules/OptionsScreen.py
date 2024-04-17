@@ -2,7 +2,7 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import pygame
-from SQ_modules.configs import TITLE_FONT, WINDOW_DIMENSIONS, TITLE_SCREEN_TEXT_COLOR, LEFT_CLICK, TITLE_SCREEN_COLOR, GAME_VOLUME, WHITE, DARK_GRAY, TITLE_FONT, MUTE_GREEN
+from SQ_modules.configs import TITLE_FONT, WINDOW_DIMENSIONS, TITLE_SCREEN_TEXT_COLOR, LEFT_CLICK, TITLE_SCREEN_COLOR, WHITE, DARK_GRAY, TITLE_FONT, MUTE_GREEN
 from SQ_modules.Sprites import TextSprite
 from SQ_modules.DataTypes import Point, Size
 from SQ_modules.Button import Button, SqButton
@@ -19,6 +19,7 @@ class OptionsScreen(metaclass=SqScreenMeta):
         self.screen = screen
         self.click_type = None
         self.user_data = UserData()
+        self.game_audio = GameAudio()
 
         self.title_sprite = TextSprite(
             "Options", 
@@ -37,10 +38,10 @@ class OptionsScreen(metaclass=SqScreenMeta):
         self.title_screen_sprite_group = pygame.sprite.Group()
         self.title_screen_sprite_group.add(self.title_sprite)
 
-        self.music_volume_slider = Slider(self.screen, GAME_VOLUME, Point(WINDOW_DIMENSIONS[0]//2, WINDOW_DIMENSIONS[1]//3), DARK_GRAY, WHITE, Size(200, 5), Size(10, 20), font=TITLE_FONT, font_size=45, label='Music Volume')
-        self.sfx_volume_slider = Slider(self.screen, GAME_VOLUME, Point(WINDOW_DIMENSIONS[0]//2, WINDOW_DIMENSIONS[1]//2), DARK_GRAY, WHITE, Size(200, 5), Size(10, 20), font=TITLE_FONT, font_size=45, label='SFX Volume')
+        self.music_volume_slider = Slider(self.screen, self.game_audio.current_music_volume, Point(WINDOW_DIMENSIONS[0]//2, WINDOW_DIMENSIONS[1]//3), DARK_GRAY, WHITE, Size(200, 5), Size(10, 20), font=TITLE_FONT, font_size=45, label='Music Volume')
+        self.sfx_volume_slider = Slider(self.screen, self.game_audio.current_sfx_volume, Point(WINDOW_DIMENSIONS[0]//2, WINDOW_DIMENSIONS[1]//2), DARK_GRAY, WHITE, Size(200, 5), Size(10, 20), font=TITLE_FONT, font_size=45, label='SFX Volume')
 
-        self.game_audio = GameAudio()
+        
 
     def update(self, events: list[pygame.event.Event]):
         """
@@ -50,10 +51,14 @@ class OptionsScreen(metaclass=SqScreenMeta):
         self.back_button.update(events)
         self.music_volume_slider.update(events)
         self.sfx_volume_slider.update(events)
-        self.game_audio.update_music_volume(self.music_volume_slider.current_slider_percent)
-        self.game_audio.update_sfx_volume(self.sfx_volume_slider.current_slider_percent)
-        self.user_data.update_music_volume(self.music_volume_slider.current_slider_percent)
-        self.user_data.update_sfx_volume(self.sfx_volume_slider.current_slider_percent)
+
+        if self.game_audio.current_music_volume != self.music_volume_slider.current_slider_percent:
+            self.game_audio.update_music_volume(self.music_volume_slider.current_slider_percent)
+            self.user_data.update_music_volume(self.music_volume_slider.current_slider_percent)
+        
+        if self.game_audio.current_sfx_volume != self.sfx_volume_slider.current_slider_percent:
+            self.game_audio.update_sfx_volume(self.sfx_volume_slider.current_slider_percent)
+            self.user_data.update_sfx_volume(self.sfx_volume_slider.current_slider_percent)
 
 
         for event in events:

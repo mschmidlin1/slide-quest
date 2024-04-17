@@ -5,9 +5,9 @@ from SQ_modules.Seed import Seed
 from SQ_modules.GameEnums import GameDifficulty, Direction
 from SQ_modules.ShortestPath import ShortestPath
 from SQ_modules.UserData import UserData
-
-
-
+from SQ_modules.my_logging import set_logger
+import logging
+set_logger()
 
 
 
@@ -27,6 +27,7 @@ class LevelManager(metaclass=SingletonMeta):
         """
         Change the difficulty used to generate maps.
         """
+        logging.info(f"Difficulty changed to {new_difficulty}.")
         self.current_difficulty = new_difficulty
         self.level_generator = LevelGenerator(new_difficulty)
         self.current_seed = self.user_data.get_current_seed(new_difficulty)
@@ -42,7 +43,9 @@ class LevelManager(metaclass=SingletonMeta):
         - time_ms: how long it took to complete the map.
         - num_moves: the number of moves it took to complete the map.
         """
-        self.user_data.replace_map(self.current_difficulty, Seed(self.current_seed.number, shortest_path, completed, True, time_ms, num_moves))
+        seed_to_save = Seed(self.current_seed.number, shortest_path, completed, True, time_ms, num_moves)
+        logging.info(f"Saving map seed: {seed_to_save}")
+        self.user_data.replace_map(self.current_difficulty, seed_to_save)
 
     def next_seed(self):
         """
@@ -50,12 +53,12 @@ class LevelManager(metaclass=SingletonMeta):
         """
         new_seed, gameboard = self.level_generator.generate(self.current_seed.number+1)
         #add all the failed seeds to the user data for saving
-        for i in range(self.current_seed+1, new_seed):
+        for i in range(self.current_seed.number+1, new_seed):
             failed_seed = Seed(i, [], False, False, 0, 0)
             self.user_data.add_map(self.current_difficulty, failed_seed)
         
         self.current_seed = Seed(new_seed, ShortestPath(gameboard), False, True, 0, 0)
-        self.user_data.set_current_seed(self.current_seed)
+        self.user_data.set_current_seed(self.current_difficulty, self.current_seed)
         self.current_gameboard = gameboard
 
     def get_current_gameboard(self) -> GameBoard:

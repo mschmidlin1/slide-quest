@@ -35,10 +35,10 @@ class TitleScreen(metaclass=SqScreenMeta):
         
         self.options_button: SqButton = SqButton(screen, Point(50, 50), width=50, height=50, font_size=40, text="F", font_file=SNOWFLAKE_FONT)
 
-        self.begginer_play_button: SqButton = SqButton(screen, Point(WINDOW_DIMENSIONS[0]//2, (WINDOW_DIMENSIONS[1]//2) + 0), width=200, height=50, font_size=40, text="Play Begginer Levels", font_file=TITLE_FONT)
-        self.intermediate_play_button: SqButton = SqButton(screen, Point(WINDOW_DIMENSIONS[0]//2, (WINDOW_DIMENSIONS[1]//2) + 100), width=200, height=50, font_size=40, text="Play Intermediate Levels", font_file=TITLE_FONT)
-        self.hard_play_button: SqButton = SqButton(screen, Point(WINDOW_DIMENSIONS[0]//2, (WINDOW_DIMENSIONS[1]//2) + 200), width=200, height=50, font_size=40, text="Play Hard Levels", font_file=TITLE_FONT)
-        self.expert_play_button: SqButton = SqButton(screen, Point(WINDOW_DIMENSIONS[0]//2, (WINDOW_DIMENSIONS[1]//2) + 300), width=200, height=50, font_size=40, text="Play Expert Levels", font_file=TITLE_FONT)
+        self.begginer_play_button: SqButton = SqButton(screen, Point(WINDOW_DIMENSIONS[0]//2, (WINDOW_DIMENSIONS[1]//2) + 0), width=300, height=50, font_size=40, text="PLAY BEGGINER", font_file=TITLE_FONT)
+        self.intermediate_play_button: SqButton = SqButton(screen, Point(WINDOW_DIMENSIONS[0]//2, (WINDOW_DIMENSIONS[1]//2) + 100), width=300, height=50, font_size=40, text="PLAY INTERMEDIATE", font_file=TITLE_FONT)
+        self.hard_play_button: SqButton = SqButton(screen, Point(WINDOW_DIMENSIONS[0]//2, (WINDOW_DIMENSIONS[1]//2) + 200), width=300, height=50, font_size=40, text="PLAY HARD", font_file=TITLE_FONT)
+        self.expert_play_button: SqButton = SqButton(screen, Point(WINDOW_DIMENSIONS[0]//2, (WINDOW_DIMENSIONS[1]//2) + 300), width=300, height=50, font_size=40, text="PLAY EXPERT", font_file=TITLE_FONT)
         # self.start_sprite = TextSprite(
         #     "Press space to start.", 
         #     TITLE_FONT, 

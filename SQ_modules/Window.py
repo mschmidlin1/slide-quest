@@ -1,5 +1,6 @@
 import sys
 import pygame
+import logging
 from SQ_modules.LevelIO import LevelIO
 from SQ_modules.TitleScreen import TitleScreen
 from SQ_modules.LevelCompleteScreen import LevelCompleteScreen
@@ -24,6 +25,7 @@ class Window():
     
     def __init__(self):
         self.new()
+        self.user_data = UserData()
         self.title_screen: TitleScreen = None
         self.current_game: Game = None
         self.level_complete_screen: LevelCompleteScreen = None
@@ -31,7 +33,7 @@ class Window():
         self.level_manager = LevelManager()
         self.game_audio = GameAudio()
         self.navigation_manager = NavigationManager()
-        self.user_data = UserData()
+        
         
     
     def new(self):
@@ -92,9 +94,15 @@ class Window():
         #do nothing if the current screen has not been changed
         if self.current_screen_type == self.navigation_manager.current_screen:
             return
+        
+        logging.info(f"Navigating to {self.navigation_manager.current_screen}.")
 
         self.game_audio.button_click_sfx.play()
         if self.navigation_manager.current_screen == Screen.TITLE:
+            if self.current_game is not None:
+                self.level_manager.save_seed(self.current_game.shortest_path, False, 0, 0)
+                self.current_game = None
+                self.navigation_manager.game_active = False
             self.current_screen = self.title_screen
             self.current_screen_type = Screen.TITLE
 
