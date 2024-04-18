@@ -108,7 +108,7 @@ class Window():
 
         if self.navigation_manager.current_screen == Screen.OPTIONS:
             self.current_screen = self.options_screen
-            self.current_screen_type = Screen.OPTIONS
+            self.current_sczreen_type = Screen.OPTIONS
 
         if self.navigation_manager.current_screen == Screen.LEVEL_COMPLETE:
             self.current_screen_type = Screen.LEVEL_COMPLETE
