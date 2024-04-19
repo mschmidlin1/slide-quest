@@ -23,15 +23,20 @@ class LevelManager(metaclass=SingletonMeta):
         self.user_data = UserData()
 
 
-    def change_difficulty(self, new_difficulty: GameDifficulty):
+    def load_level(self, new_difficulty: GameDifficulty):
         """
-        Change the difficulty used to generate maps.
+        Set the difficulty.
+        Load the level.
+        Find the next level if the current one is complete.
         """
-        logging.info(f"Difficulty changed to {new_difficulty}.")
+        logging.info(f"Loading difficulty {new_difficulty}.")
         self.current_difficulty = new_difficulty
         self.level_generator = LevelGenerator(new_difficulty)
         self.current_seed = self.user_data.get_current_seed(new_difficulty)
-        self.current_gameboard = self.level_generator.generate_candidate(self.current_seed.number)
+        if self.current_seed.completed:
+            self.next_seed()
+        else:
+            self.current_gameboard = self.level_generator.generate_candidate(self.current_seed.number)
 
     
     def save_seed(self, shortest_path: Direction, completed: bool, time_ms: float, num_moves: int):
@@ -45,6 +50,8 @@ class LevelManager(metaclass=SingletonMeta):
         """
         seed_to_save = Seed(self.current_seed.number, shortest_path, completed, True, time_ms, num_moves)
         logging.info(f"Saving map seed: {seed_to_save}")
+        self.current_seed = seed_to_save
+        self.user_data.set_current_seed(self.current_difficulty, seed_to_save)
         self.user_data.replace_map(self.current_difficulty, seed_to_save)
 
     def next_seed(self):
@@ -55,9 +62,10 @@ class LevelManager(metaclass=SingletonMeta):
         #add all the failed seeds to the user data for saving
         for i in range(self.current_seed.number+1, new_seed):
             failed_seed = Seed(i, [], False, False, 0, 0)
-            self.user_data.add_map(self.current_difficulty, failed_seed)
+            self.user_data.replace_map(self.current_difficulty, failed_seed)
         
         self.current_seed = Seed(new_seed, ShortestPath(gameboard), False, True, 0, 0)
+        self.user_data.replace_map(self.current_difficulty, self.current_seed)
         self.user_data.set_current_seed(self.current_difficulty, self.current_seed)
         self.current_gameboard = gameboard
 

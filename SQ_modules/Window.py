@@ -108,7 +108,7 @@ class Window():
 
         if self.navigation_manager.current_screen == Screen.OPTIONS:
             self.current_screen = self.options_screen
-            self.current_sczreen_type = Screen.OPTIONS
+            self.current_screen_type = Screen.OPTIONS
 
         if self.navigation_manager.current_screen == Screen.LEVEL_COMPLETE:
             self.current_screen_type = Screen.LEVEL_COMPLETE
@@ -124,8 +124,7 @@ class Window():
         if self.navigation_manager.current_screen == Screen.GAME:
             self.current_screen_type = Screen.GAME
             if self.current_game is None:
-                self.level_manager.change_difficulty(self.navigation_manager.curent_difficulty)#every time a game is created update the level manager so it always has the current difficulty
-                self.level_manager.next_seed()
+                self.level_manager.load_level(self.navigation_manager.curent_difficulty)
                 self.current_game = Game(self.screen, self.level_manager.get_current_gameboard())
                 self.navigation_manager.game_active = True
             self.current_screen = self.current_game
