@@ -82,4 +82,4 @@ class UserData(metaclass=SingletonMeta):
     def get_user_name(self) -> str:
         return self.user_data['user_name']
     def set_user_name(self, user_name: str):
-        self.user_data['user_name'] = user_name
+        self.user_data['user_name'] = user_name.strip()

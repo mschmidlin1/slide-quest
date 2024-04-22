@@ -2,18 +2,19 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import pygame
-from SQ_modules.configs import TITLE_FONT, WINDOW_DIMENSIONS, TITLE_SCREEN_TEXT_COLOR, LEFT_CLICK, TITLE_SCREEN_COLOR, WHITE, DARK_GRAY, TITLE_FONT, MUTE_GREEN
+from SQ_modules.configs import TITLE_FONT, WINDOW_DIMENSIONS, TITLE_SCREEN_TEXT_COLOR, LEFT_CLICK, TITLE_SCREEN_COLOR, WHITE, DARK_GRAY, TITLE_FONT, MUTE_GREEN, BLUE_ICE
 from SQ_modules.Sprites import TextSprite
 from SQ_modules.DataTypes import Point, Size
 from SQ_modules.Button import Button, SqButton
 from SQ_modules.GameEnums import Screen
-from SQ_modules.Metas import SqScreenMeta
+from SQ_modules.Metas import SqScreenMeta, SingletonMeta
 from SQ_modules.NavigationManager import NavigationManager
 from SQ_modules.Slider import Slider
 from SQ_modules.GameAudio import GameAudio
 from SQ_modules.UserData import UserData
+from SQ_modules.TextBox import TextBox
 
-class OptionsScreen(metaclass=SqScreenMeta):
+class OptionsScreen(metaclass=SingletonMeta):
     def __init__(self, screen):
         self.navigation_manager: NavigationManager = NavigationManager()
         self.screen = screen
@@ -31,21 +32,58 @@ class OptionsScreen(metaclass=SqScreenMeta):
             outline_width=1
             )
         
-        self.title_screen_button: SqButton = SqButton(screen, Point(WINDOW_DIMENSIONS[0]//2, WINDOW_DIMENSIONS[1] - WINDOW_DIMENSIONS[1]//8), width=350, height=70, font_size=40, text="Title Screen")
+
+        self.user_name_sprite = TextSprite(
+            self.user_data.get_user_name(),
+            TITLE_FONT,
+            35,
+            Point(WINDOW_DIMENSIONS.width-20, 20),
+            TITLE_SCREEN_TEXT_COLOR,
+            outline_color=(0,0,0),
+            outline_width=1,
+            anchor='topright'
+            )
+        
+
+        self.edit_name_sprite = TextSprite(
+            "Edit your user name:",
+            TITLE_FONT,
+            35,
+            Point(WINDOW_DIMENSIONS[0]//2, (WINDOW_DIMENSIONS[1]//2)+140),
+            TITLE_SCREEN_TEXT_COLOR,
+            outline_color=(0,0,0),
+            outline_width=1,
+            anchor='center'
+            )
+
+
+        self.user_name_text_box = TextBox(Point(WINDOW_DIMENSIONS[0]//2, (WINDOW_DIMENSIONS[1]//2)+200), Size(width=200, height=50),  font_size=32, color_active=BLUE_ICE, color_inactive=WHITE, active_by_default=False)
+        self.user_name_text_box.text = self.user_data.get_user_name()
+        
+        self.title_screen_button: SqButton = SqButton(screen, Point(150, WINDOW_DIMENSIONS[1] - 60), width=250, height=60, font_size=40, text="Title Screen")
         self.back_button: SqButton = SqButton(screen, Point(50, 50), width=50, height=50, font_size=70, text="<<")
+        self.apply_button = SqButton(self.screen, Point(WINDOW_DIMENSIONS[0]-75, WINDOW_DIMENSIONS[1]-60), width=100, height=60, text='Apply', font_file=TITLE_FONT, font_size=40)
 
 
         self.title_screen_sprite_group = pygame.sprite.Group()
         self.title_screen_sprite_group.add(self.title_sprite)
+        self.title_screen_sprite_group.add(self.user_name_sprite)
+        self.title_screen_sprite_group.add(self.edit_name_sprite)
 
         self.music_volume_slider = Slider(self.screen, self.game_audio.current_music_volume, Point(WINDOW_DIMENSIONS[0]//2, WINDOW_DIMENSIONS[1]//3), DARK_GRAY, WHITE, Size(200, 5), Size(10, 20), font=TITLE_FONT, font_size=45, label='Music Volume')
         self.sfx_volume_slider = Slider(self.screen, self.game_audio.current_sfx_volume, Point(WINDOW_DIMENSIONS[0]//2, WINDOW_DIMENSIONS[1]//2), DARK_GRAY, WHITE, Size(200, 5), Size(10, 20), font=TITLE_FONT, font_size=45, label='SFX Volume')
+
 
         
 
     def update(self, events: list[pygame.event.Event]):
         """
         """
+        self.user_name_text_box.update(events)
+        self.apply_button.update(events)
+
+        
+
         self.title_screen_sprite_group.update()
         self.title_screen_button.update(events)
         self.back_button.update(events)
@@ -78,6 +116,10 @@ class OptionsScreen(metaclass=SqScreenMeta):
                             self.navigation_manager.navigate_to(Screen.TITLE)
                         else:
                             self.navigation_manager.navigate_to(Screen.GAME)
+                    if self.apply_button.is_over(event.pos):
+                        self.user_data.set_user_name(self.user_name_text_box.text.strip())
+                        self.user_name_sprite.update_text(self.user_name_text_box.text.strip())
+                        self.user_name_text_box.disable()
 
     def draw(self):
         self.screen.fill(MUTE_GREEN)
@@ -86,6 +128,8 @@ class OptionsScreen(metaclass=SqScreenMeta):
         self.music_volume_slider.draw()
         self.sfx_volume_slider.draw()
         self.back_button.draw()
+        self.user_name_text_box.draw(self.screen)
+        self.apply_button.draw()
 
         
 

@@ -53,17 +53,25 @@ from SQ_modules.DataTypes import Point, Size
 
 
 class TextBox:
-    def __init__(self, center: Point, size: Size, color_active, color_inactive, font_size=32, text=''):
+    def __init__(self, center: Point, size: Size, color_active, color_inactive, font_size=32, text='', active_by_default=True):
         # Initialize base properties
         self.center = center
         self.size = size
         self.rect = pygame.Rect(center.x - size.width // 2, center.y - size.height // 2, size.width, size.height)
         self.color_active = color_active
         self.color_inactive = color_inactive
-        self.color = self.color_active
+        self.color = self.color_active if active_by_default else self.color_inactive
         self.text = text
         self.font = pygame.font.Font(None, font_size)
+        self.active = active_by_default
+
+    def disable(self):
+        self.active = False
+        self.color = self.color_inactive
+
+    def enable(self):
         self.active = True
+        self.color = self.color_active
 
     def draw(self, screen):
         # Render the text
