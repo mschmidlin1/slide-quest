@@ -11,6 +11,7 @@ class Screen(Enum):
     OPTIONS = 1
     GAME = 2
     LEVEL_COMPLETE = 3
+    WELCOME = 4
 
 
 

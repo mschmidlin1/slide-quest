@@ -32,7 +32,8 @@ class UserData(metaclass=SingletonMeta):
                         "sfx": self.sfx_volume
                     },
                     "maps": self.seed_data,
-                    "current_seed": {difficulty: Seed(0, [], False, False, 0, 0) for difficulty in GameDifficulty}
+                    "current_seed": {difficulty: Seed(0, [], False, False, 0, 0) for difficulty in GameDifficulty},
+                    "user_name": "",
                 }
             self.write()
         else:
@@ -78,4 +79,7 @@ class UserData(metaclass=SingletonMeta):
         self.user_data['current_seed'][difficulty] = seed
     def get_current_seed(self, difficulty: GameDifficulty) -> Seed:
         return self.user_data['current_seed'][difficulty]
-
+    def get_user_name(self) -> str:
+        return self.user_data['user_name']
+    def set_user_name(self, user_name: str):
+        self.user_data['user_name'] = user_name

@@ -14,6 +14,7 @@ from SQ_modules.OptionsScreen import OptionsScreen
 from SQ_modules.NavigationManager import NavigationManager
 from SQ_modules.LevelManager import LevelManager
 from SQ_modules.UserData import UserData
+from SQ_modules.WelcomeScreen import WelcomeScreen
 
 set_logger()
 
@@ -33,6 +34,7 @@ class Window():
         self.level_manager = LevelManager()
         self.game_audio = GameAudio()
         self.navigation_manager = NavigationManager()
+
         
         
     
@@ -67,11 +69,20 @@ class Window():
             self.run_splash_screen()    
 
         self.game_audio.title_screen_music.play(fade_ms=5000, loops=-1)
-        self.title_screen = TitleScreen(self.screen)    
-        self.current_screen = self.title_screen
-        self.current_screen_type = Screen.TITLE
-        self.navigation_manager.navigate_to(Screen.TITLE)
+        self.title_screen = TitleScreen(self.screen)
+        self.welcome_screen = WelcomeScreen(self.screen)
         self.options_screen = OptionsScreen(self.screen)
+
+
+        if self.user_data.get_user_name() == "":
+            self.current_screen = self.welcome_screen
+            self.current_screen_type = Screen.WELCOME
+            self.navigation_manager.navigate_to(Screen.WELCOME)
+        else:
+            self.current_screen = self.title_screen
+            self.current_screen_type = Screen.TITLE
+            self.navigation_manager.navigate_to(Screen.TITLE)
+        
 
         while True:
             events = pygame.event.get()
@@ -129,8 +140,6 @@ class Window():
                 self.navigation_manager.game_active = True
             self.current_screen = self.current_game
                 
-
-
 
            
 
