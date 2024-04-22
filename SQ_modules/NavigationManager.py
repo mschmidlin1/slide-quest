@@ -4,6 +4,13 @@ import pygame
 
 
 class NavigationManager(metaclass=SingletonMeta):
+    """
+    The navigation manager mostly keeps track of what screen the game is on.
+
+    User the navigate_to() method to navigate to a new screen.
+
+    The actual navigation happends in the window class. This class is a way to pass information back to the window class.
+    """
     def __init__(self):
         
 

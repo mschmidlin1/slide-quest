@@ -13,6 +13,15 @@ set_logger()
 
 
 class LevelManager(metaclass=SingletonMeta):
+    """
+    The level manager class is responsible for managing the different map seeds.
+
+    Methods:
+        - load_level() : loads the next level
+        - save_seed()  : saves a seed to user_data
+        - next_seed()  : determines which seed is next using level_generator
+        - get_current_gameboard() : gets the current gameboard object
+    """
     current_seed: Seed
     level_generator: LevelGenerator
     current_difficulty: GameDifficulty

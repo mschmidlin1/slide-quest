@@ -53,8 +53,22 @@ from SQ_modules.DataTypes import Point, Size
 
 
 class TextBox:
+    """
+    This class represents a text box element for user input within a Pygame application.
+    """
     def __init__(self, center: Point, size: Size, color_active, color_inactive, font_size=32, text='', active_by_default=True):
-        # Initialize base properties
+        """
+        Initializes a new TextBox object.
+
+        Args:
+            center (Point): The center point of the text box.
+            size (Size): The size of the text box (width and height).
+            color_active (tuple): The color of the text box border when active (RGB values).
+            color_inactive (tuple): The color of the text box border when inactive (RGB values).
+            font_size (int, optional): The size of the font used to render the text (default: 32).
+            text (str, optional): The initial text displayed within the text box (default: '').
+            active_by_default (bool, optional): A flag indicating whether the text box is initially active (default: True).
+        """
         self.center = center
         self.size = size
         self.rect = pygame.Rect(center.x - size.width // 2, center.y - size.height // 2, size.width, size.height)
@@ -66,14 +80,26 @@ class TextBox:
         self.active = active_by_default
 
     def disable(self):
+        """
+        Deactivates the text box, preventing user input and changing the border color to inactive.
+        """
         self.active = False
         self.color = self.color_inactive
 
     def enable(self):
+        """
+        Activates the text box, allowing user input and changing the border color to active.
+        """
         self.active = True
         self.color = self.color_active
 
     def draw(self, screen):
+        """
+        Draws the text box onto the provided Pygame surface.
+
+        Args:
+            screen (pygame.Surface): The Pygame surface to draw the text box on.
+        """
         # Render the text
         text_surface = self.font.render(self.text, True, self.color)
         # Calculate new width and adjust if necessary
@@ -87,6 +113,12 @@ class TextBox:
         pygame.draw.rect(screen, self.color, self.rect, 2)
 
     def update(self, events):
+        """
+        Processes user input events (mouse clicks and key presses) to handle text box interaction.
+
+        Args:
+            events (list[pygame.event.Event]): A list of Pygame events to process.
+        """
         for event in events:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if self.rect.collidepoint(event.pos):

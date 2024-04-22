@@ -5,7 +5,8 @@ import numpy as np
 
 class Screen(Enum):
     """
-    A class that represents the different buttons on the title screen.
+    A Enum class that represents the main screens of the SQ game.
+    A main screen is any screen that draws on the entire window.
     """
     TITLE = 0
     OPTIONS = 1

@@ -15,7 +15,11 @@ from SQ_modules.UserData import UserData
 from SQ_modules.TextBox import TextBox
 
 class OptionsScreen(metaclass=SingletonMeta):
-    def __init__(self, screen):
+    """
+    This class represents the options screen in a game. It handles user interactions related
+    to modifying game settings such as music volume, sound effects volume, and user name.
+    """
+    def __init__(self, screen: pygame.surface.Surface):
         self.navigation_manager: NavigationManager = NavigationManager()
         self.screen = screen
         self.click_type = None
@@ -73,23 +77,21 @@ class OptionsScreen(metaclass=SingletonMeta):
         self.music_volume_slider = Slider(self.screen, self.game_audio.current_music_volume, Point(WINDOW_DIMENSIONS[0]//2, WINDOW_DIMENSIONS[1]//3), DARK_GRAY, WHITE, Size(200, 5), Size(10, 20), font=TITLE_FONT, font_size=45, label='Music Volume')
         self.sfx_volume_slider = Slider(self.screen, self.game_audio.current_sfx_volume, Point(WINDOW_DIMENSIONS[0]//2, WINDOW_DIMENSIONS[1]//2), DARK_GRAY, WHITE, Size(200, 5), Size(10, 20), font=TITLE_FONT, font_size=45, label='SFX Volume')
 
-
-        
-
     def update(self, events: list[pygame.event.Event]):
         """
+        Handles all update events for the options screen.
         """
+        #update all child elements
         self.user_name_text_box.update(events)
         self.apply_button.update(events)
-
-        
-
         self.title_screen_sprite_group.update()
         self.title_screen_button.update(events)
         self.back_button.update(events)
         self.music_volume_slider.update(events)
         self.sfx_volume_slider.update(events)
 
+
+        #handle if the game audio is changed
         if self.game_audio.current_music_volume != self.music_volume_slider.current_slider_percent:
             self.game_audio.update_music_volume(self.music_volume_slider.current_slider_percent)
             self.user_data.update_music_volume(self.music_volume_slider.current_slider_percent)
@@ -98,7 +100,7 @@ class OptionsScreen(metaclass=SingletonMeta):
             self.game_audio.update_sfx_volume(self.sfx_volume_slider.current_slider_percent)
             self.user_data.update_sfx_volume(self.sfx_volume_slider.current_slider_percent)
 
-
+        #handle navigation and button clicks
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
@@ -122,6 +124,9 @@ class OptionsScreen(metaclass=SingletonMeta):
                         self.user_name_text_box.disable()
 
     def draw(self):
+        """
+        Handles all the drawing for the options screen.
+        """
         self.screen.fill(MUTE_GREEN)
         self.title_screen_sprite_group.draw(self.screen)
         self.title_screen_button.draw()

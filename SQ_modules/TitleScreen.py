@@ -42,15 +42,6 @@ class TitleScreen(metaclass=SqScreenMeta):
         self.intermediate_play_button: SqButton = SqButton(screen, Point(WINDOW_DIMENSIONS[0]//2, (WINDOW_DIMENSIONS[1]//2) + 100), width=300, height=50, font_size=40, text="Intermidiate", font_file=TITLE_FONT)
         self.hard_play_button: SqButton = SqButton(screen, Point(WINDOW_DIMENSIONS[0]//2, (WINDOW_DIMENSIONS[1]//2) + 200), width=300, height=50, font_size=40, text="Hard", font_file=TITLE_FONT)
         self.expert_play_button: SqButton = SqButton(screen, Point(WINDOW_DIMENSIONS[0]//2, (WINDOW_DIMENSIONS[1]//2) + 300), width=300, height=50, font_size=40, text="Expert", font_file=TITLE_FONT)
-        # self.start_sprite = TextSprite(
-        #     "Press space to start.", 
-        #     TITLE_FONT, 
-        #     40, 
-        #     Point(WINDOW_DIMENSIONS[0]//2, WINDOW_DIMENSIONS[1] - WINDOW_DIMENSIONS[1]//4),
-        #     TITLE_SCREEN_TEXT_COLOR,
-        #     outline_color=(0,0,0),
-        #     outline_width=1
-        #     )
 
         self.title_screen_sprite_group = pygame.sprite.Group()
         self.title_screen_sprite_group.add(self.title_sprite)

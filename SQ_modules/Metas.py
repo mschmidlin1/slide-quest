@@ -46,18 +46,3 @@ class SingletonMeta(type):
             cls._instances[cls] = super().__call__(*args, **kwargs)
         return cls._instances[cls]
 
-
-
-
-
-
-
-
-
-
-
-
-# class TestClass(metaclass=SingletonMeta):
-#     def __init__(self):
-#         self.x = 1
-#         self.name = 'name'

@@ -74,11 +74,11 @@ class Window():
         self.options_screen = OptionsScreen(self.screen)
 
 
-        if self.user_data.get_user_name() == "":
+        if self.user_data.get_user_name() == "": #if the user name is an empty string, launch the welcome screen.
             self.current_screen = self.welcome_screen
             self.current_screen_type = Screen.WELCOME
             self.navigation_manager.navigate_to(Screen.WELCOME)
-        else:
+        else:                                    #otherwise if there is a user name saved, go directly to title screen
             self.current_screen = self.title_screen
             self.current_screen_type = Screen.TITLE
             self.navigation_manager.navigate_to(Screen.TITLE)
