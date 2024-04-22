@@ -222,7 +222,7 @@ class Player(pygame.sprite.Sprite):
 
     def draw_player(self, screen):
         # Draw the shadow first using the updated position
-        if self.current_type is not 'celebrate':
+        if self.current_type != 'celebrate':
             screen.blit(self.shadow_sprite, self.shadow_pos)
         
         # Then draw the player sprite
