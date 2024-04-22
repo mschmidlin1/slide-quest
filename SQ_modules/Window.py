@@ -1,5 +1,6 @@
 import sys
 import pygame
+import logging
 from SQ_modules.LevelIO import LevelIO
 from SQ_modules.TitleScreen import TitleScreen
 from SQ_modules.LevelCompleteScreen import LevelCompleteScreen
@@ -11,6 +12,9 @@ from SQ_modules.GameAudio import GameAudio
 from SQ_modules.GameEnums import Screen
 from SQ_modules.OptionsScreen import OptionsScreen
 from SQ_modules.NavigationManager import NavigationManager
+from SQ_modules.LevelManager import LevelManager
+from SQ_modules.UserData import UserData
+from SQ_modules.WelcomeScreen import WelcomeScreen
 
 set_logger()
 
@@ -22,14 +26,17 @@ class Window():
     
     def __init__(self):
         self.new()
+        self.user_data = UserData()
         self.title_screen: TitleScreen = None
         self.current_game: Game = None
         self.level_complete_screen: LevelCompleteScreen = None
         self.options_screen: OptionsScreen = None
-        self.level_manager = LevelIO()
+        self.level_manager = LevelManager()
         self.game_audio = GameAudio()
         self.navigation_manager = NavigationManager()
-        self.game_audio.title_screen_music.play(fade_ms=5000, loops=-1)
+
+        
+        
     
     def new(self):
         """
@@ -47,6 +54,7 @@ class Window():
         """
         Creates and instance of SplashScreen and runs it.
         """
+        self.game_audio.splash_screen_sounds.play()
         splash_screen = SplashScreen(self.screen)
         splash_screen.run()
 
@@ -60,11 +68,21 @@ class Window():
         if SPLASH_SCREEN_ON:
             self.run_splash_screen()    
 
-        self.title_screen = TitleScreen(self.screen)    
-        self.current_screen = self.title_screen
-        self.current_screen_type = Screen.TITLE
-        self.navigation_manager.navigate_to(Screen.TITLE)
+        self.game_audio.title_screen_music.play(fade_ms=5000, loops=-1)
+        self.title_screen = TitleScreen(self.screen)
+        self.welcome_screen = WelcomeScreen(self.screen)
         self.options_screen = OptionsScreen(self.screen)
+
+
+        if self.user_data.get_user_name() == "": #if the user name is an empty string, launch the welcome screen.
+            self.current_screen = self.welcome_screen
+            self.current_screen_type = Screen.WELCOME
+            self.navigation_manager.navigate_to(Screen.WELCOME)
+        else:                                    #otherwise if there is a user name saved, go directly to title screen
+            self.current_screen = self.title_screen
+            self.current_screen_type = Screen.TITLE
+            self.navigation_manager.navigate_to(Screen.TITLE)
+        
 
         while True:
             events = pygame.event.get()
@@ -78,14 +96,6 @@ class Window():
         Draw window elements onto the screen.
         """
         self.current_screen.draw()
-        # if self.title_screen is not None:
-        #     self.title_screen.draw()
-        # elif self.level_complete_screen is not None:
-        #     self.level_complete_screen.draw()
-        # elif self.current_game is not None:
-        #     self.current_game.draw()
-        # elif self.options_screen is not None:
-        #     self.options_screen.draw()
     
 
     def handle_navigation(self):
@@ -95,9 +105,15 @@ class Window():
         #do nothing if the current screen has not been changed
         if self.current_screen_type == self.navigation_manager.current_screen:
             return
+        
+        logging.info(f"Navigating to {self.navigation_manager.current_screen}.")
 
-
+        self.game_audio.button_click_sfx.play()
         if self.navigation_manager.current_screen == Screen.TITLE:
+            if self.current_game is not None:
+                self.level_manager.save_seed(self.current_game.shortest_path, False, 0, 0)
+                self.current_game = None
+                self.navigation_manager.game_active = False
             self.current_screen = self.title_screen
             self.current_screen_type = Screen.TITLE
 
@@ -108,21 +124,22 @@ class Window():
         if self.navigation_manager.current_screen == Screen.LEVEL_COMPLETE:
             self.current_screen_type = Screen.LEVEL_COMPLETE
             if self.current_game.isComplete():
+                self.level_manager.save_seed(self.current_game.shortest_path, True, self.current_game.total_time(), self.current_game.num_moves) #save the time and number of moves etc... This gets saved to the user data.
                 self.level_complete_screen = LevelCompleteScreen(self.screen, self.current_game.num_moves, self.current_game.totalTime(), self.current_game.least_moves)
                 self.current_game = None
                 self.navigation_manager.game_active = False
+
             self.current_screen = self.level_complete_screen
             
 
         if self.navigation_manager.current_screen == Screen.GAME:
             self.current_screen_type = Screen.GAME
             if self.current_game is None:
-                self.current_game = Game(self.screen, self.level_manager, self.game_audio)
+                self.level_manager.load_level(self.navigation_manager.curent_difficulty)
+                self.current_game = Game(self.screen, self.level_manager.get_current_gameboard())
                 self.navigation_manager.game_active = True
             self.current_screen = self.current_game
                 
-
-
 
            
 
@@ -133,12 +150,14 @@ class Window():
         """
         for event in events:
             if event.type == pygame.QUIT:
+                self.user_data.write()
                 pygame.quit()
                 sys.exit()
 
+        #pass events to which ever screen is current
         self.current_screen.update(events)
 
 
 
-        #### Handle Window events #####
+        #### Handle screen navigation #####
         self.handle_navigation()

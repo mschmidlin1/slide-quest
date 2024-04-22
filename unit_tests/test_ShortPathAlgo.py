@@ -4,8 +4,8 @@ import os
 import numpy as np
 #necessary to import things from the SQ_modules folder
 sys.path.append(os.getcwd())
-from SQ_modules.DataTypes import Point
-from LevelGenerator import ShortestPath
+from SQ_modules.DataTypes import Point, Cell
+from SQ_modules.LevelGenerator import ShortestPath
 from SQ_modules.GameEnums import GameDifficulty, CellType, Direction
 from SQ_modules.GameBoard import GameBoard
 cell_dtype = np.dtype(CellType)
@@ -25,7 +25,7 @@ class Test_ShortestPath(unittest.TestCase):
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.BLOCK,],     
         ], dtype=cell_dtype)
-        player_pos = Point(x=8, y=0)
+        player_pos = Cell(col=8, row=0)
         gameboard = GameBoard(board, player_pos)
         moves = ShortestPath(gameboard)
         self.assertEqual(1, len(moves))
@@ -44,7 +44,7 @@ class Test_ShortestPath(unittest.TestCase):
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.BLOCK,],     
         ], dtype=cell_dtype)
-        player_pos = Point(x=8, y=9)
+        player_pos = Cell(col=8, row=9)
         gameboard = GameBoard(board, player_pos)
         moves = ShortestPath(gameboard)
         self.assertEqual(2, len(moves))
@@ -63,7 +63,7 @@ class Test_ShortestPath(unittest.TestCase):
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.BLOCK,],     
         ], dtype=cell_dtype)
-        player_pos = Point(x=0, y=9)
+        player_pos = Cell(col=0, row=9)
         gameboard = GameBoard(board, player_pos)
         moves = ShortestPath(gameboard)
         self.assertEqual(3, len(moves))
@@ -84,7 +84,7 @@ class Test_ShortestPath(unittest.TestCase):
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.BLOCK,],     
         ], dtype=cell_dtype)
-        player_pos = Point(x=0, y=0)
+        player_pos = Cell(col=0, row=0)
         gameboard = GameBoard(board, player_pos)
         moves = ShortestPath(gameboard)
         self.assertEqual(4, len(moves))
@@ -106,7 +106,7 @@ class Test_ShortestPath(unittest.TestCase):
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.BLOCK,],     
         ], dtype=cell_dtype)
-        player_pos = Point(x=0, y=0)
+        player_pos = Cell(col=0, row=0)
         gameboard = GameBoard(board, player_pos)
         moves = ShortestPath(gameboard)
         self.assertEqual(0, len(moves))

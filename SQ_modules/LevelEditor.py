@@ -22,13 +22,11 @@ class LevelEditor:
     self.initial_mouse_location
     """
     
-    def __init__(self, gameboard: GameBoard, gameboard_sprite_manager: GameboardSpriteManager, difficulty: GameDifficulty, level_manager: LevelIO, screen: pygame.surface.Surface): #need from game, player, border_size, gameboard_sprite_group, gameboard, 
+    def __init__(self, gameboard: GameBoard, gameboard_sprite_manager: GameboardSpriteManager, screen: pygame.surface.Surface): #need from game, player, border_size, gameboard_sprite_group, gameboard, 
         self.screen = screen
         self.gameboard = gameboard
         self.gameboard_sprite_manager = gameboard_sprite_manager
-        self.level_manager = level_manager
-        self.difficulty = difficulty
-        self.border_size = Border_Size_Lookup[self.difficulty]
+        self.border_size = Border_Size_Lookup[self.gameboard.difficulty]
 
         self.reset_click()
         self.create_pallet_sprites()
@@ -109,7 +107,7 @@ class LevelEditor:
             for col in range(self.initial_mouse_location.col, self.current_mouse_location.col + col_step, col_step):
                 new_loc = Cell(row, col)
                 self.selected_cell_list.append(new_loc)
-                self.selected_sprite_group.add(Highlighter(new_loc, self.difficulty))
+                self.selected_sprite_group.add(Highlighter(new_loc, self.gameboard.difficulty))
 
     def handle_left_click(self, event: pygame.event.Event):
         """
@@ -120,9 +118,9 @@ class LevelEditor:
         #every left click will clear and selected cells
         self.selected_sprite_group.empty() 
         #save the current location of the mouse as the "initial location" for any dragging movements
-        self.initial_mouse_location: Cell = PointToCell(Point(event.pos[0], event.pos[1]), self.difficulty)
+        self.initial_mouse_location: Cell = PointToCell(Point(event.pos[0], event.pos[1]), self.gameboard.difficulty)
         #also update the current mouse position, some methods rely on the current mouse position always being accurate
-        self.current_mouse_location: Cell = PointToCell(Point(event.pos[0], event.pos[1]), self.difficulty)
+        self.current_mouse_location: Cell = PointToCell(Point(event.pos[0], event.pos[1]), self.gameboard.difficulty)
 
         #if none, the click was outside the bounds of the gameboard.
         if self.initial_mouse_location is None:
@@ -161,7 +159,7 @@ class LevelEditor:
         Handles mouse motion event for level editor. This mostly consistly of any "dragging" operations.
         """
         #always update the current mouse location
-        self.current_mouse_location: Cell = PointToCell(Point(event.pos[0], event.pos[1]), self.difficulty)
+        self.current_mouse_location: Cell = PointToCell(Point(event.pos[0], event.pos[1]), self.gameboard.difficulty)
         #if drag type is none, then there is nothing that needs to be handled.
         if self.drag_type is None:
             return
@@ -197,27 +195,27 @@ class LevelEditor:
         This also will reset all of the global states for level editor that are kept track of during dragging movements.
         """        
         #always update the current mouse location
-        self.current_mouse_location: Cell = PointToCell(Point(event.pos[0], event.pos[1]), self.difficulty)
+        self.current_mouse_location: Cell = PointToCell(Point(event.pos[0], event.pos[1]), self.gameboard.difficulty)
 
 
         if self.drag_type == CellType.PLAYER:
             #if mouse if off of gameboard - put back to original position
             if self.current_mouse_location is None:
-                self.gameboard_sprite_manager.player_sprite.rect.center = CellToPoint(self.initial_mouse_location, self.difficulty)
+                self.gameboard_sprite_manager.player_sprite.rect.center = CellToPoint(self.initial_mouse_location, self.gameboard.difficulty)
             #player can only be "set down" on ice and ground.
             elif self.gameboard.Get_CellType(self.current_mouse_location) in [CellType.ICE, CellType.GROUND]: 
                 #set new player position for gameboard
                 self.gameboard.SetPlayerPos(self.current_mouse_location)
                 #set new player position for sprite
-                self.gameboard_sprite_manager.player_sprite.rect.center = CellToPoint(self.current_mouse_location, self.difficulty)
+                self.gameboard_sprite_manager.player_sprite.rect.center = CellToPoint(self.current_mouse_location, self.gameboard.difficulty)
             #if operator tries to drop player on an "illegal" location, return the sprite to initial location.
             else:
-                self.gameboard_sprite_manager.player_sprite.rect.center = CellToPoint(self.initial_mouse_location, self.difficulty)
+                self.gameboard_sprite_manager.player_sprite.rect.center = CellToPoint(self.initial_mouse_location, self.gameboard.difficulty)
 
         elif self.drag_type == CellType.GOAL:
             #if mouse if off of gameboard - put back to original position
             if self.current_mouse_location is None:
-                self.gameboard_sprite_manager.goal_sprite.rect.center = CellToPoint(self.initial_mouse_location, self.difficulty)
+                self.gameboard_sprite_manager.goal_sprite.rect.center = CellToPoint(self.initial_mouse_location, self.gameboard.difficulty)
             #we could allow putting of the goal anywhere, it's limited to ICE and GROUND right now.
             elif self.gameboard.Get_CellType(self.current_mouse_location) in [CellType.ICE, CellType.GROUND]: 
                 #set old goal location to ICE, set new goal location to GOAL
@@ -231,7 +229,7 @@ class LevelEditor:
 
             #if operator tries to drop player on an "illegal" location, return the sprite to initial location.
             else:
-                self.gameboard_sprite_manager.goal_sprite.rect.center = CellToPoint(self.initial_mouse_location, self.difficulty)
+                self.gameboard_sprite_manager.goal_sprite.rect.center = CellToPoint(self.initial_mouse_location, self.gameboard.difficulty)
         
         
         self.reset_click()
@@ -240,13 +238,10 @@ class LevelEditor:
         """
         Handles any button down events for level editor.
         """
-        #pressing the shift and "s" key
-        if event.key == pygame.K_s and pygame.key.get_mods() & pygame.KMOD_SHIFT:
-            self.level_manager.SaveInPlace(self.gameboard)
-            logging.info("Map saved. (over-wrote level)")
+
         #pressing just the "s" key
-        elif event.key == pygame.K_s:
-            #if the level editor has a selected region, save that instead of the whole level
+        if event.key == pygame.K_s:
+            #if the level editor has a selected region, save that
             if len(self.selected_cell_list)!=0:
                 min_row = min(self.selected_cell_list, key=lambda cell: cell.row).row
                 max_row = max(self.selected_cell_list, key=lambda cell: cell.row).row
@@ -259,10 +254,6 @@ class LevelEditor:
 
                 sub_array = self.gameboard.Crop(upper_left, lower_right)
                 MapgenIO.SaveMapgen(sub_array)
-
-            else:
-                self.level_manager.SaveNew(self.gameboard)
-                logging.info("Saved new map.")
 
     def update(self, events: list[pygame.event.Event]):
         for event in events:
@@ -287,7 +278,7 @@ class LevelEditor:
         """
         This is just temporary for showing the dimensions of the grid until we can start implementing sprites more regularly
         """
-        border_size = Border_Size_Lookup[self.level_manager.current_difficulty]
+        border_size = Border_Size_Lookup[self.gameboard.difficulty]
         for x in range(border_size.width, WINDOW_DIMENSIONS.width-border_size.width + 1, CELL_DIMENSIONS.width):
             pygame.draw.line(self.screen, WHITE, (x, border_size.height), (x, WINDOW_DIMENSIONS.height-border_size.height))
         for y in range(border_size.height, WINDOW_DIMENSIONS.height-border_size.height + 1, CELL_DIMENSIONS.height):

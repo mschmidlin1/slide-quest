@@ -51,9 +51,8 @@ def SpriteType_To_CellType(sprite: Sprite) -> CellType:
 
 class GameboardSpriteManager:
 
-    def __init__(self, gameboard: GameBoard, difficulty: GameDifficulty, screen: pygame.surface.Surface):
+    def __init__(self, gameboard: GameBoard, screen: pygame.surface.Surface):
         self.gameboard = gameboard
-        self.difficulty = difficulty
         self.screen = screen
         self.gameboard_sprites = np.empty(self.gameboard.gameboard.shape, dtype=sprite_dtype)
         self.gameboard_sprite_group = pygame.sprite.LayeredUpdates()
@@ -68,7 +67,7 @@ class GameboardSpriteManager:
         """"
         Creates the player sprite.
         """
-        self.player_sprite = Player(self.gameboard.player_pos, self.difficulty)
+        self.player_sprite = Player(self.gameboard.player_pos, self.gameboard.difficulty)
 
     def PopulateSprites(self):
         """
@@ -78,7 +77,7 @@ class GameboardSpriteManager:
         for row_num, cells in enumerate(self.gameboard.gameboard):
             for col_num, cell in enumerate(cells):
                 sprite_type = CellType_To_SpriteType(cell)
-                new_sprite = sprite_type(Cell(row_num, col_num), self.difficulty)
+                new_sprite = sprite_type(Cell(row_num, col_num), self.gameboard.difficulty)
                 self.gameboard_sprites[row_num, col_num] = new_sprite
                 self.gameboard_sprite_group.add(new_sprite)
                  
@@ -107,7 +106,7 @@ class GameboardSpriteManager:
         """
         #if cell type is player, just set the player sprite to the new location
         if cell_type == CellType.PLAYER:
-            self.player_sprite.rect.center = CellToPoint(cell, self.difficulty)
+            self.player_sprite.rect.center = CellToPoint(cell, self.gameboard.difficulty)
             return
         
         #get the old sprite object from the location and delete from gameboard group
@@ -116,7 +115,7 @@ class GameboardSpriteManager:
 
         #create new sprite, set in gameboard array, and add to gameboard sprite group
         new_cell_type = CellType_To_SpriteType(cell_type)
-        new_sprite = new_cell_type(cell, self.difficulty)
+        new_sprite = new_cell_type(cell, self.gameboard.difficulty)
         self.gameboard_sprites[cell.row, cell.col] = new_sprite
         self.gameboard_sprite_group.add(new_sprite)
 

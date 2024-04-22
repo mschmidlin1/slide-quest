@@ -3,9 +3,9 @@ from SQ_modules.configs import Board_Size_Lookup
 from SQ_modules.GameBoard import GameBoard
 from SQ_modules.LevelIO import LevelIO
 from SQ_modules.ShortestPath import ShortestPath
-from SQ_modules.LevelIO import LevelIO
+from SQ_modules.LevelIO import LevelIO, MapgenIO
 import numpy as np
-from SQ_modules.DataTypes import Point
+from SQ_modules.DataTypes import Cell
 import random
 import os
 import copy
@@ -42,22 +42,7 @@ class LevelGenerator:
         self.probability_increase_ratio = 1.65 #decrease this number to increase size of blobs
         self.empty_board = np.empty(self.board_dimensions, dtype=cell_dtype)
         self.empty_board.fill(CellType.ICE)
-        self.resources = self.read_mapgen_resources()
-    
-    def read_mapgen_resources(self) -> dict[str, np.ndarray]:
-        """
-        Reads the mapgen resources from files.
-
-        Returns a dictionary where the keys are strings (file names) and the values are np.ndarrays of dtype CellType.
-        """
-        level_io = LevelIO()
-        resource_files = os.listdir("mapgen_resources")
-        resources = {}
-        for file in resource_files:
-            full_path = os.path.join("mapgen_resources", file)
-            sub_map: np.ndarray = level_io.ReadBoard(full_path)
-            resources[file] = sub_map
-        return resources
+        self.resources = MapgenIO.ReadMapgen()
     
     def calculate_block_probability(self, num_adjacent_blocks: int) -> float:
         """
@@ -68,7 +53,7 @@ class LevelGenerator:
             probability += (1-probability)/self.probability_increase_ratio
         return min(probability, 1.0)
     
-    def count_neighbors(self, board: np.ndarray, location: Point, cell_type: CellType) -> int:
+    def count_neighbors(self, board: np.ndarray, location: Cell, cell_type: CellType) -> int:
         """
         This method counts the number of neighbors that have the same cell type as the given `cell_type`. 
         """
@@ -78,15 +63,15 @@ class LevelGenerator:
             for j in [-1, 0, 1]:
                 if i==0 and j==0:
                     continue
-                if location.y+i>=height or location.y+i<0:
+                if location.row+i>=height or location.row+i<0:
                     continue
-                if location.x+j>=height or location.x+j<0:
+                if location.col+j>=height or location.col+j<0:
                     continue
-                if board[location.y+i, location.x+j] == cell_type:
+                if board[location.row+i, location.col+j] == cell_type:
                     num_neighbors += 1
         return num_neighbors
     
-    def random_goal_pos(self, board: np.ndarray, rng: np.random.RandomState) -> Point:
+    def random_goal_pos(self, board: np.ndarray, rng: np.random.RandomState) -> Cell:
         """
         Selects a random goal position from the board where the cell type is ICE using a specified random number generator.
 
@@ -98,20 +83,20 @@ class LevelGenerator:
         - rng (np.random.RandomState): A RandomState instance for reproducible random operations.
 
         Returns:
-        Point: A randomly selected Point object (row, column) representing the goal position on the ICE cells. Returns None if no ICE cells are found.
+        Cell: A randomly selected Cell object (row, column) representing the goal position on the ICE cells. Returns None if no ICE cells are found.
         """
         width, height = board.shape
         possible_goal_positions = []
         for col in range(width):
             for row in range(height):
-                if board[col, row] == CellType.ICE:
-                    possible_goal_positions.append(Point(row, col))
+                if board[row, col] == CellType.ICE:
+                    possible_goal_positions.append(Cell(row=row, col=col))
         if len(possible_goal_positions)==0:
             return None
         idx = rng.randint(0, len(possible_goal_positions))
         return possible_goal_positions[idx]
     
-    def random_player_pos(self, board: np.ndarray, rng: np.random.RandomState) -> Point:
+    def random_player_pos(self, board: np.ndarray, rng: np.random.RandomState) -> Cell:
         """
         Selects a random player position from the board where the cell type is ICE, ensuring it does not coincide with the goal position, using a specified random number generator.
 
@@ -124,18 +109,18 @@ class LevelGenerator:
         - rng (np.random.RandomState): A RandomState instance for reproducible random selections.
 
         Returns:
-        Point: A randomly selected Point object (row, column) for the player's position. Returns None if no ICE cells are found.
+        Cell: A randomly selected Cell object (row, column) for the player's position. Returns None if no ICE cells are found.
 
         Raises:
         ValueError: If the randomly selected player position coincides with the goal position.
         """
-        temp_gameboard = GameBoard(board, Point(0, 0))
+        temp_gameboard = GameBoard(board, Cell(0, 0), self.difficulty)
         width, height = board.shape
         possible_player_positions = []
         for col in range(width):
             for row in range(height):
-                if board[col, row] == CellType.ICE:
-                    possible_player_positions.append(Point(row, col))
+                if board[row, col] == CellType.ICE:
+                    possible_player_positions.append(Cell(row, col))
         if len(possible_player_positions)==0:
             return None
         idx = rng.randint(0, len(possible_player_positions))
@@ -149,7 +134,7 @@ class LevelGenerator:
         """
         return set(list1).issubset(set(list2))
     
-    def insert_feature(self, loc: Point, feature: np.ndarray, board: np.ndarray) -> np.ndarray:
+    def insert_feature(self, loc: Cell, feature: np.ndarray, board: np.ndarray) -> np.ndarray:
         """
         Inserts a rectangular feature into a copy of the game board at a specified location and returns the copy.
 
@@ -158,7 +143,7 @@ class LevelGenerator:
         and returns the modified copy.
 
         Parameters:
-        - loc (Point): Coordinates (x=row, y=column) for the upper-left corner where the feature begins.
+        - loc (Cell): Coordinates (x=row, y=column) for the upper-left corner where the feature begins.
         - feature (np.ndarray): 2D numpy array of the feature to insert. Assumed to be rectangular.
         - board (np.ndarray): 2D numpy array representing the game board. Not modified.
 
@@ -179,29 +164,29 @@ class LevelGenerator:
         nrows, ncols = feature.shape
         
         # Insert the feature into the copied game board
-        board_copy[loc.x:loc.x+nrows, loc.y:loc.y+ncols] = feature
+        board_copy[loc.row:loc.row+nrows, loc.col:loc.col+ncols] = feature
         
         return board_copy
     
-    def get_covered_points(self, loc: Point, feature: np.ndarray) -> list[Point]:
+    def get_covered_points(self, loc: Cell, feature: np.ndarray) -> list[Cell]:
         """
-        Computes and returns a list of Points covered by a rectangular feature placed on the gameboard,
+        Computes and returns a list of Cells covered by a rectangular feature placed on the gameboard,
         excluding the top-left corner point. 
 
         Parameters:
-        - loc (Point): The top-left corner (x=row, y=column) of the feature on the gameboard.
+        - loc (Cell): The top-left corner (x=row, y=column) of the feature on the gameboard.
         - feature (np.ndarray): A 2D numpy array representing the rectangular feature's dimensions. Cannot by empty!
 
         Returns:
-        list[Point]: A list of Points covered by the feature, excluding the initial top-left corner point.
+        list[Cell]: A list of Cells covered by the feature, excluding the initial top-left corner point.
         """
         if len(feature.shape) != 2:
             raise ValueError(f"feature array has shape length of {len(feature.shape)} and not length 2.")
         nrows, ncols = feature.shape
         points = []
-        for row_num in range(loc.x, loc.x+nrows):
-            for col_num in range(loc.y, loc.y+ncols):
-                points.append(Point(row_num, col_num))
+        for row_num in range(loc.row, loc.row+nrows):
+            for col_num in range(loc.col, loc.col+ncols):
+                points.append(Cell(row_num, col_num))
         points.remove(loc)
         return points
     
@@ -226,15 +211,15 @@ class LevelGenerator:
         rng = np.random.RandomState(random_seed)
         board = self.empty_board.copy()
         width, height = board.shape
-        all_board_locations = []
+        all_board_locations: list[Cell] = []
         for col in range(width):
             for row in range(height):
-                all_board_locations.append(Point(row, col))
+                all_board_locations.append(Cell(row, col))
         rng.shuffle(all_board_locations)
         while len(all_board_locations)>0:#iterate until all the board positions have been considered.
             loc = all_board_locations.pop()#remove the last location in the list
             if rng.binomial(1, self.feature_probability): #binomial choice based on feature probability
-                feature = self.resources[rng.choice(self.resources.keys())] #randomly select a feature from those available in "mapgen_resources" folder
+                feature = self.resources[rng.choice(list(self.resources.keys()))] #randomly select a feature from those available in "mapgen_resources" folder
                 needed_locations = self.get_covered_points(loc, feature)
 
                 if self.contains(needed_locations, all_board_locations): #make sure all the points the feature needs are still available, this also checks the boundries.
@@ -245,7 +230,7 @@ class LevelGenerator:
                     board = self.insert_feature(loc, feature, board)
             # if loc not selected for a feature
             elif rng.binomial(1, self.block_probability):
-                board[loc.y, loc.x] = CellType.BLOCK
+                board[loc.row, loc.col] = CellType.BLOCK
             else:
                 pass#the location remains ice
 
@@ -253,33 +238,30 @@ class LevelGenerator:
         if goal_pos is None:
             return None
         self.goal_pos = goal_pos
-        board[goal_pos.y, goal_pos.x] = CellType.GOAL
+        board[goal_pos.row, goal_pos.col] = CellType.GOAL
         player_pos = self.random_player_pos(board, rng)
         if player_pos is None:
             return None
         if player_pos == goal_pos:
             logging.error(f"Goal position and player position both have location: {player_pos}")
-        gameboard = GameBoard(board, player_pos)
+        gameboard = GameBoard(board, player_pos, self.difficulty)
         if gameboard.player_pos == gameboard.Find_Goal_Pos():
             logging.error(f"Goal position and player position both have location: {gameboard.player_pos}")
         return gameboard
     
-    def generate(self) -> tuple[int, GameBoard]:
+    def generate(self, starting_num=0) -> tuple[int, GameBoard]:
         """
         Generates a valid game board along with its seed.
 
         This method repeatedly attempts to generate a game board using random seeds until it finds a configuration where both the player and goal positions are set, and the map is solvable (i.e., there exists a path between the player and goal).
+        It first checks the "starting_num" as a seed and indexes by 1 until a valid seed is found.
 
         Returns:
         tuple[int, GameBoard]: A tuple containing the seed used to generate the playable game board and the game board itself.
-
-        Notes:
-        - The method internally generates candidate game boards using randomly selected seeds within a predefined range.
-        - It verifies each candidate to ensure that player and goal positions can be placed and that the map is not impossible to solve.
-        - Upon finding a valid configuration, it returns the seed and the corresponding game board.
         """
+        candidate_seed = starting_num - 1
         while True:
-            candidate_seed = np.random.randint(0, 100000)
+            candidate_seed += 1
             candidate = self.generate_candidate(candidate_seed)
             if candidate is None:
                 logging.info(f"Candidate failed as player or goal position could not be found.(seed={candidate_seed})")

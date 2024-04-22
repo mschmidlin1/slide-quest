@@ -5,3 +5,4 @@ remove logs and replace with meaningful info logs about user driven events
 create exe for MAc
 refactor navigation in wondow class
 round corners of buttons
+add wasd to the movement commands along with arrow keys

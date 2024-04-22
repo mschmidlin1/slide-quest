@@ -6,7 +6,7 @@ sys.path.append(os.getcwd())
 from SQ_modules.GameEnums import CellType, Direction, Str_to_CellType_vector_func
 import numpy as np
 from SQ_modules.DataTypes import Point, Cell
-
+from SQ_modules.GameEnums import GameDifficulty
 cell_dtype = np.dtype(CellType)
 from SQ_modules.my_logging import set_logger, log
 
@@ -18,13 +18,14 @@ class GameBoard:
     A class that keeps track of the slide quest board and what cells are filled with what `CellType`. 
     """
     
-    def __init__(self, gameboard: np.ndarray, player_pos: Cell):
+    def __init__(self, gameboard: np.ndarray, player_pos: Cell, difficulty: GameDifficulty):
         """
         
         """
         self.gameboard = gameboard
         self.goal_pos: Cell = self.Find_Goal_Pos()
         self.player_pos: Cell = player_pos
+        self.difficulty = difficulty
     
     def UpdateCell(self, location: Cell, cell_type: CellType) -> None:
         """
@@ -195,7 +196,11 @@ class GameBoard:
         """
         return self.gameboard[upper_left.row:lower_right.row+1,upper_left.col:lower_right.col+1]
 
-
+    def __eq__(self, other) -> bool:
+        if np.array_equal(self.gameboard, other.gameboard) and self.player_pos==other.player_pos and self.goal_pos==other.goal_pos:
+            return True
+        else:
+            return False
 
 
 if __name__=="__main__":

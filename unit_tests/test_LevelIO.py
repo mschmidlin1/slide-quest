@@ -2,11 +2,51 @@ import unittest
 import sys
 import os
 import re
+import numpy as np
 #necessary to import things from the SQ_modules folder
 sys.path.append(os.getcwd())
-from SQ_modules.LevelIO import LevelIO
+from SQ_modules.LevelIO import LevelIO, eliminate_duplicates_dict
 
-class Test__init__(unittest.TestCase):
+class Test_EliminateDuplicatesDict(unittest.TestCase):
+
+    def test_empty_dict(self):
+        self.assertEqual(eliminate_duplicates_dict({}), {})
+
+    def test_all_unique(self):
+        input_dict = {
+            "path1": np.array([1, 2, 3]),
+            "path2": np.array([4, 5, 6]),
+        }
+        self.assertEqual(eliminate_duplicates_dict(input_dict), input_dict)
+
+    def test_all_duplicates(self):
+        arr = np.array([1, 2, 3])
+        input_dict = {
+            "path1": arr,
+            "path2": arr,
+        }
+        expected_dict = {
+            "path1": arr,
+        }
+        self.assertEqual(eliminate_duplicates_dict(input_dict), expected_dict)
+
+    def test_mixed_unique_and_duplicates(self):
+        unique_arr1 = np.array([1, 2, 3])
+        unique_arr2 = np.array([4, 5, 6])
+        duplicate_arr = np.array([1, 2, 3])
+
+        input_dict = {
+            "path1": unique_arr1,
+            "path2": duplicate_arr,  # Duplicate of path1
+            "path3": unique_arr2,
+        }
+        expected_dict = {
+            "path1": unique_arr1,
+            "path3": unique_arr2,
+        }
+        self.assertEqual(eliminate_duplicates_dict(input_dict), expected_dict)
+
+class Test_LevelIO(unittest.TestCase):
     def test_path_checking(self):
         level_manager = LevelIO()
         self.assertEqual(level_manager.levels_root_dir, "levels")
@@ -54,6 +94,10 @@ class Test__init__(unittest.TestCase):
         level_manager.clear_completed()
         self.assertEqual(len(level_manager.completed_levels), 0)
 
+# class Test_MapgenIO(unittest.TestCase):
+#     def test_path_checking(self):
+#         level_manager = LevelIO()
+#         self.assertEqual(level_manager.levels_root_dir, "levels")
 
 if __name__ == '__main__':
     unittest.main()
