@@ -84,7 +84,7 @@ BLUE_ICE = (158, 227, 231)
 
 
 #other constants
-PLAYER_SPEED = .1
+PLAYER_SPEED = .4
 COMPLETION_DELAY = 2000
 
 #settings

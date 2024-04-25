@@ -56,36 +56,6 @@ class Game:
 
         self.start_time = time.time()
 
-    
-    # def move_player(self, events: list[pygame.event.Event]):
-    #     """
-    #     Moves the player if instructed by the user in the events argument.
-    #     """
-    #     for event in events:
-    #         if event.type == pygame.KEYDOWN:
-    #             direction = None # Placeholder for the direction
-    #             if event.key == Direction.LEFT.value and not self.gameboard_sprite_manager.player_sprite.moving:
-    #                 self.gameboard_sprite_manager.Move(self.gameboard.MovePlayer(Direction.LEFT))
-    #                 direction = "LEFT"
-    #                 self.num_moves += 1
-    #                 self.game_audio.PlayRandomSlideSfx()
-    #             if event.key == Direction.RIGHT.value and not self.gameboard_sprite_manager.player_sprite.moving:
-    #                 self.gameboard_sprite_manager.Move(self.gameboard.MovePlayer(Direction.RIGHT))
-    #                 direction = "RIGHT"
-    #                 self.num_moves += 1
-    #                 self.game_audio.PlayRandomSlideSfx()
-    #             if event.key == Direction.UP.value and not self.gameboard_sprite_manager.player_sprite.moving:
-    #                 self.gameboard_sprite_manager.Move(self.gameboard.MovePlayer(Direction.UP))
-    #                 direction = "UP"
-    #                 self.num_moves += 1
-    #                 self.game_audio.PlayRandomSlideSfx()
-    #             if event.key == Direction.DOWN.value and not self.gameboard_sprite_manager.player_sprite.moving:
-    #                 self.gameboard_sprite_manager.Move(self.gameboard.MovePlayer(Direction.DOWN))
-    #                 direction = "DOWN"
-    #                 self.num_moves += 1
-    #                 self.game_audio.PlayRandomSlideSfx()
-    #             if self.isEditActive:
-    #                 self.solution_moves = ShortestPath(self.gameboard)
     def move_player(self, events: list[pygame.event.Event]):
         """
         Moves the player if instructed by the user in the events argument.
@@ -191,6 +161,7 @@ class Game:
             if self.game_complete_time == None:
                 self.player_movable = False
                 self.game_complete_time = current_time + COMPLETION_DELAY
+                self.game_audio.level_complete_sfx.play()
                 self.gameboard_sprite_manager.player_sprite.current_type = 'celebrate'
                 self.gameboard_sprite_manager.player_sprite.change_direction('DOWN')
 
