@@ -12,6 +12,7 @@ from SQ_modules.Sprites import Block, Goal, Ice, Player, SpriteLoader
 from SQ_modules.ShortestPath import ShortestPath
 from SQ_modules.GameAudio import GameAudio
 from SQ_modules.NavigationManager import NavigationManager
+from SQ_modules.Timer import Timer
 from SQ_modules.configs import ( 
     WHITE,
     WINDOW_DIMENSIONS,
@@ -20,7 +21,7 @@ from SQ_modules.configs import (
     IS_EDIT_ON_DEFAULT,
     Border_Size_Lookup,
     ENVIRONMENT_SPRITE_SHEET,
-    COMPLETION_DELAY)
+    CELEBRATION_TIME_S)
 
 import copy
 import time
@@ -40,7 +41,7 @@ class Game:
         self.isEditActive = IS_EDIT_ON_DEFAULT
         self.gameboard = gameboard
         self.border_size: Size = Border_Size_Lookup[self.gameboard.difficulty]
-        self.game_complete_time = None
+        self.celebration_timer = None
         self.solution_moves = ShortestPath(self.gameboard)
         self.shortest_path = copy.deepcopy(self.solution_moves)#save the original shortest path so the solution_moves can be updated as the player moves around
         self.least_moves = len(self.solution_moves)
@@ -56,36 +57,6 @@ class Game:
 
         self.start_time = time.time()
 
-    
-    # def move_player(self, events: list[pygame.event.Event]):
-    #     """
-    #     Moves the player if instructed by the user in the events argument.
-    #     """
-    #     for event in events:
-    #         if event.type == pygame.KEYDOWN:
-    #             direction = None # Placeholder for the direction
-    #             if event.key == Direction.LEFT.value and not self.gameboard_sprite_manager.player_sprite.moving:
-    #                 self.gameboard_sprite_manager.Move(self.gameboard.MovePlayer(Direction.LEFT))
-    #                 direction = "LEFT"
-    #                 self.num_moves += 1
-    #                 self.game_audio.PlayRandomSlideSfx()
-    #             if event.key == Direction.RIGHT.value and not self.gameboard_sprite_manager.player_sprite.moving:
-    #                 self.gameboard_sprite_manager.Move(self.gameboard.MovePlayer(Direction.RIGHT))
-    #                 direction = "RIGHT"
-    #                 self.num_moves += 1
-    #                 self.game_audio.PlayRandomSlideSfx()
-    #             if event.key == Direction.UP.value and not self.gameboard_sprite_manager.player_sprite.moving:
-    #                 self.gameboard_sprite_manager.Move(self.gameboard.MovePlayer(Direction.UP))
-    #                 direction = "UP"
-    #                 self.num_moves += 1
-    #                 self.game_audio.PlayRandomSlideSfx()
-    #             if event.key == Direction.DOWN.value and not self.gameboard_sprite_manager.player_sprite.moving:
-    #                 self.gameboard_sprite_manager.Move(self.gameboard.MovePlayer(Direction.DOWN))
-    #                 direction = "DOWN"
-    #                 self.num_moves += 1
-    #                 self.game_audio.PlayRandomSlideSfx()
-    #             if self.isEditActive:
-    #                 self.solution_moves = ShortestPath(self.gameboard)
     def move_player(self, events: list[pygame.event.Event]):
         """
         Moves the player if instructed by the user in the events argument.
@@ -93,13 +64,13 @@ class Game:
         for event in events:
             if event.type == pygame.KEYDOWN:
                 direction = None  # Placeholder for the direction
-                if event.key == Direction.LEFT.value:
+                if event.key == Direction.LEFT.value or event.key == pygame.K_a:
                     direction = "LEFT"
-                elif event.key == Direction.RIGHT.value:
+                elif event.key == Direction.RIGHT.value or event.key == pygame.K_d:
                     direction = "RIGHT"
-                elif event.key == Direction.UP.value:
+                elif event.key == Direction.UP.value or event.key == pygame.K_w:
                     direction = "UP"
-                elif event.key == Direction.DOWN.value:
+                elif event.key == Direction.DOWN.value or event.key == pygame.K_s:
                     direction = "DOWN"
                 
                 if direction and not self.gameboard_sprite_manager.player_sprite.moving:
@@ -169,7 +140,6 @@ class Game:
 
         This also passes the events to child elements such as levelEditor.
         """
-        current_time = pygame.time.get_ticks()
 
         if self.player_movable:
             self.move_player(events)
@@ -188,15 +158,17 @@ class Game:
                     self.navigation_manager.navigate_to(Screen.OPTIONS)
         
         if self.isComplete() and not self.gameboard_sprite_manager.player_sprite.moving:
-            if self.game_complete_time == None:
+            if self.celebration_timer == None:
                 self.player_movable = False
-                self.game_complete_time = current_time + COMPLETION_DELAY
+                self.celebration_timer = Timer(CELEBRATION_TIME_S)
+                self.celebration_timer.start()
+                self.game_audio.level_complete_sfx.play()
                 self.gameboard_sprite_manager.player_sprite.current_type = 'celebrate'
                 self.gameboard_sprite_manager.player_sprite.change_direction('DOWN')
 
-            if self.game_complete_time and current_time - self.game_complete_time >= COMPLETION_DELAY:
+            if self.celebration_timer.time_is_up():
                 self.navigation_manager.navigate_to(Screen.LEVEL_COMPLETE)
-                self.game_complete_time = None
+                self.celebration_timer = None
     
     def solution_str(self) -> str:
         """
