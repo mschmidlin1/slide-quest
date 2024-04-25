@@ -107,8 +107,8 @@ class Window():
             return
         
         logging.info(f"Navigating to {self.navigation_manager.current_screen}.")
-
-        self.game_audio.button_click_sfx.play()
+        if self.navigation_manager.current_screen != Screen.LEVEL_COMPLETE:#don't play the navigation sound effect for level complete screen
+            self.game_audio.button_click_sfx.play()
         if self.navigation_manager.current_screen == Screen.TITLE:
             if self.current_game is not None:
                 self.level_manager.save_seed(self.current_game.shortest_path, False, 0, 0)
