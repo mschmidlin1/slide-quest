@@ -85,7 +85,7 @@ BLUE_ICE = (158, 227, 231)
 
 #other constants
 PLAYER_SPEED = .4
-COMPLETION_DELAY = 2000
+CELEBRATION_TIME_S = 2
 
 #settings
 LEFT_CLICK = 1

@@ -12,6 +12,7 @@ from SQ_modules.Sprites import Block, Goal, Ice, Player, SpriteLoader
 from SQ_modules.ShortestPath import ShortestPath
 from SQ_modules.GameAudio import GameAudio
 from SQ_modules.NavigationManager import NavigationManager
+from SQ_modules.Timer import Timer
 from SQ_modules.configs import ( 
     WHITE,
     WINDOW_DIMENSIONS,
@@ -20,7 +21,7 @@ from SQ_modules.configs import (
     IS_EDIT_ON_DEFAULT,
     Border_Size_Lookup,
     ENVIRONMENT_SPRITE_SHEET,
-    COMPLETION_DELAY)
+    CELEBRATION_TIME_S)
 
 import copy
 import time
@@ -40,7 +41,7 @@ class Game:
         self.isEditActive = IS_EDIT_ON_DEFAULT
         self.gameboard = gameboard
         self.border_size: Size = Border_Size_Lookup[self.gameboard.difficulty]
-        self.game_complete_time = None
+        self.celebration_timer = None
         self.solution_moves = ShortestPath(self.gameboard)
         self.shortest_path = copy.deepcopy(self.solution_moves)#save the original shortest path so the solution_moves can be updated as the player moves around
         self.least_moves = len(self.solution_moves)
@@ -139,7 +140,6 @@ class Game:
 
         This also passes the events to child elements such as levelEditor.
         """
-        current_time = pygame.time.get_ticks()
 
         if self.player_movable:
             self.move_player(events)
@@ -158,16 +158,17 @@ class Game:
                     self.navigation_manager.navigate_to(Screen.OPTIONS)
         
         if self.isComplete() and not self.gameboard_sprite_manager.player_sprite.moving:
-            if self.game_complete_time == None:
+            if self.celebration_timer == None:
                 self.player_movable = False
-                self.game_complete_time = current_time + COMPLETION_DELAY
+                self.celebration_timer = Timer(CELEBRATION_TIME_S)
+                self.celebration_timer.start()
                 self.game_audio.level_complete_sfx.play()
                 self.gameboard_sprite_manager.player_sprite.current_type = 'celebrate'
                 self.gameboard_sprite_manager.player_sprite.change_direction('DOWN')
 
-            if self.game_complete_time and current_time - self.game_complete_time >= COMPLETION_DELAY:
+            if self.celebration_timer.time_is_up():
                 self.navigation_manager.navigate_to(Screen.LEVEL_COMPLETE)
-                self.game_complete_time = None
+                self.celebration_timer = None
     
     def solution_str(self) -> str:
         """
