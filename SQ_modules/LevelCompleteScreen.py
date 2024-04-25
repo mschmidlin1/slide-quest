@@ -37,8 +37,8 @@ class LevelCompleteScreen():
             Point(WINDOW_DIMENSIONS[0]//2, WINDOW_DIMENSIONS[1] - WINDOW_DIMENSIONS[1]//3-200),
             TITLE_SCREEN_TEXT_COLOR)
 
-        self.title_screen_button = SqButton(screen, Point(WINDOW_DIMENSIONS[0]//2, (WINDOW_DIMENSIONS[1]//2) + 0), width=300, height=50, font_size=40, text="Title Screen", font_file=TITLE_FONT)
-        self.next_level_button = SqButton(screen, Point(WINDOW_DIMENSIONS[0]//2, (WINDOW_DIMENSIONS[1]//2) + 200), width=300, height=50, font_size=40, text="Next Level", font_file=TITLE_FONT)
+        self.title_screen_button = SqButton(screen, Point(25 + 250/2, (WINDOW_DIMENSIONS[1]-50) + 0), width=250, height=50, font_size=40, text="Title Screen", font_file=TITLE_FONT)
+        self.next_level_button = SqButton(screen, Point(WINDOW_DIMENSIONS[0]//2, (WINDOW_DIMENSIONS[1]//2) + 100), width=250, height=50, font_size=40, text="Next Level", font_file=TITLE_FONT)
 
 
         self.title_screen_sprite_group = pygame.sprite.Group()

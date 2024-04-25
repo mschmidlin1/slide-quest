@@ -64,13 +64,13 @@ class Game:
         for event in events:
             if event.type == pygame.KEYDOWN:
                 direction = None  # Placeholder for the direction
-                if event.key == Direction.LEFT.value:
+                if event.key == Direction.LEFT.value or event.key == pygame.K_a:
                     direction = "LEFT"
-                elif event.key == Direction.RIGHT.value:
+                elif event.key == Direction.RIGHT.value or event.key == pygame.K_d:
                     direction = "RIGHT"
-                elif event.key == Direction.UP.value:
+                elif event.key == Direction.UP.value or event.key == pygame.K_w:
                     direction = "UP"
-                elif event.key == Direction.DOWN.value:
+                elif event.key == Direction.DOWN.value or event.key == pygame.K_s:
                     direction = "DOWN"
                 
                 if direction and not self.gameboard_sprite_manager.player_sprite.moving:
