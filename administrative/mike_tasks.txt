@@ -2,3 +2,6 @@
 block algorithm
 add wasd to the movement commands along with arrow keys
 make beta release (need intel mac)
+rename SQ_modules to sq_source
+reorganize all src files into folder
+rename files to all be snake case
