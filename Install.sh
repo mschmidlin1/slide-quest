@@ -7,7 +7,7 @@ SCRIPT_DIR="$(dirname "$0")"
 USER_HOME=$HOME
 
 # Specify the folders and files to copy
-ITEMS_TO_COPY=("levels" "mapgen_resources" "resources" "SQ_modules" "SlideQuest.app")
+ITEMS_TO_COPY=("resources" "SQ_modules" "SlideQuest")
 
 # Loop through each item and copy it to the user's home directory
 for item in "${ITEMS_TO_COPY[@]}"
