@@ -59,6 +59,8 @@ def FindConnectedBlocks(gameboard: GameBoard, start_cell: Cell) -> list[Cell]:
     Returns:
     list[Cell]: A list of all connected cells of the same type as 'start_cell'.
     """
+    if gameboard.Get_CellType(start_cell) != CellType.BLOCK:
+        raise ValueError("start_cell type must be a block cell.")
     
     # Directions for moving in the grid: up, down, left, right
     directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
@@ -87,5 +89,25 @@ def FindConnectedBlocks(gameboard: GameBoard, start_cell: Cell) -> list[Cell]:
     
     return connected_cells
 
+def FindConnectedGroups(gameboard: GameBoard, cell_type: CellType = CellType.BLOCK) -> list[list[Cell]]:
+    """
+    Finds each connected group of cells of `cell_type` and returns each group in a set.
+    """
+
+    visited_cells = set()
+    all_coordinates = set([Cell(row, col) for row in range(gameboard.gameboard.shape[0]) for col in range(gameboard.gameboard.shape[1])])
+    groups = []
+    while len(all_coordinates)>0:
+        current_coordinate = all_coordinates[0]
+        if gameboard.Get_CellType(current_coordinate) != CellType.BLOCK:
+            all_coordinates.remove(current_coordinate)
+            continue
+        group = FindConnectedBlocks(gameboard, current_coordinate)
+        groups.append(group)
+        for coord in group:
+            visited_cells.add(coord)
+            all_coordinates.remove(coord)
+
+    return groups
 
 
