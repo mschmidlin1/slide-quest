@@ -15,7 +15,7 @@
 ### Mac
 1. Go to releases/tags page [here](https://github.com/mschmidlin1/slide-quest/releases "Title") and download the latest zip file.
 2. Unzip folder
-3. Run Install.sh from the command line using the following command `./Install.sh` (this moves the game and resources to your home folder on Mac)
+3. Run Install.sh from the command line using the following command `./Install.sh` (this moves the game and resources to your home folder on Mac) (this must be run from the same directory as the script!)
 4. Navigate to your home folder and run either SlideQuest or SlideQuest-Intel. You can double click them in finder or run them with `./SlideQuest` or `./SlideQuest-Intel`.
 
 
