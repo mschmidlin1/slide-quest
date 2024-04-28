@@ -3,7 +3,7 @@ import pygame
 from SQ_modules.configs import WINDOW_DIMENSIONS
 from SQ_modules.GameboardSpriteManager import SpriteType_To_CellType, CellType_To_SpriteType, GameboardSpriteManager
 from SQ_modules.GameBoard import GameBoard
-from SQ_modules.Sprites import Player, Goal, Block, Ice
+from SQ_modules.Sprites import Player, Goal, Block, Ice, SpriteLoader
 from SQ_modules.GameEnums import CellType, GameDifficulty
 from SQ_modules.DataTypes import Cell, Size
 import numpy as np
@@ -23,6 +23,7 @@ def create_empty_gameboard(size: Size) -> GameBoard:
 
 SCREEN = pygame.display.set_mode(WINDOW_DIMENSIONS)
 
+SpriteLoader.load_sprite_sheet()
 
 class Test_CellType_To_Sprite(unittest.TestCase):
     def test_player(self):
@@ -66,7 +67,7 @@ class Test_Sprite_Manager(unittest.TestCase):
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.GOAL,],     
         ], dtype=cell_dtype)
 
-        sprite_manager = GameboardSpriteManager(my_gameboard, GameDifficulty.BEGINNER, SCREEN)
+        sprite_manager = GameboardSpriteManager(my_gameboard, SCREEN)
         self.assertEqual(100, len(sprite_manager.gameboard_sprite_group))
 
 
@@ -85,7 +86,7 @@ class Test_Sprite_Manager(unittest.TestCase):
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.GOAL,],     
         ], dtype=cell_dtype)
 
-        sprite_manager = GameboardSpriteManager(my_gameboard, GameDifficulty.BEGINNER, SCREEN)
+        sprite_manager = GameboardSpriteManager(my_gameboard, SCREEN)
         self.assertEqual(Goal, type(sprite_manager.GetSprite(Cell(9, 9))))
         self.assertEqual(Ice, type(sprite_manager.GetSprite(Cell(5, 5))))
 
@@ -105,7 +106,7 @@ class Test_Sprite_Manager(unittest.TestCase):
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.GOAL,],     
         ], dtype=cell_dtype)
 
-        sprite_manager = GameboardSpriteManager(my_gameboard, GameDifficulty.BEGINNER, SCREEN)
+        sprite_manager = GameboardSpriteManager(my_gameboard, SCREEN)
         self.assertEqual(CellType.GOAL, sprite_manager.GetCellType(Cell(9, 9)))
         self.assertEqual(CellType.ICE, sprite_manager.GetCellType(Cell(5, 5)))
 
@@ -124,7 +125,7 @@ class Test_Sprite_Manager(unittest.TestCase):
             [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.GOAL,],     
         ], dtype=cell_dtype)
 
-        sprite_manager = GameboardSpriteManager(my_gameboard, GameDifficulty.BEGINNER, SCREEN)
+        sprite_manager = GameboardSpriteManager(my_gameboard, SCREEN)
         sprite_manager.SetSprite(Cell(2, 2), CellType.BLOCK)
 
         self.assertEqual(CellType.BLOCK, sprite_manager.GetCellType(Cell(2, 2)))

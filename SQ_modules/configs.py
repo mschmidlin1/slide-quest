@@ -5,6 +5,28 @@ from SQ_modules.GameEnums import GameDifficulty
 from SQ_modules.DataTypes import Size
 import pygame
 
+SPRITE_POSITIONS = {
+    'ice': (32, 192, 32, 32),            
+    'goal': (96, 224, 32, 32),
+    'background': (32, 32, 32, 32),
+    'block_1x1_a': (32, 320, 32, 32),
+    'block_1x1_b': (32, 352, 32, 32),
+    'block_1x1_c': (64, 352, 32, 32),
+    'block_1x1_d': (96, 352, 32, 32),
+    'block_1x1_e': (128, 352, 32, 32),
+    'border_top': (32, 128, 32, 32),
+    'border_topAbove': (32, 256, 32, 32),
+    'border_left': (64, 32, 32, 32),
+    'border_right': (0, 32, 32, 32),
+    'border_bottom': (512, 384, 32, 32),
+    'border_topLeft': (64, 32, 32, 32),
+    'border_topLeftAbove': (0, 256, 32, 32),
+    'border_topRight': (0, 32, 32, 32),
+    'border_topRightAbove': (32, 288, 32, 32),
+    'border_bottomLeft': (448, 384, 32, 32),
+    'border_bottomRight': (576, 384, 32, 32)
+}
+
 #choose to turn of splash screen or not
 SPLASH_SCREEN_ON: bool = True
 
@@ -31,6 +53,7 @@ BEGINNER_DIMENSIONS = Size(width=12, height=12)
 INTERMEDIATE_DIMENSIONS = Size(width=18, height=18)
 HARD_DIMENSIONS = Size(width=22, height=22)
 EXPERT_DIMENSIONS = Size(width=26, height=26)
+TEST_DIMENSIONS = Size(width=10, height=10)
 
 def calculate_border(board_dimensions: Size, window_dimensions: Size, cell_dimensions: Size) -> Size:
         """
@@ -45,20 +68,25 @@ BEGINNER_BORDER = calculate_border(BEGINNER_DIMENSIONS, WINDOW_DIMENSIONS, CELL_
 INTERMEDIATE_BORDER = calculate_border(INTERMEDIATE_DIMENSIONS, WINDOW_DIMENSIONS, CELL_DIMENSIONS)
 HARD_BORDER = calculate_border(HARD_DIMENSIONS, WINDOW_DIMENSIONS, CELL_DIMENSIONS)
 EXPERT_BORDER = calculate_border(EXPERT_DIMENSIONS, WINDOW_DIMENSIONS, CELL_DIMENSIONS)
+TEST_BORDER = calculate_border(TEST_DIMENSIONS, WINDOW_DIMENSIONS, CELL_DIMENSIONS)
 
 Border_Size_Lookup = {
         GameDifficulty.BEGINNER: BEGINNER_BORDER,
         GameDifficulty.INTERMEDIATE: INTERMEDIATE_BORDER,
         GameDifficulty.HARD: HARD_BORDER,
-        GameDifficulty.EXPERT: EXPERT_BORDER
+        GameDifficulty.EXPERT: EXPERT_BORDER,
+        GameDifficulty.TEST: TEST_BORDER
 }
 
 Board_Size_Lookup = {
         GameDifficulty.BEGINNER: BEGINNER_DIMENSIONS,
         GameDifficulty.INTERMEDIATE: INTERMEDIATE_DIMENSIONS,
         GameDifficulty.HARD: HARD_DIMENSIONS,
-        GameDifficulty.EXPERT: EXPERT_DIMENSIONS
+        GameDifficulty.EXPERT: EXPERT_DIMENSIONS,
+        GameDifficulty.TEST: TEST_DIMENSIONS
 }
+
+Difficulty_Lookup: dict[Size, GameDifficulty] = {value: key for key, value in Board_Size_Lookup.items()}
 
 #Defaul to edit on or edit off
 IS_EDIT_ON_DEFAULT = False

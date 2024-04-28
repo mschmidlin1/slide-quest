@@ -71,7 +71,7 @@ class MapgenIO:
         bottom_right = mapgen_array[-1, -1]
         mapgen_array[-1, -1] = CellType.GOAL
         
-        gameboard = GameBoard(mapgen_array, Cell(0, 0), GameDifficulty.BEGINNER)#set begginer difficulty only as placeholder
+        gameboard = GameBoard(mapgen_array, Cell(0, 0))#set begginer difficulty only as placeholder
 
         #put the bottom right cell back in the gameboard array
         gameboard.gameboard[-1, -1] = bottom_right

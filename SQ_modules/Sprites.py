@@ -4,7 +4,10 @@ import os
 import random
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from SQ_modules.GameEnums import CellType, GameDifficulty
-from SQ_modules.configs import CELL_DIMENSIONS, WALL_COLOR, GOAL_COLOR, GROUND_COLOR, ICE_COLOR, PLAYER_COLOR, PLAYER_SPEED, PALLET_HIGHLIGHT_COLOR, SELECTOR_TOOL_IMAGE, Border_Size_Lookup, PLAYER_SPRITE_SHEET, PLAYERSHADOW_SPRITE_SHEET, ENVIRONMENT_SPRITE_SHEET 
+from SQ_modules.configs import (
+    CELL_DIMENSIONS, WALL_COLOR, GOAL_COLOR, GROUND_COLOR, ICE_COLOR, 
+    PLAYER_COLOR, PLAYER_SPEED, PALLET_HIGHLIGHT_COLOR, SELECTOR_TOOL_IMAGE, 
+    Border_Size_Lookup, PLAYER_SPRITE_SHEET, PLAYERSHADOW_SPRITE_SHEET, ENVIRONMENT_SPRITE_SHEET, SPRITE_POSITIONS)
 from SQ_modules.DataTypes import Point, Size, Cell
 from SQ_modules.my_logging import set_logger, log
 from SQ_modules.Converters import PointToCell, CellToPoint
@@ -14,27 +17,26 @@ class SpriteLoader:
     _sprites = {}
 
     @classmethod
-    def load_sprite_sheet(cls, sheet_path, sprite_positions):
+    def load_sprite_sheet(cls):
         """
         Load and slice a sprite sheet.
         
-        Parameters:
-        - sheet_path (str): Path to the sprite sheet file.
-        - sprite_positions (dict): A dictionary with keys as sprite names and values as tuples
+        GLOBALS:
+        - ENVIRONMENT_SPRITE_SHEET (str): Path to the sprite sheet file.
+        - SPRITE_POSITIONS (dict): A dictionary with keys as sprite names and values as tuples
                                 specifying the sprite's rectangle on the sprite sheet (x, y, width, height).
         
-        Returns:
-        - dict: A dictionary of sprite names and their corresponding pygame.Surface objects.
+
         """
-        sprite_sheet = pygame.image.load(sheet_path).convert_alpha()
+        sprite_sheet = pygame.image.load(ENVIRONMENT_SPRITE_SHEET).convert_alpha()
         
-        for sprite_name, pos in sprite_positions.items():
+        for sprite_name, pos in SPRITE_POSITIONS.items():
             x, y, width, height = pos
             sprite = sprite_sheet.subsurface((x, y, width, height))
             cls._sprites[sprite_name] = sprite
 
     @classmethod
-    def get_sprite(cls, sprite_name):
+    def get_sprite(cls, sprite_name) -> pygame.surface.Surface:
         """
         Retrieve a loaded sprite by name.
         
