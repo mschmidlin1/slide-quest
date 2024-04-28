@@ -7,13 +7,13 @@
 # Install Instructions
 
 ### Windows
-1. Go to releases/tags page here and download the latest zip file.
+1. Go to releases/tags page [here](https://github.com/mschmidlin1/slide-quest/releases "Title") and download the latest zip file.
 2. Unzip folder to desired location.
 3. Run game by double clicking on "SlideQuest.exe"
 4. Note - the game must be in the the same location as the resources folder so if you move the game the resources folder must go with it. 
 
 ### Mac
-1. Go to releases/tags page here and download the latest zip file.
+1. Go to releases/tags page [here](https://github.com/mschmidlin1/slide-quest/releases "Title") and download the latest zip file.
 2. Unzip folder
 3. Run Install.sh from the command line using the following command `./Install.sh` (this moves the game and resources to your home folder on Mac)
 4. Navigate to your home folder and run either SlideQuest or SlideQuest-Intel. You can double click them in finder or run them with `./SlideQuest` or `./SlideQuest-Intel`.
