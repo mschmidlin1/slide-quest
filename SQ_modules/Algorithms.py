@@ -49,7 +49,7 @@ def ShortestPath(input_gameboard: GameBoard) -> list[Direction]:
 
 def FindConnectedBlocks(gameboard: GameBoard, start_cell: Cell) -> list[Cell]:
     """
-    Finds all connected cells of type 'CellType.BLOCK' starting from 'start_cell'.
+    Finds all connected cells of the same type as the 'start_cell'.
     Uses Breadth-First Search (BFS) to explore the gameboard.
 
     Args:
@@ -59,9 +59,7 @@ def FindConnectedBlocks(gameboard: GameBoard, start_cell: Cell) -> list[Cell]:
     Returns:
     list[Cell]: A list of all connected cells of the same type as 'start_cell'.
     """
-    if gameboard.Get_CellType(start_cell) != CellType.BLOCK:
-        raise ValueError("start_cell type must be a block cell.")
-    
+    start_type = gameboard.Get_CellType(start_cell)
     # Directions for moving in the grid: up, down, left, right
     directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
     connected_cells = []
@@ -81,7 +79,7 @@ def FindConnectedBlocks(gameboard: GameBoard, start_cell: Cell) -> list[Cell]:
             # Check if next_cell is within bounds and of the right type
             if (0 <= next_row < gameboard.gameboard.shape[0] and
                 0 <= next_col < gameboard.gameboard.shape[1] and
-                gameboard.gameboard[next_row, next_col] == CellType.BLOCK and
+                gameboard.gameboard[next_row, next_col] == start_type and
                 next_cell not in visited):
                 
                 visited.add(next_cell)
@@ -95,11 +93,11 @@ def FindConnectedGroups(gameboard: GameBoard, cell_type: CellType = CellType.BLO
     """
 
     visited_cells = set()
-    all_coordinates = set([Cell(row, col) for row in range(gameboard.gameboard.shape[0]) for col in range(gameboard.gameboard.shape[1])])
+    all_coordinates = [Cell(row, col) for row in range(gameboard.gameboard.shape[0]) for col in range(gameboard.gameboard.shape[1])]
     groups = []
     while len(all_coordinates)>0:
         current_coordinate = all_coordinates[0]
-        if gameboard.Get_CellType(current_coordinate) != CellType.BLOCK:
+        if gameboard.Get_CellType(current_coordinate) != cell_type:
             all_coordinates.remove(current_coordinate)
             continue
         group = FindConnectedBlocks(gameboard, current_coordinate)
