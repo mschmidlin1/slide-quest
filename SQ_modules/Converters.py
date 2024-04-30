@@ -80,13 +80,20 @@ def PointToCell(point: Point, difficulty: GameDifficulty) -> Cell:
         return None
     if point.y<Border_Size_Lookup[difficulty].height: #check if point is in top border
         return None
-    if point.x>(WINDOW_DIMENSIONS.width-Border_Size_Lookup[difficulty].width): #check if point is in right border
+    if point.x>(WINDOW_DIMENSIONS.width-Border_Size_Lookup[difficulty].width)-1: #check if point is in right border
         return None
-    if point.y>(WINDOW_DIMENSIONS.height-Border_Size_Lookup[difficulty].height): #check if point is in bottom border
+    if point.y>(WINDOW_DIMENSIONS.height-Border_Size_Lookup[difficulty].height)-1: #check if point is in bottom border
         return None
     
     col = (point.x - Border_Size_Lookup[difficulty].width) // CELL_DIMENSIONS.width
     row = (point.y - Border_Size_Lookup[difficulty].height) // CELL_DIMENSIONS.height
 
-    return Cell(row=int(row), col=int(col))
+    cell = Cell(row=int(row), col=int(col))
+    if cell.row > Board_Size_Lookup[difficulty].height - 1:
+        raise ValueError(f"cell.row is outside the bounds for {difficulty} difficulty.")
+    
+    if cell.col > Board_Size_Lookup[difficulty].width - 1:
+        raise ValueError(f"cell.col is outside the bounds for {difficulty} difficulty.")
+
+    return cell
 
