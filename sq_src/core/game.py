@@ -1,19 +1,19 @@
 import pygame
-from SQ_modules.GameBoard import GameBoard
-from SQ_modules.DataTypes import Point, Size, Cell
-from SQ_modules.LevelEditor import LevelEditor
-from SQ_modules.LevelIO import LevelIO
-from SQ_modules.GameEnums import Direction, GameDifficulty, CellType, Screen
-from SQ_modules.my_logging import set_logger, log
-from SQ_modules.GameboardSpriteManager import GameboardSpriteManager
+from sq_src.core.game_board import GameBoard
+from sq_src.data_structures.data_types import Point, Size, Cell
+from sq_src.level_generation.level_editor import LevelEditor
+from sq_src.level_generation.level_io import LevelIO
+from sq_src.data_structures.game_enums import Direction, GameDifficulty, CellType, Screen
+from sq_src.my_logging import set_logger, log
+from sq_src.core.gameboard_sprite_manager import GameboardSpriteManager
 import logging
-from SQ_modules.LevelBackground import LevelBackground
-from SQ_modules.Sprites import Block, Goal, Ice, Player, SpriteLoader
-from SQ_modules.algorithms import ShortestPath
-from SQ_modules.GameAudio import GameAudio
-from SQ_modules.NavigationManager import NavigationManager
-from SQ_modules.Timer import Timer
-from SQ_modules.configs import ( 
+from sq_src.core.level_background import LevelBackground
+from sq_src.sprites.sprites import Block, Goal, Ice, Player, SpriteLoader
+from sq_src.data_structures.algorithms import ShortestPath
+from sq_src.singletons.game_audio import GameAudio
+from sq_src.singletons.navigation_manager import NavigationManager
+from sq_src.timer import Timer
+from sq_src.configs import ( 
     WHITE,
     WINDOW_DIMENSIONS,
     CELL_DIMENSIONS,

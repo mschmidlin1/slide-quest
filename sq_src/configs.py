@@ -1,8 +1,8 @@
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from SQ_modules.GameEnums import GameDifficulty
-from SQ_modules.DataTypes import Size
+from sq_src.data_structures.game_enums import GameDifficulty
+from sq_src.data_structures.data_types import Size
 import pygame
 
 SPRITE_POSITIONS = {

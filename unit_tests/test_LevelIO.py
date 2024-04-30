@@ -5,7 +5,7 @@ import re
 import numpy as np
 #necessary to import things from the SQ_modules folder
 sys.path.append(os.getcwd())
-from SQ_modules.LevelIO import LevelIO, eliminate_duplicates_dict
+from sq_src.level_generation.level_io import LevelIO, eliminate_duplicates_dict
 
 class Test_EliminateDuplicatesDict(unittest.TestCase):
 

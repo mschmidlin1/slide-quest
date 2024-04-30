@@ -1,6 +1,6 @@
-from SQ_modules.GameBoard import GameBoard
-from SQ_modules.GameEnums import Direction, CellType
-from SQ_modules.DataTypes import Cell
+from sq_src.core.game_board import GameBoard
+from sq_src.data_structures.game_enums import Direction, CellType
+from sq_src.data_structures.data_types import Cell
 import numpy as np
 import copy
 import collections

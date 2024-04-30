@@ -1,16 +1,16 @@
-from SQ_modules.GameEnums import GameDifficulty, CellType, Game_Difficult_Str_Map_Reverse, Direction
-from SQ_modules.configs import Board_Size_Lookup
-from SQ_modules.GameBoard import GameBoard
-from SQ_modules.LevelIO import LevelIO
-from SQ_modules.algorithms import ShortestPath
-from SQ_modules.LevelIO import LevelIO, MapgenIO
+from sq_src.data_structures.game_enums import GameDifficulty, CellType, Game_Difficult_Str_Map_Reverse, Direction
+from sq_src.configs import Board_Size_Lookup
+from sq_src.core.game_board import GameBoard
+from sq_src.level_generation.level_io import LevelIO
+from sq_src.data_structures.algorithms import ShortestPath
+from sq_src.level_generation.level_io import LevelIO, MapgenIO
 import numpy as np
-from SQ_modules.DataTypes import Cell
+from sq_src.data_structures.data_types import Cell
 import random
 import os
 import copy
 import collections
-from SQ_modules.my_logging import set_logger, log
+from sq_src.my_logging import set_logger, log
 import logging
 import random
 cell_dtype = np.dtype(CellType)

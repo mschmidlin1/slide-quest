@@ -1,5 +1,5 @@
-from SQ_modules.metas import SingletonMeta, SqScreenMeta
-from SQ_modules.game_enums import Screen, GameDifficulty
+from sq_src.metas import SingletonMeta, SqScreenMeta
+from sq_src.data_structures.game_enums import Screen, GameDifficulty
 import pygame
 
 

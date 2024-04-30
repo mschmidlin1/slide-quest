@@ -1,12 +1,12 @@
 import pygame
-from SQ_modules.UserData import UserData
-from SQ_modules.configs import MUTE_GREEN, WHITE, BLUE_ICE, WINDOW_DIMENSIONS, TITLE_FONT, LEFT_CLICK
-from SQ_modules.DataTypes import Point, Size
-from SQ_modules.TextBox import TextBox
-from SQ_modules.NavigationManager import NavigationManager
-from SQ_modules.GameEnums import Screen
-from SQ_modules.button import SqButton
-from SQ_modules.OptionsScreen import OptionsScreen
+from sq_src.singletons.user_data import UserData
+from sq_src.configs import MUTE_GREEN, WHITE, BLUE_ICE, WINDOW_DIMENSIONS, TITLE_FONT, LEFT_CLICK
+from sq_src.data_structures.data_types import Point, Size
+from sq_src.controls.text_box import TextBox
+from sq_src.singletons.navigation_manager import NavigationManager
+from sq_src.data_structures.game_enums import Screen
+from sq_src.controls.button import SqButton
+from sq_src.screens.options_screen import OptionsScreen
 
 
 class WelcomeScreen:

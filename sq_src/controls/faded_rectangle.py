@@ -1,5 +1,5 @@
 import pygame
-from SQ_modules.DataTypes import Point, Size
+from sq_src.data_structures.data_types import Point, Size
 
 class FadedRectangle:
     """

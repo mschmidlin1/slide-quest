@@ -6,3 +6,5 @@ rename files to all be snake case
 set minimum number of moves threshold for a legitimate map
 
 make another beta release for brian to test
+
+turn logging into a singleton service

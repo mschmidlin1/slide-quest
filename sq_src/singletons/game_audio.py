@@ -1,9 +1,9 @@
 import pygame
 import os
-from SQ_modules.metas import SingletonMeta
+from sq_src.metas import SingletonMeta
 import random
 import time
-from SQ_modules.UserData import UserData
+from sq_src.singletons.user_data import UserData
 
 def fade_out_sound(sound: pygame.mixer.Sound, fade_duration_ms: int):
     """

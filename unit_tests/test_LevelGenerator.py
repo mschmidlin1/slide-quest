@@ -4,10 +4,10 @@ import os
 import numpy as np
 #necessary to import things from the SQ_modules folder
 sys.path.append(os.getcwd())
-from SQ_modules.DataTypes import Cell
-from SQ_modules.LevelGenerator import LevelGenerator
-from SQ_modules.GameBoard import GameBoard
-from SQ_modules.GameEnums import GameDifficulty, CellType
+from sq_src.data_structures.data_types import Cell
+from sq_src.level_generation.level_generator import LevelGenerator
+from sq_src.core.game_board import GameBoard
+from sq_src.data_structures.game_enums import GameDifficulty, CellType
 cell_dtype = np.dtype(CellType)
 class Test_Constructor(unittest.TestCase):
     def test_Constructor_Beginner(self):

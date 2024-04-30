@@ -3,14 +3,14 @@ import os
 import sys
 #necessary to import things from the SQ_modules folder
 sys.path.append(os.getcwd())
-from SQ_modules.converters import CellToPoint, PointToCell
-from SQ_modules.DataTypes import Cell, Point
-from SQ_modules.GameEnums import CellType, GameDifficulty
-from SQ_modules.configs import CELL_DIMENSIONS, Border_Size_Lookup, WINDOW_DIMENSIONS
+from sq_src.data_structures.converters import CellToPoint, PointToCell
+from sq_src.data_structures.data_types import Cell, Point
+from sq_src.data_structures.game_enums import CellType, GameDifficulty
+from sq_src.configs import CELL_DIMENSIONS, Border_Size_Lookup, WINDOW_DIMENSIONS
 import numpy as np
-from SQ_modules.GameBoard import GameBoard
-from SQ_modules.GameEnums import Direction, CellType
-from SQ_modules.DataTypes import Point, Cell
+from sq_src.core.game_board import GameBoard
+from sq_src.data_structures.game_enums import Direction, CellType
+from sq_src.data_structures.data_types import Point, Cell
 cell_dtype = np.dtype(CellType)
 
 

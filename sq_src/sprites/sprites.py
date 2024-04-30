@@ -3,14 +3,14 @@ import sys
 import os
 import random
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from SQ_modules.GameEnums import CellType, GameDifficulty
-from SQ_modules.configs import (
+from sq_src.data_structures.game_enums import CellType, GameDifficulty
+from sq_src.configs import (
     CELL_DIMENSIONS, WALL_COLOR, GOAL_COLOR, GROUND_COLOR, ICE_COLOR, 
     PLAYER_COLOR, PLAYER_SPEED, PALLET_HIGHLIGHT_COLOR, SELECTOR_TOOL_IMAGE, 
     Border_Size_Lookup, PLAYER_SPRITE_SHEET, PLAYERSHADOW_SPRITE_SHEET, ENVIRONMENT_SPRITE_SHEET, SPRITE_POSITIONS)
-from SQ_modules.DataTypes import Point, Size, Cell
-from SQ_modules.my_logging import set_logger, log
-from SQ_modules.converters import PointToCell, CellToPoint
+from sq_src.data_structures.data_types import Point, Size, Cell
+from sq_src.my_logging import set_logger, log
+from sq_src.data_structures.converters import PointToCell, CellToPoint
 import logging
 
 class SpriteLoader:

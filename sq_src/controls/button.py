@@ -1,7 +1,7 @@
 import pygame
-from SQ_modules.data_types import Point
-from SQ_modules.sprites import TextSprite
-from SQ_modules.configs import  BLUE_ICE, GRAY_BLUE, NAVY_BLUE, UGLY_PINK, MUTE_GREEN, LIGHT_BLUE, TITLE_FONT, DARK_GRAY
+from sq_src.data_structures.data_types import Point
+from sq_src.sprites.sprites import TextSprite
+from sq_src.configs import  BLUE_ICE, GRAY_BLUE, NAVY_BLUE, UGLY_PINK, MUTE_GREEN, LIGHT_BLUE, TITLE_FONT, DARK_GRAY
 
 class Button:
     def __init__(self, screen, color, center_pos: Point, width, height, font_file: str, font_size: int, text='', font_color=(0, 0, 0), outline_color=None, hover_color=None, hover_font_color=None, border_radius=10):

@@ -1,7 +1,7 @@
 import logging
 from logging.config import dictConfig
 import functools
-from SQ_modules.configs import FILE_LOG_LEVEL, STDOUT_LOG_LEVEL
+from sq_src.configs import FILE_LOG_LEVEL, STDOUT_LOG_LEVEL
 import os
 
 #check for log folder and logs file and create if they don't exist.

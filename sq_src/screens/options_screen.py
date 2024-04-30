@@ -2,17 +2,17 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import pygame
-from SQ_modules.configs import TITLE_FONT, WINDOW_DIMENSIONS, TITLE_SCREEN_TEXT_COLOR, LEFT_CLICK, TITLE_SCREEN_COLOR, WHITE, DARK_GRAY, TITLE_FONT, MUTE_GREEN, BLUE_ICE
-from SQ_modules.sprites import TextSprite
-from SQ_modules.data_types import Point, Size
-from SQ_modules.button import Button, SqButton
-from SQ_modules.game_enums import Screen
-from SQ_modules.metas import SqScreenMeta, SingletonMeta
-from SQ_modules.navigation_manager import NavigationManager
-from SQ_modules.slider import Slider
-from SQ_modules.game_audio import GameAudio
-from SQ_modules.UserData import UserData
-from SQ_modules.TextBox import TextBox
+from sq_src.configs import TITLE_FONT, WINDOW_DIMENSIONS, TITLE_SCREEN_TEXT_COLOR, LEFT_CLICK, TITLE_SCREEN_COLOR, WHITE, DARK_GRAY, TITLE_FONT, MUTE_GREEN, BLUE_ICE
+from sq_src.sprites.sprites import TextSprite
+from sq_src.data_structures.data_types import Point, Size
+from sq_src.controls.button import Button, SqButton
+from sq_src.data_structures.game_enums import Screen
+from sq_src.metas import SqScreenMeta, SingletonMeta
+from sq_src.singletons.navigation_manager import NavigationManager
+from sq_src.controls.slider import Slider
+from sq_src.singletons.game_audio import GameAudio
+from sq_src.singletons.user_data import UserData
+from sq_src.controls.text_box import TextBox
 
 class OptionsScreen(metaclass=SingletonMeta):
     """

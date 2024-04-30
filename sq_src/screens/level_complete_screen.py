@@ -2,12 +2,12 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import pygame
-from SQ_modules.configs import TITLE_FONT, WINDOW_DIMENSIONS, TITLE_SCREEN_COLOR, TITLE_SCREEN_TEXT_COLOR, LEFT_CLICK
-from SQ_modules.sprites import TextSprite
-from SQ_modules.data_types import Point
-from SQ_modules.navigation_manager import NavigationManager
-from SQ_modules.game_enums import Screen
-from SQ_modules.button import SqButton
+from sq_src.configs import TITLE_FONT, WINDOW_DIMENSIONS, TITLE_SCREEN_COLOR, TITLE_SCREEN_TEXT_COLOR, LEFT_CLICK
+from sq_src.sprites.sprites import TextSprite
+from sq_src.data_structures.data_types import Point
+from sq_src.singletons.navigation_manager import NavigationManager
+from sq_src.data_structures.game_enums import Screen
+from sq_src.controls.button import SqButton
 
 class LevelCompleteScreen():
     def __init__(self, screen, num_moves: int, time_str: str, least_possible_moves: int):

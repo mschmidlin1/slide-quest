@@ -1,11 +1,11 @@
-from SQ_modules.game_board import GameBoard
-from SQ_modules.level_generator import LevelGenerator
-from SQ_modules.metas import SingletonMeta
-from SQ_modules.seed import Seed
-from SQ_modules.game_enums import GameDifficulty, Direction
-from SQ_modules.algorithms import ShortestPath
-from SQ_modules.UserData import UserData
-from SQ_modules.my_logging import set_logger
+from sq_src.core.game_board import GameBoard
+from sq_src.level_generation.level_generator import LevelGenerator
+from sq_src.metas import SingletonMeta
+from sq_src.level_generation.seed import Seed
+from sq_src.data_structures.game_enums import GameDifficulty, Direction
+from sq_src.data_structures.algorithms import ShortestPath
+from sq_src.singletons.user_data import UserData
+from sq_src.my_logging import set_logger
 import logging
 set_logger()
 

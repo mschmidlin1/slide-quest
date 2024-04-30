@@ -1,9 +1,9 @@
 import unittest
-from SQ_modules.UserData import UserData, Seed
-from SQ_modules.configs import GAME_VOLUME
+from sq_src.singletons.user_data import UserData, Seed
+from sq_src.configs import GAME_VOLUME
 import os
-from SQ_modules.metas import SingletonMeta
-from SQ_modules.game_enums import GameDifficulty, Direction
+from sq_src.metas import SingletonMeta
+from sq_src.data_structures.game_enums import GameDifficulty, Direction
 
 class Test_Seed(unittest.TestCase):
     def test_construct(self):

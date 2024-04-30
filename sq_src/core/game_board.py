@@ -3,13 +3,13 @@ import os
 #necessary to import things from the SQ_modules folder
 sys.path.append(os.getcwd())
 
-from SQ_modules.GameEnums import CellType, Direction, Str_to_CellType_vector_func
-from SQ_modules.configs import Difficulty_Lookup
+from sq_src.data_structures.game_enums import CellType, Direction, Str_to_CellType_vector_func
+from sq_src.configs import Difficulty_Lookup
 import numpy as np
-from SQ_modules.DataTypes import Cell, Size
-from SQ_modules.GameEnums import GameDifficulty
+from sq_src.data_structures.data_types import Cell, Size
+from sq_src.data_structures.game_enums import GameDifficulty
 cell_dtype = np.dtype(CellType)
-from SQ_modules.my_logging import set_logger, log
+from sq_src.my_logging import set_logger, log
 
 set_logger()
 

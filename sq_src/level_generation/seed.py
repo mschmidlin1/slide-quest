@@ -6,7 +6,7 @@
 
 
 
-from SQ_modules.GameEnums import Direction
+from sq_src.data_structures.game_enums import Direction
 
 
 class Seed:

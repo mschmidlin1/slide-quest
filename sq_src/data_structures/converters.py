@@ -1,6 +1,6 @@
-from SQ_modules.DataTypes import Cell, Point
-from SQ_modules.GameEnums import CellType, GameDifficulty
-from SQ_modules.configs import CELL_DIMENSIONS, Border_Size_Lookup, WINDOW_DIMENSIONS, Board_Size_Lookup
+from sq_src.data_structures.data_types import Cell, Point
+from sq_src.data_structures.game_enums import CellType, GameDifficulty
+from sq_src.configs import CELL_DIMENSIONS, Border_Size_Lookup, WINDOW_DIMENSIONS, Board_Size_Lookup
 
 
 def CellToPoint(cell: Cell, difficulty: GameDifficulty) -> Point:
