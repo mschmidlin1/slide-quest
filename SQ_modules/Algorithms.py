@@ -45,8 +45,6 @@ def ShortestPath(input_gameboard: GameBoard) -> list[Direction]:
     
     return []  # Return an empty list if there's no path to the goal
 
-
-
 def FindConnectedBlocks(gameboard: GameBoard, start_cell: Cell) -> list[Cell]:
     """
     Finds all connected cells of the same type as the 'start_cell'.

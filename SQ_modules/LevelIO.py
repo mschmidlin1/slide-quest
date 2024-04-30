@@ -67,15 +67,6 @@ class MapgenIO:
         """
         Saves the mapgen array to the mapgen folder.
         """
-        #temporarily set goal position so gameboard object can be created
-        bottom_right = mapgen_array[-1, -1]
-        mapgen_array[-1, -1] = CellType.GOAL
-        
-        gameboard = GameBoard(mapgen_array, Cell(0, 0))#set begginer difficulty only as placeholder
-
-        #put the bottom right cell back in the gameboard array
-        gameboard.gameboard[-1, -1] = bottom_right
-
         root_dir = "mapgen_resources"
 
         if not os.path.exists(root_dir):
@@ -84,7 +75,7 @@ class MapgenIO:
         str_dttm = GetStrDateTime()
         filename = os.path.join(root_dir, "sub-map_"+str_dttm+".csv")
         with open(filename, mode='w', newline='') as file:
-            file.write(str(gameboard))
+            file.write(str('\n'.join([','.join(list(map(str, row))) for row in mapgen_array])))
     @staticmethod
     def ReadMapgen() -> dict[str, np.ndarray]:
         """
