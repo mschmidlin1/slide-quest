@@ -3,7 +3,7 @@ from SQ_modules.LevelGenerator import LevelGenerator
 from SQ_modules.Metas import SingletonMeta
 from SQ_modules.Seed import Seed
 from SQ_modules.GameEnums import GameDifficulty, Direction
-from SQ_modules.ShortestPath import ShortestPath
+from SQ_modules.Algorithms import ShortestPath
 from SQ_modules.UserData import UserData
 from SQ_modules.my_logging import set_logger
 import logging

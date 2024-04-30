@@ -2,7 +2,7 @@ from SQ_modules.GameEnums import GameDifficulty, CellType, Game_Difficult_Str_Ma
 from SQ_modules.configs import Board_Size_Lookup
 from SQ_modules.GameBoard import GameBoard
 from SQ_modules.LevelIO import LevelIO
-from SQ_modules.ShortestPath import ShortestPath
+from SQ_modules.Algorithms import ShortestPath
 from SQ_modules.LevelIO import LevelIO, MapgenIO
 import numpy as np
 from SQ_modules.DataTypes import Cell
@@ -114,7 +114,7 @@ class LevelGenerator:
         Raises:
         ValueError: If the randomly selected player position coincides with the goal position.
         """
-        temp_gameboard = GameBoard(board, Cell(0, 0), self.difficulty)
+        temp_gameboard = GameBoard(board, Cell(0, 0))
         width, height = board.shape
         possible_player_positions = []
         for col in range(width):
@@ -244,7 +244,7 @@ class LevelGenerator:
             return None
         if player_pos == goal_pos:
             logging.error(f"Goal position and player position both have location: {player_pos}")
-        gameboard = GameBoard(board, player_pos, self.difficulty)
+        gameboard = GameBoard(board, player_pos)
         if gameboard.player_pos == gameboard.Find_Goal_Pos():
             logging.error(f"Goal position and player position both have location: {gameboard.player_pos}")
         return gameboard

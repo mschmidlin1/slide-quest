@@ -1,7 +1,8 @@
 
 block algorithm
-add wasd to the movement commands along with arrow keys
-make beta release (need intel mac)
 rename SQ_modules to sq_source
 reorganize all src files into folder
 rename files to all be snake case
+set minimum number of moves threshold for a legitimate map
+
+make another beta release for brian to test

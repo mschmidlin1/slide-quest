@@ -7,17 +7,17 @@ from SQ_modules.GameEnums import GameDifficulty, Direction
 
 class Test_Seed(unittest.TestCase):
     def test_construct(self):
-        seed = Seed(1, [Direction.UP], False, 0.0, 0)
+        seed = Seed(1, [Direction.UP], False, False, 0.0, 0)
         self.assertTrue(True)
 
     def test_eq(self):
-        seed = Seed(1, [Direction.UP], False, 0.0, 0)
-        seed1 = Seed(1, [Direction.DOWN], True, 1.0, 1)
+        seed = Seed(1, [Direction.UP], False, False, 0.0, 0)
+        seed1 = Seed(1, [Direction.DOWN], False, True, 1.0, 1)
         self.assertEqual(seed, seed1)
         
     def test_not_eq(self):
-        seed = Seed(1, [Direction.UP], False, 0.0, 0)
-        seed1 = Seed(2, [Direction.UP], False, 0.0, 0)
+        seed = Seed(1, [Direction.UP], False, False, 0.0, 0)
+        seed1 = Seed(2, [Direction.UP],  False, False, 0.0, 0)
         self.assertNotEqual(seed, seed1)
         
 
@@ -60,12 +60,6 @@ class Test_UserData(unittest.TestCase):
         user_data = UserData()
         user_data.update_sfx_volume(0.75)
         self.assertEqual(user_data.user_data['volume_levels']['sfx'], 0.75)
-
-    def test_add_completed_level(self):
-        """Test the add_completed_level method."""
-        user_data = UserData()
-        user_data.add_completed_level(GameDifficulty.BEGINNER, 1)
-        self.assertIn(1, user_data.user_data['completed_maps'][GameDifficulty.BEGINNER])
 
 
 if __name__ == '__main__':

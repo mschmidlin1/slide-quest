@@ -3,13 +3,13 @@ from SQ_modules.GameBoard import GameBoard
 from SQ_modules.DataTypes import Point, Size, Cell
 from SQ_modules.LevelEditor import LevelEditor
 from SQ_modules.LevelIO import LevelIO
-from SQ_modules.GameEnums import Direction, GameDifficulty, CellType, sprite_positions, Screen
+from SQ_modules.GameEnums import Direction, GameDifficulty, CellType, Screen
 from SQ_modules.my_logging import set_logger, log
 from SQ_modules.GameboardSpriteManager import GameboardSpriteManager
 import logging
 from SQ_modules.LevelBackground import LevelBackground
 from SQ_modules.Sprites import Block, Goal, Ice, Player, SpriteLoader
-from SQ_modules.ShortestPath import ShortestPath
+from SQ_modules.Algorithms import ShortestPath
 from SQ_modules.GameAudio import GameAudio
 from SQ_modules.NavigationManager import NavigationManager
 from SQ_modules.Timer import Timer
@@ -21,7 +21,8 @@ from SQ_modules.configs import (
     IS_EDIT_ON_DEFAULT,
     Border_Size_Lookup,
     ENVIRONMENT_SPRITE_SHEET,
-    CELEBRATION_TIME_S)
+    CELEBRATION_TIME_S, 
+    SPRITE_POSITIONS)
 
 import copy
 import time
@@ -84,7 +85,7 @@ class Game:
 
     
     def load_all_resources(self):
-        SpriteLoader.load_sprite_sheet(ENVIRONMENT_SPRITE_SHEET, sprite_positions)
+        SpriteLoader.load_sprite_sheet()
 
     
     def isComplete(self):
