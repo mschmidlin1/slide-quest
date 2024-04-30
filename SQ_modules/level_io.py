@@ -5,11 +5,11 @@ import re
 
 #necessary to import things from the SQ_modules folder
 sys.path.append(os.getcwd())
-from SQ_modules.GameBoard import GameBoard
-from SQ_modules.Metas import SingletonMeta
+from SQ_modules.game_board import GameBoard
+from SQ_modules.metas import SingletonMeta
 from SQ_modules.my_logging import set_logger, log
-from SQ_modules.GameEnums import CellType, Str_to_CellType_vector_func, GameDifficulty, Game_Difficult_Str_Map
-from SQ_modules.DataTypes import Point, Cell
+from SQ_modules.game_enums import CellType, Str_to_CellType_vector_func, GameDifficulty, Game_Difficult_Str_Map
+from SQ_modules.data_types import Point, Cell
 import numpy as np
 cell_dtype = np.dtype(CellType)
 set_logger()

@@ -5,7 +5,7 @@ import numpy as np
 #necessary to import things from the SQ_modules folder
 sys.path.append(os.getcwd())
 from SQ_modules.DataTypes import Point, Cell
-from SQ_modules.Algorithms import ShortestPath, FindConnectedBlocks, FindConnectedGroups
+from SQ_modules.algorithms import ShortestPath, FindConnectedBlocks, FindConnectedGroups
 from SQ_modules.GameEnums import GameDifficulty, CellType, Direction
 from SQ_modules.GameBoard import GameBoard
 cell_dtype = np.dtype(CellType)

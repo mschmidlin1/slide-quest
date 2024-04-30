@@ -3,9 +3,9 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import pygame
 from SQ_modules.configs import TITLE_FONT, WINDOW_DIMENSIONS, TITLE_SCREEN_COLOR, TITLE_SCREEN_TEXT_COLOR, CELL_DIMENSIONS, Border_Size_Lookup
-from SQ_modules.Sprites import TextSprite, SpriteLoader, Border, Background
-from SQ_modules.GameEnums import GameDifficulty
-from SQ_modules.DataTypes import Point
+from SQ_modules.sprites import TextSprite, SpriteLoader, Border, Background
+from SQ_modules.game_enums import GameDifficulty
+from SQ_modules.data_types import Point
 
 class LevelBackground():
     def __init__(self, screen: pygame.surface.Surface, text: str, difficulty: GameDifficulty):

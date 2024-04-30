@@ -10,7 +10,7 @@ from SQ_modules.configs import (
     Border_Size_Lookup, PLAYER_SPRITE_SHEET, PLAYERSHADOW_SPRITE_SHEET, ENVIRONMENT_SPRITE_SHEET, SPRITE_POSITIONS)
 from SQ_modules.DataTypes import Point, Size, Cell
 from SQ_modules.my_logging import set_logger, log
-from SQ_modules.Converters import PointToCell, CellToPoint
+from SQ_modules.converters import PointToCell, CellToPoint
 import logging
 
 class SpriteLoader:

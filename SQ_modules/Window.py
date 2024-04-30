@@ -1,20 +1,20 @@
 import sys
 import pygame
 import logging
-from SQ_modules.LevelIO import LevelIO
-from SQ_modules.TitleScreen import TitleScreen
-from SQ_modules.LevelCompleteScreen import LevelCompleteScreen
-from SQ_modules.Game import Game
+from SQ_modules.level_io import LevelIO
+from SQ_modules.title_screen import TitleScreen
+from SQ_modules.level_complete_screen import LevelCompleteScreen
+from SQ_modules.game import Game
 from SQ_modules.configs import WINDOW_DIMENSIONS, WINDOW_TITLE, ICON, SPLASH_SCREEN_ON
 from SQ_modules.my_logging import set_logger, log
-from SQ_modules.SplashScreen import SplashScreen
-from SQ_modules.GameAudio import GameAudio
-from SQ_modules.GameEnums import Screen
-from SQ_modules.OptionsScreen import OptionsScreen
-from SQ_modules.NavigationManager import NavigationManager
-from SQ_modules.LevelManager import LevelManager
-from SQ_modules.UserData import UserData
-from SQ_modules.WelcomeScreen import WelcomeScreen
+from SQ_modules.splash_screen import SplashScreen
+from SQ_modules.game_audio import GameAudio
+from SQ_modules.game_enums import Screen
+from SQ_modules.options_screen import OptionsScreen
+from SQ_modules.navigation_manager import NavigationManager
+from SQ_modules.level_manager import LevelManager
+from SQ_modules.user_data import UserData
+from SQ_modules.welcome_screen import WelcomeScreen
 
 set_logger()
 

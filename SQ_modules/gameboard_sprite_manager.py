@@ -1,11 +1,11 @@
 import pygame
 from pygame.sprite import Sprite
-from SQ_modules.Converters import CellToPoint
-from SQ_modules.DataTypes import Cell
-from SQ_modules.GameEnums import CellType, Direction, GameDifficulty
-from SQ_modules.GameBoard import GameBoard
+from SQ_modules.converters import CellToPoint
+from SQ_modules.data_types import Cell
+from SQ_modules.game_enums import CellType, Direction, GameDifficulty
+from SQ_modules.game_board import GameBoard
 import numpy as np
-from SQ_modules.Sprites import Player, Goal, Block, Ice, Ground
+from SQ_modules.sprites import Player, Goal, Block, Ice, Ground
 sprite_dtype = np.dtype(Sprite)
 
 

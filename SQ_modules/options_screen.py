@@ -3,14 +3,14 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import pygame
 from SQ_modules.configs import TITLE_FONT, WINDOW_DIMENSIONS, TITLE_SCREEN_TEXT_COLOR, LEFT_CLICK, TITLE_SCREEN_COLOR, WHITE, DARK_GRAY, TITLE_FONT, MUTE_GREEN, BLUE_ICE
-from SQ_modules.Sprites import TextSprite
-from SQ_modules.DataTypes import Point, Size
-from SQ_modules.Button import Button, SqButton
-from SQ_modules.GameEnums import Screen
-from SQ_modules.Metas import SqScreenMeta, SingletonMeta
-from SQ_modules.NavigationManager import NavigationManager
-from SQ_modules.Slider import Slider
-from SQ_modules.GameAudio import GameAudio
+from SQ_modules.sprites import TextSprite
+from SQ_modules.data_types import Point, Size
+from SQ_modules.button import Button, SqButton
+from SQ_modules.game_enums import Screen
+from SQ_modules.metas import SqScreenMeta, SingletonMeta
+from SQ_modules.navigation_manager import NavigationManager
+from SQ_modules.slider import Slider
+from SQ_modules.game_audio import GameAudio
 from SQ_modules.UserData import UserData
 from SQ_modules.TextBox import TextBox
 

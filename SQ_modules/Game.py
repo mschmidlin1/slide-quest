@@ -9,7 +9,7 @@ from SQ_modules.GameboardSpriteManager import GameboardSpriteManager
 import logging
 from SQ_modules.LevelBackground import LevelBackground
 from SQ_modules.Sprites import Block, Goal, Ice, Player, SpriteLoader
-from SQ_modules.Algorithms import ShortestPath
+from SQ_modules.algorithms import ShortestPath
 from SQ_modules.GameAudio import GameAudio
 from SQ_modules.NavigationManager import NavigationManager
 from SQ_modules.Timer import Timer

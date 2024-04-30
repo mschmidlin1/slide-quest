@@ -3,7 +3,7 @@ import os
 import sys
 #necessary to import things from the SQ_modules folder
 sys.path.append(os.getcwd())
-from SQ_modules.Converters import CellToPoint, PointToCell
+from SQ_modules.converters import CellToPoint, PointToCell
 from SQ_modules.DataTypes import Cell, Point
 from SQ_modules.GameEnums import CellType, GameDifficulty
 from SQ_modules.configs import CELL_DIMENSIONS, Border_Size_Lookup, WINDOW_DIMENSIONS

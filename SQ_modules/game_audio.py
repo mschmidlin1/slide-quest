@@ -1,6 +1,6 @@
 import pygame
 import os
-from SQ_modules.Metas import SingletonMeta
+from SQ_modules.metas import SingletonMeta
 import random
 import time
 from SQ_modules.UserData import UserData

@@ -3,13 +3,13 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import pygame
 from SQ_modules.configs import TITLE_FONT, WINDOW_DIMENSIONS, TITLE_SCREEN_TEXT_COLOR, LEFT_CLICK, BLUE_ICE, GRAY_BLUE, NAVY_BLUE, UGLY_PINK, MUTE_GREEN, LIGHT_BLUE, SNOWFLAKE_FONT
-from SQ_modules.Sprites import TextSprite
-from SQ_modules.DataTypes import Point, Size
-from SQ_modules.Button import Button, SqButton
-from SQ_modules.GameEnums import Screen, GameDifficulty
-from SQ_modules.Metas import SqScreenMeta
-from SQ_modules.NavigationManager import NavigationManager
-from SQ_modules.FadedRectangle import FadedRectangle
+from SQ_modules.sprites import TextSprite
+from SQ_modules.data_types import Point, Size
+from SQ_modules.button import Button, SqButton
+from SQ_modules.game_enums import Screen, GameDifficulty
+from SQ_modules.metas import SqScreenMeta
+from SQ_modules.navigation_manager import NavigationManager
+from SQ_modules.faded_rectangle import FadedRectangle
 
 class TitleScreen(metaclass=SqScreenMeta):
     def __init__(self, screen):

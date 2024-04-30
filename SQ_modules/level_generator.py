@@ -2,7 +2,7 @@ from SQ_modules.GameEnums import GameDifficulty, CellType, Game_Difficult_Str_Ma
 from SQ_modules.configs import Board_Size_Lookup
 from SQ_modules.GameBoard import GameBoard
 from SQ_modules.LevelIO import LevelIO
-from SQ_modules.Algorithms import ShortestPath
+from SQ_modules.algorithms import ShortestPath
 from SQ_modules.LevelIO import LevelIO, MapgenIO
 import numpy as np
 from SQ_modules.DataTypes import Cell

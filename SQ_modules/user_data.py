@@ -1,9 +1,9 @@
 from dataclasses import dataclass
-from SQ_modules.Seed import Seed
-from SQ_modules.Metas import SingletonMeta
+from SQ_modules.seed import Seed
+from SQ_modules.metas import SingletonMeta
 import os
 from SQ_modules.configs import GAME_VOLUME
-from SQ_modules.GameEnums import GameDifficulty, Direction
+from SQ_modules.game_enums import GameDifficulty, Direction
 import pickle
 from SQ_modules.my_logging import set_logger
 import logging

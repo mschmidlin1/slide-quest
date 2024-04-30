@@ -1,6 +1,6 @@
 import pygame
-from SQ_modules.DataTypes import Point
-from SQ_modules.Sprites import TextSprite
+from SQ_modules.data_types import Point
+from SQ_modules.sprites import TextSprite
 from SQ_modules.configs import  BLUE_ICE, GRAY_BLUE, NAVY_BLUE, UGLY_PINK, MUTE_GREEN, LIGHT_BLUE, TITLE_FONT, DARK_GRAY
 
 class Button:

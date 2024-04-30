@@ -5,7 +5,7 @@ from SQ_modules.DataTypes import Point, Size
 from SQ_modules.TextBox import TextBox
 from SQ_modules.NavigationManager import NavigationManager
 from SQ_modules.GameEnums import Screen
-from SQ_modules.Button import SqButton
+from SQ_modules.button import SqButton
 from SQ_modules.OptionsScreen import OptionsScreen
 
 

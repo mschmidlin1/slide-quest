@@ -1,11 +1,11 @@
 import unittest
 import pygame
 from SQ_modules.configs import WINDOW_DIMENSIONS
-from SQ_modules.GameboardSpriteManager import SpriteType_To_CellType, CellType_To_SpriteType, GameboardSpriteManager
-from SQ_modules.GameBoard import GameBoard
-from SQ_modules.Sprites import Player, Goal, Block, Ice, SpriteLoader
-from SQ_modules.GameEnums import CellType, GameDifficulty
-from SQ_modules.DataTypes import Cell, Size
+from SQ_modules.gameboard_sprite_manager import SpriteType_To_CellType, CellType_To_SpriteType, GameboardSpriteManager
+from SQ_modules.game_board import GameBoard
+from SQ_modules.sprites import Player, Goal, Block, Ice, SpriteLoader
+from SQ_modules.game_enums import CellType, GameDifficulty
+from SQ_modules.data_types import Cell, Size
 import numpy as np
 cell_dtype = np.dtype(CellType)
 
