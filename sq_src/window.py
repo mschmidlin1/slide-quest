@@ -1,12 +1,11 @@
 import sys
 import pygame
-import logging
 from sq_src.level_generation.level_io import LevelIO
 from sq_src.screens.title_screen import TitleScreen
 from sq_src.screens.level_complete_screen import LevelCompleteScreen
 from sq_src.core.game import Game
 from sq_src.configs import WINDOW_DIMENSIONS, WINDOW_TITLE, ICON, SPLASH_SCREEN_ON
-from sq_src.my_logging import set_logger, log
+from sq_src.singletons.my_logging import LoggingService
 from sq_src.screens.splash_screen import SplashScreen
 from sq_src.singletons.game_audio import GameAudio
 from sq_src.data_structures.game_enums import Screen
@@ -15,8 +14,6 @@ from sq_src.singletons.navigation_manager import NavigationManager
 from sq_src.singletons.level_manager import LevelManager
 from sq_src.singletons.user_data import UserData
 from sq_src.screens.welcome_screen import WelcomeScreen
-
-set_logger()
 
 
 class Window():
@@ -34,6 +31,7 @@ class Window():
         self.level_manager = LevelManager()
         self.game_audio = GameAudio()
         self.navigation_manager = NavigationManager()
+        self.logging_service = LoggingService()
 
         
         
@@ -105,8 +103,7 @@ class Window():
         #do nothing if the current screen has not been changed
         if self.current_screen_type == self.navigation_manager.current_screen:
             return
-        
-        logging.info(f"Navigating to {self.navigation_manager.current_screen}.")
+        self.logging_service.log_info(f"Navigating to {self.navigation_manager.current_screen}.")
         if self.navigation_manager.current_screen != Screen.LEVEL_COMPLETE:#don't play the navigation sound effect for level complete screen
             self.game_audio.button_click_sfx.play()
         if self.navigation_manager.current_screen == Screen.TITLE:

@@ -5,11 +5,9 @@ from sq_src.sprites.sprites import Block, Ice, Goal, Player, HollowSquareSprite,
 from sq_src.data_structures.data_types import Point, Size
 from sq_src.core.game_board import GameBoard
 from sq_src.level_generation.level_io import LevelIO, MapgenIO
-from sq_src.my_logging import set_logger, log
+from sq_src.singletons.my_logging import LoggingService
 from sq_src.data_structures.converters import PointToCell, CellToPoint
 from sq_src.core.gameboard_sprite_manager import GameboardSpriteManager
-import logging
-set_logger()
 
 class LevelEditor:
     """
@@ -23,6 +21,7 @@ class LevelEditor:
     """
     
     def __init__(self, gameboard: GameBoard, gameboard_sprite_manager: GameboardSpriteManager, screen: pygame.surface.Surface): #need from game, player, border_size, gameboard_sprite_group, gameboard, 
+        self.logging_service = LoggingService()
         self.screen = screen
         self.gameboard = gameboard
         self.gameboard_sprite_manager = gameboard_sprite_manager
@@ -78,18 +77,19 @@ class LevelEditor:
         if self.select_tool_sprite.rect.collidepoint(event.pos):
             self.current_pallet_block = "SELECT"
             self.selected_pallet_sprite.rect.center = self.select_tool_sprite.rect.center
-            logging.info("Pallet block changed to SELECT.")
+            self.logging_service.log_info("Pallet block changed to SELECT.")
         elif self.block_pallet_sprite.rect.collidepoint(event.pos):
             self.current_pallet_block = CellType.BLOCK
             self.selected_pallet_sprite.rect.center = self.block_pallet_sprite.rect.center
-            logging.info("Pallet block changed to BLOCK.")
+            self.logging_service.log_info("Pallet block changed to BLOCK.")
         elif self.ice_pallet_sprite.rect.collidepoint(event.pos):
             self.current_pallet_block = CellType.ICE
             self.selected_pallet_sprite.rect.center = self.ice_pallet_sprite.rect.center
-            logging.info("Pallet block changed to ICE.")
+            self.logging_service.log_info("Pallet block changed to ICE.")
         elif self.ground_pallet_sprite.rect.collidepoint(event.pos):
             self.current_pallet_block = CellType.GROUND
             self.selected_pallet_sprite.rect.center = self.ground_pallet_sprite.rect.center
+            self.logging_service.log_info("Pallet block changed to GROUND.")
         
     def handle_select(self):
         """

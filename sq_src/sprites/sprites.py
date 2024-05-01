@@ -9,9 +9,8 @@ from sq_src.configs import (
     PLAYER_COLOR, PLAYER_SPEED, PALLET_HIGHLIGHT_COLOR, SELECTOR_TOOL_IMAGE, 
     Border_Size_Lookup, PLAYER_SPRITE_SHEET, PLAYERSHADOW_SPRITE_SHEET, ENVIRONMENT_SPRITE_SHEET, SPRITE_POSITIONS)
 from sq_src.data_structures.data_types import Point, Size, Cell
-from sq_src.my_logging import set_logger, log
+from sq_src.singletons.my_logging import LoggingService
 from sq_src.data_structures.converters import PointToCell, CellToPoint
-import logging
 
 class SpriteLoader:
     _sprites = {}
@@ -81,6 +80,7 @@ class Player(pygame.sprite.Sprite):
         self.current_frame = 0  # Reset frame index
         self.frame_rate = 300  # Milliseconds per frame
         self.update_shadow_position()
+        self.logging_service = LoggingService()
 
     def setup_sprites(self):
         """
@@ -246,8 +246,7 @@ class Player(pygame.sprite.Sprite):
         self.current_pos = pygame.Vector2((self.current_pos_cell.col, self.current_pos_cell.row))
         self.target_pos_cell = location
         self.target_pos = pygame.Vector2(location.col, location.row)
-
-        logging.info(f"Starting Position:  {self.current_pos_cell}  Target Position:  {self.target_pos_cell}")
+        self.logging_service.log_debug(f"Starting Position:  {self.current_pos_cell}  Target Position:  {self.target_pos_cell}")
 
         self.moving = True
 
