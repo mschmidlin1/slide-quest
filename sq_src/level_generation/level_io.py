@@ -7,12 +7,11 @@ import re
 sys.path.append(os.getcwd())
 from sq_src.core.game_board import GameBoard
 from sq_src.metas import SingletonMeta
-from sq_src.my_logging import set_logger, log
+from sq_src.singletons.my_logging import LoggingService
 from sq_src.data_structures.game_enums import CellType, Str_to_CellType_vector_func, GameDifficulty, Game_Difficult_Str_Map
 from sq_src.data_structures.data_types import Point, Cell
 import numpy as np
 cell_dtype = np.dtype(CellType)
-set_logger()
 
 
 #region Static IO Functions
@@ -82,6 +81,8 @@ class MapgenIO:
         Reads all the mapgen sub-maps from the MapgenResources folder and returns them as a dictionary of the format {filename, map-array}
         Eliminates duplicates if there are any.
         """
+        logging_service = LoggingService()
+        logging_service.log_info("Mapgen resource saved.")
         root_dir = "mapgen_resources"
         files = os.listdir(root_dir)
         file_paths = [os.path.join(root_dir, file) for file in files]

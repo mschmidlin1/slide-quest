@@ -36,6 +36,8 @@ GAME_VOLUME = 0.2 #0-1
 #logging settings
 FILE_LOG_LEVEL = "DEBUG"
 STDOUT_LOG_LEVEL = "INFO"
+LOG_FILE = "logs.txt"
+LOG_PATH = "logs"
 
 #game settings
 WINDOW_TITLE = "Slide Quest"

@@ -4,9 +4,8 @@ from sq_src.data_structures.data_types import Point, Size, Cell
 from sq_src.level_generation.level_editor import LevelEditor
 from sq_src.level_generation.level_io import LevelIO
 from sq_src.data_structures.game_enums import Direction, GameDifficulty, CellType, Screen
-from sq_src.my_logging import set_logger, log
+from sq_src.singletons.my_logging import LoggingService
 from sq_src.core.gameboard_sprite_manager import GameboardSpriteManager
-import logging
 from sq_src.core.level_background import LevelBackground
 from sq_src.sprites.sprites import Block, Goal, Ice, Player, SpriteLoader
 from sq_src.data_structures.algorithms import ShortestPath
@@ -26,7 +25,6 @@ from sq_src.configs import (
 
 import copy
 import time
-set_logger()
 
 class Game:
     """
@@ -35,8 +33,8 @@ class Game:
     """
     
     def __init__(self, screen: pygame.surface.Surface, gameboard: GameBoard):
-        
-        logging.info("New Game created.")
+        self.logging_service = LoggingService()
+        self.logging_service.log_info("New Game created.")
         self.game_audio = GameAudio()
         self.screen = screen
         self.isEditActive = IS_EDIT_ON_DEFAULT

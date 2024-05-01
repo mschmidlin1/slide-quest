@@ -5,9 +5,7 @@ import os
 from sq_src.configs import GAME_VOLUME
 from sq_src.data_structures.game_enums import GameDifficulty, Direction
 import pickle
-from sq_src.my_logging import set_logger
-import logging
-set_logger()
+from sq_src.singletons.my_logging import LoggingService
 
 
 
@@ -26,6 +24,7 @@ class UserData(metaclass=SingletonMeta):
         self.seed_data = {difficulty: set() for difficulty in GameDifficulty}
         self.music_volume = GAME_VOLUME
         self.sfx_volume = GAME_VOLUME
+        self.logging_service = LoggingService()
 
 
         if not os.path.exists(self.file_name):
@@ -51,7 +50,7 @@ class UserData(metaclass=SingletonMeta):
             with open(self.file_name, 'wb') as f:
                 pickle.dump(self.user_data, f)
         except IOError as e:
-            logging.info(f"Error writing to file: {e}")
+            self.logging_service.log_error(f"Error writing to file: {e}")
 
     def read(self):
         """
@@ -62,7 +61,7 @@ class UserData(metaclass=SingletonMeta):
                 loaded_data = pickle.load(f)
                 self.user_data = loaded_data
         except (IOError, EOFError, pickle.UnpicklingError) as e:
-            logging.info(f"Error reading from file: {e}")
+            self.logging_service.log_error(f"Error reading from file: {e}")
     
     def update_music_volume(self, volume: float):
         """

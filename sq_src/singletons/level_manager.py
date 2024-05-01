@@ -5,9 +5,7 @@ from sq_src.level_generation.seed import Seed
 from sq_src.data_structures.game_enums import GameDifficulty, Direction
 from sq_src.data_structures.algorithms import ShortestPath
 from sq_src.singletons.user_data import UserData
-from sq_src.my_logging import set_logger
-import logging
-set_logger()
+from sq_src.singletons.my_logging import LoggingService
 
 
 
@@ -30,6 +28,7 @@ class LevelManager(metaclass=SingletonMeta):
     def __init__(self):
         self.current_difficulty = None
         self.user_data = UserData()
+        self.logging_service = LoggingService()
 
 
     def load_level(self, new_difficulty: GameDifficulty):
@@ -38,7 +37,7 @@ class LevelManager(metaclass=SingletonMeta):
         Load the level.
         Find the next level if the current one is complete.
         """
-        logging.info(f"Loading difficulty {new_difficulty}.")
+        self.logging_service.log_info(f"Loading difficulty {new_difficulty}.")
         self.current_difficulty = new_difficulty
         self.level_generator = LevelGenerator(new_difficulty)
         self.current_seed = self.user_data.get_current_seed(new_difficulty)
@@ -58,7 +57,7 @@ class LevelManager(metaclass=SingletonMeta):
         - num_moves: the number of moves it took to complete the map.
         """
         seed_to_save = Seed(self.current_seed.number, shortest_path, completed, True, time_ms, num_moves)
-        logging.info(f"Saving map seed: {seed_to_save}")
+        self.logging_service.log_info(f"Saving map seed: {seed_to_save}")
         self.current_seed = seed_to_save
         self.user_data.set_current_seed(self.current_difficulty, seed_to_save)
         self.user_data.replace_map(self.current_difficulty, seed_to_save)

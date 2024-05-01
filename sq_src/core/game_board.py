@@ -9,9 +9,6 @@ import numpy as np
 from sq_src.data_structures.data_types import Cell, Size
 from sq_src.data_structures.game_enums import GameDifficulty
 cell_dtype = np.dtype(CellType)
-from sq_src.my_logging import set_logger, log
-
-set_logger()
 
 
 class GameBoard:

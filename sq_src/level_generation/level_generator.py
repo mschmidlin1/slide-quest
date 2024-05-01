@@ -10,11 +10,9 @@ import random
 import os
 import copy
 import collections
-from sq_src.my_logging import set_logger, log
-import logging
+from sq_src.singletons.my_logging import LoggingService
 import random
 cell_dtype = np.dtype(CellType)
-set_logger()
 
 
 class LevelGenerator:
@@ -35,6 +33,7 @@ class LevelGenerator:
     """
 
     def __init__(self, difficulty: GameDifficulty):
+        self.logging_service = LoggingService()
         self.difficulty = difficulty
         self.board_dimensions = Board_Size_Lookup[difficulty]
         self.block_probability = 0.05 #increase this number to increase number of blobs
@@ -207,7 +206,7 @@ class LevelGenerator:
         - It ensures that features do not overlap and that the player and goal positions are valid and distinct.
         - Logs are generated for tracking the generation process and any potential errors in placement.
         """
-        logging.info(f"Generating random map with seed: {random_seed}")
+        self.logging_service.log_info(f"Generating random map with seed: {random_seed}")
         rng = np.random.RandomState(random_seed)
         board = self.empty_board.copy()
         width, height = board.shape
@@ -243,10 +242,10 @@ class LevelGenerator:
         if player_pos is None:
             return None
         if player_pos == goal_pos:
-            logging.error(f"Goal position and player position both have location: {player_pos}")
+            self.logging_service.log_info(f"Goal position and player position both have location: {player_pos}")
         gameboard = GameBoard(board, player_pos)
         if gameboard.player_pos == gameboard.Find_Goal_Pos():
-            logging.error(f"Goal position and player position both have location: {gameboard.player_pos}")
+            self.logging_service.log_info(f"Goal position and player position both have location: {gameboard.player_pos}")
         return gameboard
     
     def generate(self, starting_num=0) -> tuple[int, GameBoard]:
@@ -264,37 +263,11 @@ class LevelGenerator:
             candidate_seed += 1
             candidate = self.generate_candidate(candidate_seed)
             if candidate is None:
-                logging.info(f"Candidate failed as player or goal position could not be found.(seed={candidate_seed})")
+                self.logging_service.log_info(f"Candidate failed as player or goal position could not be found.(seed={candidate_seed})")
                 continue
             elif len(ShortestPath(candidate))==0:
-                logging.info(f"Candidate failed as map is impossible.(seed={candidate_seed})")
+                self.logging_service.log_info(f"Candidate failed as map is impossible.(seed={candidate_seed})")
                 continue
             else:
                 return (candidate_seed, candidate)
-
-
-if __name__=="__main__":
-    difficulty = GameDifficulty.HARD
-    generator = LevelGenerator(difficulty)
-    generator.block_probability = 0.25
-    generator.probability_increase_ratio = 2
-    generator.feature_probability = 0.4
-    level_manager = LevelIO()
-    level_manager.current_level = Game_Difficult_Str_Map_Reverse[difficulty]
-    maps_created = 0
-    while maps_created<4:
-        level = generator.generate_candidate()
-        if level:
-            if level.player_pos == level.Find_Goal_Pos():
-                print()
-            if len(ShortestPath(level))>0:
-                if level.player_pos == level.Find_Goal_Pos():
-                    print()
-                level_manager.SaveNew(level)
-                maps_created+=1
-                logging.info("Successfully created map.")
-            else:
-                logging.info("Map was impossible, failed to create map.")
-        else:
-            logging.info("Map was impossible, failed to create map.")
 
