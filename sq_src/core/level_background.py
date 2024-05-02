@@ -2,7 +2,7 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import pygame
-from sq_src.configs import TITLE_FONT, WINDOW_DIMENSIONS, TITLE_SCREEN_COLOR, TITLE_SCREEN_TEXT_COLOR, CELL_DIMENSIONS, Border_Size_Lookup
+from sq_src.configs import TITLE_FONT, WINDOW_DIMENSIONS, TITLE_SCREEN_COLOR, TITLE_SCREEN_TEXT_COLOR, CELL_DIMENSIONS, Border_Size_Lookup, BLUE_ICE, MUTE_GREEN
 from sq_src.sprites.sprites import TextSprite, SpriteLoader, Border, Background
 from sq_src.data_structures.game_enums import GameDifficulty
 from sq_src.data_structures.data_types import Point
@@ -16,42 +16,33 @@ class LevelBackground():
         self.bottom_border_sprites = pygame.sprite.Group()
         self.background_sprites = pygame.sprite.Group()
 
-        self.main_menu_sprite = TextSprite(
-            "Press (Esc) for main menu", 
-            TITLE_FONT, 
-            15, 
-            Point(10, 10),
-            TITLE_SCREEN_TEXT_COLOR,
-            anchor='topleft')
-
         self.current_level_sprite = TextSprite(
             f"{text}", 
             TITLE_FONT,
-            15,
-            Point(WINDOW_DIMENSIONS.width//2, 10),
-            TITLE_SCREEN_TEXT_COLOR, 
+            30,
+            Point(WINDOW_DIMENSIONS.width//2, 20),
+            (255, 0, 0), 
             anchor='center')
         
         self.time_sprite = TextSprite(
             "", 
             TITLE_FONT,
-            15,
+            30,
             Point(WINDOW_DIMENSIONS.width-10, 10),
-            TITLE_SCREEN_TEXT_COLOR,
+            (255, 0, 0),
             anchor='topright')
         
         self.solution_sprite = TextSprite(
             "",
             TITLE_FONT,
-            15,
+            30,
             Point(WINDOW_DIMENSIONS.width-10, WINDOW_DIMENSIONS.height-10),
-            TITLE_SCREEN_TEXT_COLOR,
+            (255, 0, 0),
             anchor='bottomright')
         
         self.sprite_group = pygame.sprite.Group()
         self.sprite_group.add(self.current_level_sprite)
         self.sprite_group.add(self.time_sprite)
-        self.sprite_group.add(self.main_menu_sprite)
         self.sprite_group.add(self.solution_sprite)
 
     def load_border_sprites(self):
@@ -119,20 +110,3 @@ class LevelBackground():
         self.solution_sprite.update_text(solution)
         self.sprite_group.draw(self.screen)
 
-if __name__=="__main__":
-    pygame.init()
-    screen = pygame.display.set_mode(WINDOW_DIMENSIONS)
-    clock = pygame.time.Clock()
-
-    level_background = LevelBackground(screen, "This is the level name")
-
-    while True:
-        level_background.draw()
-        events = pygame.event.get()
-        for event in events:
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-
-        pygame.display.flip()
-        clock.tick(60)

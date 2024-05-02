@@ -41,7 +41,7 @@ class LevelManager(metaclass=SingletonMeta):
         self.current_difficulty = new_difficulty
         self.level_generator = LevelGenerator(new_difficulty)
         self.current_seed = self.user_data.get_current_seed(new_difficulty)
-        if self.current_seed.completed:
+        if self.current_seed.completed or not self.current_seed.is_possible:
             self.next_seed()
         else:
             self.current_gameboard = self.level_generator.generate_candidate(self.current_seed.number)
