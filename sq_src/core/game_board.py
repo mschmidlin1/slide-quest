@@ -16,10 +16,11 @@ class GameBoard:
     A class that keeps track of the slide quest board and what cells are filled with what `CellType`. 
     """
     
-    def __init__(self, gameboard: np.ndarray, player_pos: Cell):
+    def __init__(self, gameboard: np.ndarray, player_pos: Cell, seed: int):
         """
         
         """
+        self.seed = seed
         self.gameboard = gameboard
         self.goal_pos: Cell = self.Find_Goal_Pos()
         self.player_pos: Cell = player_pos
@@ -200,11 +201,3 @@ class GameBoard:
         else:
             return False
 
-
-if __name__=="__main__":
-    # my_gameboard = GameBoard((10, 10))
-    # my_gameboard.SaveBoard("test.csv")
-    # my_gameboard.ReadBoard("test.csv")
-    my_gameboard = GameBoard((26, 26))
-    my_gameboard.ReadBoard("test copy.csv")
-    # print(my_gameboard)

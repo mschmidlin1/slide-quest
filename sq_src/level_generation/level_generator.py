@@ -113,7 +113,7 @@ class LevelGenerator:
         Raises:
         ValueError: If the randomly selected player position coincides with the goal position.
         """
-        temp_gameboard = GameBoard(board, Cell(0, 0))
+        temp_gameboard = GameBoard(board, Cell(0, 0), 0)
         width, height = board.shape
         possible_player_positions = []
         for col in range(width):
@@ -243,7 +243,7 @@ class LevelGenerator:
             return None
         if player_pos == goal_pos:
             self.logging_service.log_info(f"Goal position and player position both have location: {player_pos}")
-        gameboard = GameBoard(board, player_pos)
+        gameboard = GameBoard(board, player_pos, random_seed)
         if gameboard.player_pos == gameboard.Find_Goal_Pos():
             self.logging_service.log_info(f"Goal position and player position both have location: {gameboard.player_pos}")
         return gameboard
@@ -253,6 +253,7 @@ class LevelGenerator:
         Generates a valid game board along with its seed.
 
         This method repeatedly attempts to generate a game board using random seeds until it finds a configuration where both the player and goal positions are set, and the map is solvable (i.e., there exists a path between the player and goal).
+        In addition, it must take at least 2 moves to solve the map.
         It first checks the "starting_num" as a seed and indexes by 1 until a valid seed is found.
 
         Returns:
@@ -265,8 +266,8 @@ class LevelGenerator:
             if candidate is None:
                 self.logging_service.log_info(f"Candidate failed as player or goal position could not be found.(seed={candidate_seed})")
                 continue
-            elif len(ShortestPath(candidate))==0:
-                self.logging_service.log_info(f"Candidate failed as map is impossible.(seed={candidate_seed})")
+            elif len(ShortestPath(candidate))<3:
+                self.logging_service.log_info(f"Candidate map failed.(seed={candidate_seed})")
                 continue
             else:
                 return (candidate_seed, candidate)

@@ -49,7 +49,7 @@ class Game:
         self.gameboard_sprite_manager = GameboardSpriteManager(self.gameboard, self.screen)
 
         self.levelEditor = LevelEditor(self.gameboard, self.gameboard_sprite_manager, self.screen)
-        self.level_background = LevelBackground(self.screen, "level text goes here", self.gameboard.difficulty)
+        self.level_background = LevelBackground(self.screen, f"Map seed: {self.gameboard.seed}", self.gameboard.difficulty)
         self.level_background.fill_background()
         self.num_moves = 0
         self.navigation_manager = NavigationManager()
