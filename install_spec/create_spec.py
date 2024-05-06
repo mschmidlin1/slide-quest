@@ -2,7 +2,7 @@ import os
 
 
 
-def get_external_dependencies(folder = "SQ_modules") -> list[str]:
+def get_external_dependencies(folder = "sq_src") -> list[str]:
     """
     Get's a list of the external dependencies from the modules folder.
     """
@@ -47,7 +47,7 @@ def list_to_str(l: list[str]) -> str:
     return '[' + ', '.join(f"'{e}'" for e in l) + ']'
 
 hidden_imports = list_to_str(get_external_dependencies())
-
+print(hidden_imports)
 spec_file_content = f"""
 # -*- mode: python ; coding: utf-8 -*-
 
@@ -56,7 +56,7 @@ a = Analysis(
     ['SlideQuest.py'],
     pathex=[],
     binaries=[],
-    datas=[('./SQ_modules/', './SQ_modules/')],
+    datas=[('./sq_src/', './sq_src/')],
     hiddenimports={hidden_imports},
     hookspath=[],
     hooksconfig={{}},
