@@ -1,6 +1,8 @@
 # Slide-Quest
 "A fun puzzle game created by people who don't know how to code."
 
+Runs on python 3.11.9
+
 ![alt text](resources/images/Icy-Q-nobackground.png)
 
 
