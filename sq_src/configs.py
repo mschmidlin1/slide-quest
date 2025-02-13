@@ -5,6 +5,9 @@ from sq_src.data_structures.game_enums import GameDifficulty
 from sq_src.data_structures.data_types import Size
 import pygame
 
+#custome events
+MUSIC_FADE_EVENT = pygame.USEREVENT + 1#pygame.event.custom_type()
+
 SPRITE_POSITIONS = {
     'ice': (32, 192, 32, 32),            
     'goal': (96, 224, 32, 32),
