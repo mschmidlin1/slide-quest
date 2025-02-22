@@ -35,7 +35,7 @@ class SpriteLoader:
             cls._sprites[sprite_name] = sprite
 
     @classmethod
-    def get_sprite(cls, sprite_name) -> pygame.surface.Surface:
+    def get_sprite(cls, sprite_name: str) -> pygame.surface.Surface:
         """
         Retrieve a loaded sprite by name.
         
@@ -45,19 +45,7 @@ class SpriteLoader:
         Returns:
         - pygame.Surface: The requested sprite.
         """
-        return cls._sprites.get(sprite_name)
-
-    @classmethod
-    def get_ice_sprite(cls):
-        return cls.load_sprite(ENVIRONMENT_SPRITE_SHEET, (32, 224, 32, 32))
-
-    @classmethod
-    def get_block_sprite(cls):
-        return cls.load_sprite(ENVIRONMENT_SPRITE_SHEET, (32, 352, 32, 32))
-
-    @classmethod
-    def get_goal_sprite(cls):
-        return cls.load_sprite(ENVIRONMENT_SPRITE_SHEET, (64, 256, 32, 32))
+        return cls._sprites[sprite_name]
 
 
 class Player(pygame.sprite.Sprite):
@@ -303,8 +291,10 @@ class Block(pygame.sprite.Sprite):
         self.border_size = Border_Size_Lookup[difficulty]
         self.gameboard_loc = gameboard_loc
         block_variants = ['block_1x1_a', 'block_1x1_b', 'block_1x1_c', 'block_1x1_d', 'block_1x1_e']
-        chosen_block = random.choice(block_variants)  
-        self.image = SpriteLoader.get_sprite(chosen_block)  # Use the chosen sprite
+        chosen_block = random.choice(block_variants)
+        block_image = SpriteLoader.get_sprite('ice').copy()
+        block_image.blit(SpriteLoader.get_sprite(chosen_block), (0,0))# Use the chosen sprite
+        self.image = block_image
         self.rect = self.image.get_rect()
         self.rect.center = CellToPoint(gameboard_loc, self.difficulty)
 
@@ -315,8 +305,9 @@ class Ground(pygame.sprite.Sprite):
         self.difficulty = difficulty
         self._layer = 0
         self.gameboard_loc = gameboard_loc
-        self.image = pygame.Surface(CELL_DIMENSIONS)
-        self.image.fill(GROUND_COLOR)
+        # self.image = pygame.Surface(CELL_DIMENSIONS)
+        # self.image.fill(GROUND_COLOR)
+        self.image = SpriteLoader.get_sprite('background')
         self.rect = self.image.get_rect()
         self.rect.center = CellToPoint(gameboard_loc, self.difficulty)
 
