@@ -8,10 +8,11 @@ import pygame
 #custome events
 MUSIC_FADE_EVENT = pygame.USEREVENT + 1#pygame.event.custom_type()
 
+# (x, y, width, ,height)
 SPRITE_POSITIONS = {
-    'ice': (32, 192, 32, 32),            
-    'goal': (96, 224, 32, 32),
-    'background': (32, 32, 32, 32),
+    'ice': (32, 192, 32, 32),     #one square of ice       
+    'goal': (96, 224, 32, 32),    #
+    'background': (32, 32, 32, 32), #one square of snow
     'block_1x1_a': (32, 320, 32, 32),
     'block_1x1_b': (32, 352, 32, 32),
     'block_1x1_c': (64, 352, 32, 32),
@@ -43,7 +44,7 @@ LOG_FILE = "logs.txt"
 LOG_PATH = "logs"
 
 #game settings
-WINDOW_TITLE = "Slide Quest"
+WINDOW_TITLE = "Slide Quest" 
 ICON = pygame.image.load('resources/images/Icy-Q-nobackground64x64.png')
 TITLE_FONT = "resources/fonts/m5x7.otf"
 PLAYER_SPRITE_SHEET = 'resources/sprites/player/Character spritesheet.png'
