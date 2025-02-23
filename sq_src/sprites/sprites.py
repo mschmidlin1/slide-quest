@@ -305,8 +305,6 @@ class Ground(pygame.sprite.Sprite):
         self.difficulty = difficulty
         self._layer = 0
         self.gameboard_loc = gameboard_loc
-        # self.image = pygame.Surface(CELL_DIMENSIONS)
-        # self.image.fill(GROUND_COLOR)
         self.image = SpriteLoader.get_sprite('background')
         self.rect = self.image.get_rect()
         self.rect.center = CellToPoint(gameboard_loc, self.difficulty)
