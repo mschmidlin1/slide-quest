@@ -7,10 +7,10 @@ from sq_src.data_structures.game_enums import Direction, GameDifficulty, CellTyp
 from sq_src.singletons.my_logging import LoggingService
 from sq_src.core.gameboard_sprite_manager import GameboardSpriteManager
 from sq_src.core.level_background import LevelBackground
-from sq_src.sprites.sprites import Block, Goal, Ice, Player, SpriteLoader
 from sq_src.data_structures.algorithms import ShortestPath
 from sq_src.singletons.game_audio import GameAudio
 from sq_src.singletons.navigation_manager import NavigationManager
+from sq_src.sprites.sprite_loader import SpriteLoader
 from sq_src.timer import Timer
 from sq_src.configs import ( 
     WHITE,

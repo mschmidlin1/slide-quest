@@ -3,10 +3,13 @@ import pygame
 from sq_src.configs import WINDOW_DIMENSIONS
 from sq_src.core.gameboard_sprite_manager import SpriteType_To_CellType, CellType_To_SpriteType, GameboardSpriteManager
 from sq_src.core.game_board import GameBoard
-from sq_src.sprites.sprites import Player, Goal, Block, Ice, SpriteLoader
 from sq_src.data_structures.game_enums import CellType, GameDifficulty
 from sq_src.data_structures.data_types import Cell, Size
 import numpy as np
+
+from sq_src.sprites.background_spites import Block, Goal, Ice
+from sq_src.sprites.player import Player
+from sq_src.sprites.sprite_loader import SpriteLoader
 cell_dtype = np.dtype(CellType)
 
 def create_empty_gameboard(size: Size) -> GameBoard:

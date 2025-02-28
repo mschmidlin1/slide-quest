@@ -1,7 +1,7 @@
 import pygame
 from sq_src.configs import LEFT_CLICK
 from sq_src.data_structures.data_types import Size, Point
-from sq_src.sprites.sprites import TextSprite
+from sq_src.sprites.text_sprite import TextSprite
 
 class Slider:
     def __init__(self, screen, initial_percent: float, center_pos: Point, slider_color, knob_color, slider_size: Size, knob_size: Size, font: str, font_size: int, label: str = '', knob_radius=2):
