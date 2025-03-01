@@ -5,7 +5,9 @@ from sq_src.data_structures.data_types import Cell
 from sq_src.data_structures.game_enums import CellType, Direction, GameDifficulty
 from sq_src.core.game_board import GameBoard
 import numpy as np
-from sq_src.sprites.sprites import Player, Goal, Block, Ice, Ground
+
+from sq_src.sprites.background_spites import Block, Goal, Ground, Ice
+from sq_src.sprites.player import Player
 sprite_dtype = np.dtype(Sprite)
 
 

@@ -1,9 +1,11 @@
 import sys
 import os
+
+from sq_src.sprites.background_spites import Background, Border
+from sq_src.sprites.text_sprite import TextSprite
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import pygame
 from sq_src.configs import TITLE_FONT, WINDOW_DIMENSIONS, TITLE_SCREEN_COLOR, TITLE_SCREEN_TEXT_COLOR, CELL_DIMENSIONS, Border_Size_Lookup, BLUE_ICE, MUTE_GREEN
-from sq_src.sprites.sprites import TextSprite, SpriteLoader, Border, Background
 from sq_src.data_structures.game_enums import GameDifficulty
 from sq_src.data_structures.data_types import Point
 

@@ -1,13 +1,14 @@
 import pygame
 from sq_src.configs import CELL_DIMENSIONS, WHITE, Border_Size_Lookup, LEFT_CLICK, RIGHT_CLICK, WINDOW_DIMENSIONS
 from sq_src.data_structures.game_enums import CellType, GameDifficulty
-from sq_src.sprites.sprites import Block, Ice, Goal, Player, HollowSquareSprite, Cell, SelectorTool, Highlighter, FindSpritesByLocation, Ground
-from sq_src.data_structures.data_types import Point, Size
+from sq_src.data_structures.data_types import Cell, Point, Size
 from sq_src.core.game_board import GameBoard
 from sq_src.level_generation.level_io import LevelIO, MapgenIO
 from sq_src.singletons.my_logging import LoggingService
 from sq_src.data_structures.converters import PointToCell, CellToPoint
 from sq_src.core.gameboard_sprite_manager import GameboardSpriteManager
+from sq_src.sprites.background_spites import Block, Ground, Ice
+from sq_src.sprites.level_editor_sprites import Highlighter, HollowSquareSprite, SelectorTool
 
 class LevelEditor:
     """
