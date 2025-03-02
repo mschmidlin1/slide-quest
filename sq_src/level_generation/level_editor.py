@@ -7,8 +7,9 @@ from sq_src.level_generation.level_io import LevelIO, MapgenIO
 from sq_src.singletons.my_logging import LoggingService
 from sq_src.data_structures.converters import PointToCell, CellToPoint
 from sq_src.core.gameboard_sprite_manager import GameboardSpriteManager
-from sq_src.sprites.background_spites import Block, Ground, Ice
+from sq_src.sprites.background_spites import Block, Ice
 from sq_src.sprites.level_editor_sprites import Highlighter, HollowSquareSprite, SelectorTool
+from sq_src.sprites.snow import GroundSnow
 
 class LevelEditor:
     """
@@ -48,7 +49,7 @@ class LevelEditor:
         self.ice_pallet_sprite = Ice(Cell(0, 0), GameDifficulty.BEGINNER) #the constructor arguments don't matter because we're gonna set the location manually
         self.ice_pallet_sprite.rect.center = Point(CELL_DIMENSIONS.width, 200)
 
-        self.ground_pallet_sprite = Ground(Cell(0, 0), GameDifficulty.BEGINNER) #the constructor arguments don't matter because we're gonna set the location manually
+        self.ground_pallet_sprite = GroundSnow(Cell(0, 0), GameDifficulty.BEGINNER) #the constructor arguments don't matter because we're gonna set the location manually
         self.ground_pallet_sprite.rect.center = Point(CELL_DIMENSIONS.width, 250)
 
         self.selected_pallet_sprite = HollowSquareSprite(Point(CELL_DIMENSIONS.width, 150), 4)

@@ -12,7 +12,15 @@ MUSIC_FADE_EVENT = pygame.USEREVENT + 1#pygame.event.custom_type()
 SPRITE_POSITIONS = {
     'ice': (32, 192, 32, 32),     #one square of ice       
     'goal': (96, 224, 32, 32),    #
-    'background': (32, 32, 32, 32), #one square of snow
+    'snow_center': (544, 160, 32, 32), #160, 256
+    'snow_boundry_top': (544, 160-32, 32, 32),
+    'snow_boundry_bottom': (544, 160+32, 32, 32),
+    'snow_boundry_left': (544-32, 160, 32, 32),
+    'snow_boundry_right': (544+32, 160, 32, 32),
+    'snow_boundry_top_left_corner': (544-32, 160-32, 32, 32),
+    'snow_boundry_top_right_corner': (544+32, 160-32, 32, 32),
+    'snow_boundry_bottom_left_corner': (544-32, 160+32, 32, 32),
+    'snow_boundry_bottom_right_corner': (544+32, 160+32, 32, 32),
     'block_1x1_a': (32, 320, 32, 32),
     'block_1x1_b': (32, 352, 32, 32),
     'block_1x1_c': (64, 352, 32, 32),

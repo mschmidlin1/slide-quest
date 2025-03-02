@@ -1,7 +1,9 @@
 import sys
 import os
 
-from sq_src.sprites.background_spites import Background, Border
+from sq_src.data_structures.converters import IsPointInGameboard
+from sq_src.sprites.background_spites import Border
+from sq_src.sprites.snow import Snow
 from sq_src.sprites.text_sprite import TextSprite
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import pygame
@@ -103,7 +105,8 @@ class LevelBackground():
     def fill_background(self):
         for y in range(0, WINDOW_DIMENSIONS.height, CELL_DIMENSIONS.height):
             for x in range(0, WINDOW_DIMENSIONS.width, CELL_DIMENSIONS.width):
-                self.background_sprites.add(Background(Point(x,y)))
+                if not IsPointInGameboard(Point(x, y), self.difficulty):
+                    self.background_sprites.add(Snow(Point(x,y)))
 
     def draw(self, time_str: str, solution: str):
         self.load_border_sprites()  # Make sure to call this to load and place border sprites
