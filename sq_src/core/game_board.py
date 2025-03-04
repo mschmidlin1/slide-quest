@@ -1,5 +1,7 @@
 import sys
 import os
+
+from sq_src.data_structures.neighbors import Neighbors
 #necessary to import things from the SQ_modules folder
 sys.path.append(os.getcwd())
 
@@ -201,3 +203,81 @@ class GameBoard:
         else:
             return False
 
+    def GetAboveType(self, loc: Cell) -> CellType:
+        """ 
+        Get the cell type of the cell above the provided location.
+        """
+        if loc.row < 0 or loc.col < 0:
+            raise ValueError("loc.row and loc.col must be greater than 0.")
+        if loc.row == 0:
+            return CellType.BORDER
+        return self.gameboard[loc.row-1, loc.col]
+
+    def GetBelowType(self, loc: Cell) -> CellType:
+        """Get the cell type of the cell below the provided location."""
+        if loc.row < 0 or loc.col < 0:
+            raise ValueError("loc.row and loc.col must be greater than 0.")
+        if loc.row == self.gameboard.shape[0] - 1:
+            return CellType.BORDER
+        return self.gameboard[loc.row+1][loc.col]
+
+    def GetLeftType(self, loc: Cell) -> CellType:
+        """Get the cell type of the cell to the left of the provided location."""
+        if loc.row < 0 or loc.col < 0:
+            raise ValueError("loc.row and loc.col must be greater than 0.")
+        if loc.col == 0:
+            return CellType.BORDER
+        return self.gameboard[loc.row][loc.col-1]
+
+    def GetRightType(self, loc: Cell) -> CellType:
+        """Get the cell type of the cell to the right of the provided location."""
+        if loc.row < 0 or loc.col < 0:
+            raise ValueError("loc.row and loc.col must be greater than 0.")
+        if loc.col == self.gameboard.shape[1] - 1:
+            return CellType.BORDER
+        return self.gameboard[loc.row][loc.col+1]
+    
+    def GetTopLeftType(self, loc: Cell) -> CellType:
+            """Get the cell type of the top-left cell relative to the provided location."""
+            if loc.row < 0 or loc.col < 0:
+                raise ValueError("loc.row and loc.col must be greater than 0.")
+            if loc.row == 0 or loc.col == 0:
+                return CellType.BORDER
+            return self.gameboard[loc.row - 1][loc.col - 1]
+
+    def GetTopRightType(self, loc: Cell) -> CellType:
+        """Get the cell type of the top-right cell relative to the provided location."""
+        if loc.row < 0 or loc.col < 0:
+            raise ValueError("loc.row and loc.col must be greater than 0.")
+        if loc.row == 0 or loc.col == self.gameboard.shape[1] - 1:
+            return CellType.BORDER
+        return self.gameboard[loc.row - 1][loc.col + 1]
+
+    def GetBottomLeftType(self, loc: Cell) -> CellType:
+        """Get the cell type of the bottom-left cell relative to the provided location."""
+        if loc.row < 0 or loc.col < 0:
+            raise ValueError("loc.row and loc.col must be greater than 0.")
+        if loc.row == self.gameboard.shape[0] - 1 or loc.col == 0:
+            return CellType.BORDER
+        return self.gameboard[loc.row + 1][loc.col - 1]
+
+    def GetBottomRightType(self, loc: Cell) -> CellType:
+        """Get the cell type of the bottom-right cell relative to the provided location."""
+        if loc.row < 0 or loc.col < 0:
+            raise ValueError("loc.row and loc.col must be greater than 0.")
+        if loc.row == self.gameboard.shape[0] - 1 or loc.col == self.gameboard.shape[1] - 1:
+            return CellType.BORDER
+        return self.gameboard[loc.row + 1][loc.col + 1]
+
+    def get_neighbors(self, loc: Cell) -> Neighbors:
+        """Returns a Neighbors object containing neighbor cell types."""
+        return Neighbors(
+            top=self.GetAboveType(loc),
+            bottom=self.GetBelowType(loc),
+            left=self.GetLeftType(loc),
+            right=self.GetRightType(loc),
+            top_left=self.GetTopLeftType(loc),
+            top_right=self.GetTopRightType(loc),
+            bottom_left=self.GetBottomLeftType(loc),
+            bottom_right=self.GetBottomRightType(loc)
+        )

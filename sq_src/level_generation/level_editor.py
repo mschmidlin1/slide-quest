@@ -3,6 +3,7 @@ from sq_src.configs import CELL_DIMENSIONS, WHITE, Border_Size_Lookup, LEFT_CLIC
 from sq_src.data_structures.game_enums import CellType, GameDifficulty
 from sq_src.data_structures.data_types import Cell, Point, Size
 from sq_src.core.game_board import GameBoard
+from sq_src.data_structures.neighbors import Neighbors
 from sq_src.level_generation.level_io import LevelIO, MapgenIO
 from sq_src.singletons.my_logging import LoggingService
 from sq_src.data_structures.converters import PointToCell, CellToPoint
@@ -43,13 +44,13 @@ class LevelEditor:
         self.select_tool_sprite = SelectorTool()
         self.select_tool_sprite.rect.center = Point(CELL_DIMENSIONS.width, 100)
 
-        self.block_pallet_sprite = Block(Cell(0, 0),GameDifficulty.BEGINNER) #the constructor arguments don't matter because we're gonna set the location manually
+        self.block_pallet_sprite = Block(Cell(0, 0),GameDifficulty.BEGINNER, neighbors=Neighbors(CellType.GROUND, CellType.GROUND, CellType.GROUND, CellType.GROUND,CellType.GROUND, CellType.GROUND, CellType.GROUND, CellType.GROUND)) #the constructor arguments don't matter because we're gonna set the location manually
         self.block_pallet_sprite.rect.center = Point(CELL_DIMENSIONS.width, 150)
 
         self.ice_pallet_sprite = Ice(Cell(0, 0), GameDifficulty.BEGINNER) #the constructor arguments don't matter because we're gonna set the location manually
         self.ice_pallet_sprite.rect.center = Point(CELL_DIMENSIONS.width, 200)
 
-        self.ground_pallet_sprite = GroundSnow(Cell(0, 0), GameDifficulty.BEGINNER) #the constructor arguments don't matter because we're gonna set the location manually
+        self.ground_pallet_sprite = GroundSnow(Cell(0, 0), GameDifficulty.BEGINNER, neighbors=Neighbors(CellType.GROUND, CellType.GROUND, CellType.GROUND, CellType.GROUND,CellType.GROUND, CellType.GROUND, CellType.GROUND, CellType.GROUND)) #the constructor arguments don't matter because we're gonna set the location manually
         self.ground_pallet_sprite.rect.center = Point(CELL_DIMENSIONS.width, 250)
 
         self.selected_pallet_sprite = HollowSquareSprite(Point(CELL_DIMENSIONS.width, 150), 4)

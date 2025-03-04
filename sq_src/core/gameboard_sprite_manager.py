@@ -83,7 +83,12 @@ class GameboardSpriteManager:
         for row_num, cells in enumerate(self.gameboard.gameboard):
             for col_num, cell in enumerate(cells):
                 sprite_type = CellType_To_SpriteType(cell)
-                new_sprite = sprite_type(Cell(row_num, col_num), self.gameboard.difficulty)
+                new_sprite = None
+                current_loc = Cell(row_num, col_num)
+                if cell in [CellType.GROUND, CellType.BLOCK]:
+                    new_sprite = sprite_type(Cell(row_num, col_num), self.gameboard.difficulty, self.gameboard.get_neighbors(current_loc))
+                else:
+                    new_sprite = sprite_type(Cell(row_num, col_num), self.gameboard.difficulty)
                 self.gameboard_sprites[row_num, col_num] = new_sprite
                 layer = 1
                 if cell == CellType.ICE:
@@ -95,7 +100,6 @@ class GameboardSpriteManager:
                 else:
                     layer=4
                 self.gameboard_sprite_group.add(new_sprite, layer=layer)
-    
     def fill_background(self):
         for y in range(0, WINDOW_DIMENSIONS.height, CELL_DIMENSIONS.height):
             for x in range(0, WINDOW_DIMENSIONS.width, CELL_DIMENSIONS.width):

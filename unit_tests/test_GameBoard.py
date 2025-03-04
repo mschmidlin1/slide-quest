@@ -946,6 +946,27 @@ class Test_MovePlayer(unittest.TestCase):
 
         self.assertNotEqual(my_gameboard, my_gameboard2)
 #MovePlayer
-
+class Test_CellTypeChecks(unittest.TestCase):
+    def test_GetAboveType(self):
+        gameboard = np.empty((10, 10), dtype=cell_dtype)
+        gameboard.fill(CellType.ICE)
+        gameboard[0, 1] = CellType.GOAL
+        my_gameboard = GameBoard(gameboard, Cell(0, 0))
+        my_gameboard.gameboard = np.array([
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.BLOCK, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.GOAL,],     
+        ], dtype=cell_dtype)
+        my_gameboard.SetPlayerPos(Cell(0, 0))
+        border_type = my_gameboard.GetAboveType(Cell(row=0, col=0))
+        self.assertEqual(border_type, CellType.BORDER)
+        
 if __name__ == '__main__':
     unittest.main()
