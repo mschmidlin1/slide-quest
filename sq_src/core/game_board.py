@@ -122,7 +122,7 @@ class GameBoard:
         """
         Checks if there is a player and at least one blocker in the GameBoard.
         """
-        return self.playerPresent() and self.blockerPresent() and self.goalPresent()
+        return self.playerPresent() and self.goalPresent()
     
     def playerPresent(self) -> bool:
         """

@@ -74,7 +74,7 @@ class Game:
                 
                 if direction and not self.gameboard_sprite_manager.player_sprite.moving:
                     cell = self.gameboard.MovePlayer(Direction[direction])
-                    self.gameboard_sprite_manager.Move(cell, direction)
+                    self.gameboard_sprite_manager.MovePlayer(cell, direction)
                     self.num_moves += 1
                     self.game_audio.PlayRandomSlideSfx()
 
@@ -153,6 +153,12 @@ class Game:
                 if event.key == pygame.K_F1:
                     if self.levelEditor.drag_type is None:#only let the level editor be turned off if a click and drag operation is not happening
                         self.isEditActive = not self.isEditActive
+                        if self.isEditActive:
+                            self.gameboard_sprite_manager.toggle_editor_on()
+                        else:
+                            self.gameboard_sprite_manager.toggle_editor_off()
+                        if not self.isEditActive:
+                            self.gameboard_sprite_manager.ClearAndPopulateGameSprites()
                 if event.key == pygame.K_ESCAPE:
                     self.navigation_manager.navigate_to(Screen.OPTIONS)
         
