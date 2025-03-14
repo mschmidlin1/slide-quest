@@ -40,7 +40,7 @@ class TitleScreen(metaclass=SqScreenMeta):
         self.options_button: SqButton = SqButton(screen, Point(50, 50), width=50, height=50, font_size=40, text="F", font_file=SNOWFLAKE_FONT)
 
         self.begginer_play_button: SqButton = SqButton(screen, Point(WINDOW_DIMENSIONS[0]//2, (WINDOW_DIMENSIONS[1]//2) + 0), width=300, height=50, font_size=40, text="Beginner", font_file=TITLE_FONT)
-        self.intermediate_play_button: SqButton = SqButton(screen, Point(WINDOW_DIMENSIONS[0]//2, (WINDOW_DIMENSIONS[1]//2) + 100), width=300, height=50, font_size=40, text="Intermidiate", font_file=TITLE_FONT)
+        self.intermediate_play_button: SqButton = SqButton(screen, Point(WINDOW_DIMENSIONS[0]//2, (WINDOW_DIMENSIONS[1]//2) + 100), width=300, height=50, font_size=40, text="Intermediate", font_file=TITLE_FONT)
         self.hard_play_button: SqButton = SqButton(screen, Point(WINDOW_DIMENSIONS[0]//2, (WINDOW_DIMENSIONS[1]//2) + 200), width=300, height=50, font_size=40, text="Hard", font_file=TITLE_FONT)
         self.expert_play_button: SqButton = SqButton(screen, Point(WINDOW_DIMENSIONS[0]//2, (WINDOW_DIMENSIONS[1]//2) + 300), width=300, height=50, font_size=40, text="Expert", font_file=TITLE_FONT)
 

@@ -115,7 +115,8 @@ LIGHT_BLUE = (67, 184, 214)
 MUTE_GREEN = (42, 77, 90)
 UGLY_PINK = (175, 115, 130)
 BLUE_ICE = (158, 227, 231)
-
+BLACK = (0, 0, 0)
+GRAY = (200, 200, 200)
 
 #other constants
 PLAYER_SPEED = .4
