@@ -1,6 +1,8 @@
 import sys
 import os
 
+from sq_src.singletons.banner_manager import BannerManager
+from sq_src.singletons.level_manager import LevelManager
 from sq_src.sprites.text_sprite import TextSprite
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import pygame
@@ -26,6 +28,7 @@ class OptionsScreen(metaclass=SingletonMeta):
         self.click_type = None
         self.user_data = UserData()
         self.game_audio = GameAudio()
+        self.banner_manager = BannerManager()
 
         self.title_sprite = TextSprite(
             "Options", 
@@ -67,7 +70,7 @@ class OptionsScreen(metaclass=SingletonMeta):
         
         self.title_screen_button: SqButton = SqButton(screen, Point(150, WINDOW_DIMENSIONS[1] - 60), width=250, height=60, font_size=40, text="Title Screen")
         self.back_button: SqButton = SqButton(screen, Point(50, 50), width=50, height=50, font_size=70, text="<<")
-        self.apply_button = SqButton(self.screen, Point(WINDOW_DIMENSIONS[0]-75, WINDOW_DIMENSIONS[1]-60), width=100, height=60, text='Apply', font_file=TITLE_FONT, font_size=40)
+        self.apply_button = SqButton(self.screen, Point(WINDOW_DIMENSIONS[0]-75, (WINDOW_DIMENSIONS[1]//2)+200), width=100, height=60, text='Apply', font_file=TITLE_FONT, font_size=40)
 
 
         self.title_screen_sprite_group = pygame.sprite.Group()
@@ -120,6 +123,7 @@ class OptionsScreen(metaclass=SingletonMeta):
                         else:
                             self.navigation_manager.navigate_to(Screen.GAME)
                     if self.apply_button.is_over(event.pos):
+                        self.banner_manager.add_banner("User name updated!", 5, font_size=26)
                         self.user_data.set_user_name(self.user_name_text_box.text.strip())
                         self.user_name_sprite.update_text(self.user_name_text_box.text.strip())
                         self.user_name_text_box.disable()

@@ -5,6 +5,7 @@ from sq_src.screens.title_screen import TitleScreen
 from sq_src.screens.level_complete_screen import LevelCompleteScreen
 from sq_src.core.game import Game
 from sq_src.configs import WINDOW_DIMENSIONS, WINDOW_TITLE, ICON, SPLASH_SCREEN_ON
+from sq_src.singletons.banner_manager import BannerManager
 from sq_src.singletons.my_logging import LoggingService
 from sq_src.screens.splash_screen import SplashScreen
 from sq_src.singletons.game_audio import GameAudio
@@ -32,7 +33,7 @@ class Window():
         self.game_audio = GameAudio()
         self.navigation_manager = NavigationManager()
         self.logging_service = LoggingService()
-
+        self.banner_manager = BannerManager(self.screen)
         
         
     
@@ -81,7 +82,7 @@ class Window():
             self.current_screen_type = Screen.TITLE
             self.navigation_manager.navigate_to(Screen.TITLE)
         
-
+        self.banner_manager.add_banner("Welcome!", 5)
         while True:
             events = pygame.event.get()
             self.update(events)
@@ -94,6 +95,7 @@ class Window():
         Draw window elements onto the screen.
         """
         self.current_screen.draw()
+        self.banner_manager.draw()
     
 
     def handle_navigation(self):
@@ -162,6 +164,8 @@ class Window():
 
         #pass events to which ever screen is current
         self.current_screen.update(events)
+
+        self.banner_manager.update(events)
 
         #### Handle screen navigation #####
         self.handle_navigation()
