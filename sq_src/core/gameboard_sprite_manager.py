@@ -67,34 +67,28 @@ class GameboardSpriteManager:
         self.large_block_sprites = pygame.sprite.LayeredUpdates()
         self.player_sprite: Player = None
 
-        self.PopulateSprites()
-        self.CreatePlayerSprite()
+        self.ClearAndPopulateGameSprites()
         self.fill_background()
-        self.create_large_blocks()
+        self.CreatePlayerSprite()
 
         self.goal_sprite: Goal = self.GetGoalSprite()
 
     def create_large_blocks(self):
-        """"""
+        """
+        Fills in large ice sprites where they fit on the gameboard.
+        Removes singular block images for those locations.
+        """
         all_connected_blocks = FindConnectedGroups(self.gameboard, cell_type=CellType.BLOCK)
-    #     'block_2x1_a': (64, 288, 32, 32*2),#block_height x width
-    # #'block_3x2_a': (64+32, 288-32, 32*2, 32*3),   #too short to look convincing
-    # 'block_2x2_a': (0, 384, 64, 64),
-    # 'block_2x2_b': (64+12, 384, 32*2 + 12, 64),
-    # 'block_3x3_a': (160, 352+8, 32*3, 32*3),
-    # 'block_3x1_a': (256, 352+8, 32, 32*3),
-        shapes = [(3, 3), (2, 2), (3, 1), (2, 1), ]
+        available_shapes = [(3, 3), (2, 2), (3, 1), (2, 1), ]
         for connected_blocks in all_connected_blocks:
-            for shape in shapes:
+            for shape in available_shapes:
                 upper_lefts = DoesShapeFit(connected_blocks, shape)
                 if len(upper_lefts) > 0:
-                    #randomly choose upper left
                     sprite_string = ''
                     if shape == (3, 3):
                         sprite_string = 'block_3x3_a'
                     if shape == (2, 2):
                         sprite_string = 'block_2x2_a'
-                        #sprite_string = 'block_2x2_b'
                     if shape == (3, 1):
                         sprite_string = 'block_3x1_a'
                     if shape == (2, 1):
