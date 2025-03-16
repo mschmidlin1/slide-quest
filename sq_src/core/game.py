@@ -49,8 +49,8 @@ class Game:
         self.gameboard_sprite_manager = GameboardSpriteManager(self.gameboard, self.screen)
 
         self.levelEditor = LevelEditor(self.gameboard, self.gameboard_sprite_manager, self.screen)
-        self.level_background = LevelBackground(self.screen, f"Map seed: {self.gameboard.seed}", self.gameboard.difficulty)
-        self.level_background.fill_background()
+        self.level_background = LevelBackground(self.screen, f"{self.gameboard.seed}", self.gameboard.difficulty)
+
         self.num_moves = 0
         self.navigation_manager = NavigationManager()
 
@@ -116,12 +116,7 @@ class Game:
         """
         #draw background first
         self.level_background.background_sprites.draw(self.screen)
-
-        if(self.isEditActive):
-            self.level_background.draw(self.totalTime(), self.solution_str())
-        else:
-            self.level_background.draw(self.totalTime(), "") # the solutions string won't be display if not in edit mode.
-        
+        self.level_background.draw()
         #draw sprite second
         self.gameboard_sprite_manager.draw()
 
@@ -139,7 +134,7 @@ class Game:
 
         This also passes the events to child elements such as levelEditor.
         """
-
+        
         if self.player_movable:
             self.move_player(events)
 
@@ -159,7 +154,7 @@ class Game:
                             self.gameboard_sprite_manager.ClearAndPopulateGameSprites()
                 if event.key == pygame.K_ESCAPE:
                     self.navigation_manager.navigate_to(Screen.OPTIONS)
-        
+        self.level_background.update(self.totalTime(), self.solution_str(), self.isEditActive)
         if self.isComplete() and not self.gameboard_sprite_manager.player_sprite.moving:
             if self.celebration_timer == None:
                 self.player_movable = False
