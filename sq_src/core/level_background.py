@@ -1,41 +1,53 @@
 import sys
 import os
 
+from sq_src.controls.rectangle import Rectangle
 from sq_src.data_structures.converters import IsPointInGameboard
 from sq_src.sprites.background_spites import Border
 from sq_src.sprites.snow import Snow
 from sq_src.sprites.text_sprite import TextSprite
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import pygame
-from sq_src.configs import TITLE_FONT, WINDOW_DIMENSIONS, TITLE_SCREEN_COLOR, TITLE_SCREEN_TEXT_COLOR, CELL_DIMENSIONS, Border_Size_Lookup, BLUE_ICE, MUTE_GREEN
+from sq_src.configs import BLACK, DARK_GRAY, NAVY_BLUE, TITLE_FONT, WINDOW_DIMENSIONS, TITLE_SCREEN_COLOR, TITLE_SCREEN_TEXT_COLOR, CELL_DIMENSIONS, Border_Size_Lookup, BLUE_ICE, MUTE_GREEN
 from sq_src.data_structures.game_enums import GameDifficulty
 from sq_src.data_structures.data_types import Point
 
 class LevelBackground():
-    def __init__(self, screen: pygame.surface.Surface, text: str, difficulty: GameDifficulty):
+    def __init__(self, screen: pygame.surface.Surface, map_seed: str, difficulty: GameDifficulty):
         
         self.screen = screen
         self.difficulty = difficulty
         self.border_sprites = pygame.sprite.Group()
         self.bottom_border_sprites = pygame.sprite.Group()
         self.background_sprites = pygame.sprite.Group()
-
-        self.current_level_sprite = TextSprite(
-            f"{text}", 
+        self.map_seed = map_seed
+        self.is_level_editor_on = False
+        self.current_seed_sprite = TextSprite(
+            f"Seed: {self.map_seed}", 
             TITLE_FONT,
-            30,
-            Point(WINDOW_DIMENSIONS.width//2, 20),
-            (255, 0, 0), 
-            anchor='center')
-        
+            20,
+            Point(10, WINDOW_DIMENSIONS.height-10),
+            NAVY_BLUE, 
+            anchor='bottomleft')
+
+        self.time_center_loc = Point(WINDOW_DIMENSIONS.width//2, WINDOW_DIMENSIONS.height-30)
         self.time_sprite = TextSprite(
             "", 
             TITLE_FONT,
-            30,
-            Point(WINDOW_DIMENSIONS.width-10, 10),
-            (255, 0, 0),
-            anchor='topright')
+            40,
+            self.time_center_loc,
+            BLACK,
+            anchor='center')
         
+        self.time_background_rectangle = Rectangle(
+            self.screen,
+            BLUE_ICE,
+            Point(self.time_center_loc.x, self.time_center_loc.y+2),
+            width = 100,
+            height = 24,
+            outline_color=DARK_GRAY,
+            border_radius=5
+        )
         self.solution_sprite = TextSprite(
             "",
             TITLE_FONT,
@@ -44,13 +56,18 @@ class LevelBackground():
             (255, 0, 0),
             anchor='bottomright')
         
-        self.sprite_group = pygame.sprite.Group()
-        self.sprite_group.add(self.current_level_sprite)
-        self.sprite_group.add(self.time_sprite)
-        self.sprite_group.add(self.solution_sprite)
+        self.time_sprite_group = pygame.sprite.Group()
+        self.time_sprite_group.add(self.time_sprite)
+
+        self.level_editor_sprites = pygame.sprite.Group()
+        self.level_editor_sprites.add(self.current_seed_sprite)
+        self.level_editor_sprites.add(self.solution_sprite)
+
+        self.fill_background()
+        self.load_border_sprites()
 
     def load_border_sprites(self):
-        # Ensure this method is called once or in a way that doesn't keep adding sprites on each draw call
+        """Loads all the ice cliff borders into a sprite group."""
         self.border_sprites.empty()  # Clear existing sprites to avoid duplicates
         self.bottom_border_sprites.empty()
 
@@ -103,15 +120,20 @@ class LevelBackground():
         # Note: Adjust 'border_horizontal' and 'border_vertical' to your actual sprite names
 
     def fill_background(self):
+        """Fills the area outside of the gameboard with snow."""
         for y in range(0, WINDOW_DIMENSIONS.height, CELL_DIMENSIONS.height):
             for x in range(0, WINDOW_DIMENSIONS.width, CELL_DIMENSIONS.width):
                 if not IsPointInGameboard(Point(x, y), self.difficulty):
                     self.background_sprites.add(Snow(Point(x,y)))
 
-    def draw(self, time_str: str, solution: str):
-        self.load_border_sprites()  # Make sure to call this to load and place border sprites
-        self.border_sprites.draw(self.screen)  # Draw the border sprites
+    def update(self, time_str: str, solution: str, level_editor_on: bool):
         self.time_sprite.update_text(time_str)
         self.solution_sprite.update_text(solution)
-        self.sprite_group.draw(self.screen)
+        self.is_level_editor_on = level_editor_on
+    def draw(self):
+        self.border_sprites.draw(self.screen)
+        self.time_background_rectangle.draw()
+        self.time_sprite_group.draw(self.screen)
+        if self.is_level_editor_on:
+            self.level_editor_sprites.draw(self.screen)
 
