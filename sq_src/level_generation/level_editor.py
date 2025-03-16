@@ -5,6 +5,7 @@ from sq_src.data_structures.data_types import Cell, Point, Size
 from sq_src.core.game_board import GameBoard
 from sq_src.data_structures.neighbors import Neighbors
 from sq_src.level_generation.level_io import LevelIO, MapgenIO
+from sq_src.singletons.banner_manager import BannerManager
 from sq_src.singletons.my_logging import LoggingService
 from sq_src.data_structures.converters import PointToCell, CellToPoint
 from sq_src.core.gameboard_sprite_manager import GameboardSpriteManager
@@ -29,7 +30,7 @@ class LevelEditor:
         self.gameboard = gameboard
         self.gameboard_sprite_manager = gameboard_sprite_manager
         self.border_size = Border_Size_Lookup[self.gameboard.difficulty]
-
+        self.banner_manager = BannerManager()
         self.reset_click()
         self.create_pallet_sprites()
         self.selected_sprite_group = pygame.sprite.Group()
@@ -213,7 +214,8 @@ class LevelEditor:
         """        
         #always update the current mouse location
         self.current_mouse_location: Cell = PointToCell(Point(event.pos[0], event.pos[1]), self.gameboard.difficulty)
-
+        if self.drag_type=="SELECT":
+            self.banner_manager.add_banner("Press CTRL + s to save", 5, font_size = 23)
 
         if self.drag_type == CellType.PLAYER:
             #if mouse if off of gameboard - put back to original position
@@ -261,7 +263,7 @@ class LevelEditor:
         """
 
         #pressing just the "s" key
-        if event.key == pygame.K_s:
+        if event.key == pygame.K_s and (event.mod & pygame.KMOD_CTRL):
             #if the level editor has a selected region, save that
             if len(self.selected_cell_list)!=0:
                 min_row = min(self.selected_cell_list, key=lambda cell: cell.row).row
@@ -275,6 +277,7 @@ class LevelEditor:
 
                 sub_array = self.gameboard.Crop(upper_left, lower_right)
                 MapgenIO.SaveMapgen(sub_array)
+                self.banner_manager.add_banner("Map snip saved!", duration_s=5)
 
     def update(self, events: list[pygame.event.Event]):
         for event in events:
