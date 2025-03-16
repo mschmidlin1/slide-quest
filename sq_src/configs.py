@@ -12,12 +12,33 @@ MUSIC_FADE_EVENT = pygame.USEREVENT + 1#pygame.event.custom_type()
 SPRITE_POSITIONS = {
     'ice': (32, 192, 32, 32),     #one square of ice       
     'goal': (96, 224, 32, 32),    #
-    'background': (32, 32, 32, 32), #one square of snow
+    'snow_center': (544, 160, 32, 32), #160, 256
+    'snow_boundry_top': (544, 160-32, 32, 32),
+    'snow_boundry_bottom': (544, 160+32, 32, 32),
+    'snow_boundry_left': (544-32, 160, 32, 32),
+    'snow_boundry_right': (544+32, 160, 32, 32),
+    'snow_boundry_top_left_corner': (544-32, 160-32, 32, 32),
+    'snow_boundry_top_right_corner': (544+32, 160-32, 32, 32),
+    'snow_boundry_bottom_left_corner': (544-32, 160+32, 32, 32),
+    'snow_boundry_bottom_right_corner': (544+32, 160+32, 32, 32),
+    'snow_boundry_top_wall_a': (256, 64, 32, 32),
+    'snow_boundry_top_wall_b': (256+32, 64, 32, 32),
+    'snow_boundry_top_wall_c': (256+(32*5), 64, 32, 32),
+    'snow_boundry_top_wall_d': (256+(32*6), 64, 32, 32),
     'block_1x1_a': (32, 320, 32, 32),
     'block_1x1_b': (32, 352, 32, 32),
     'block_1x1_c': (64, 352, 32, 32),
     'block_1x1_d': (96, 352, 32, 32),
-    'block_1x1_e': (128, 352, 32, 32),
+    'block_1x1_e': (128, 352, 32, 32),# (x, y, width, ,height)
+    'block_2x1_a': (64, 288, 32, 32*2),#block_height x width
+    #'block_3x2_a': (64+32, 288-32, 32*2, 32*3),   #too short to look convincing
+    'block_2x2_a': (0, 384, 64, 64),
+    'block_2x2_b': (64+12, 384, 32*2 + 12, 64),
+    'block_3x3_a': (160, 352+8, 32*3, 32*3),
+    'block_3x1_a': (256, 352+8, 32, 32*3),
+
+
+
     'border_top': (32, 128, 32, 32),
     'border_topAbove': (32, 256, 32, 32),
     'border_left': (64, 32, 32, 32),
@@ -32,7 +53,7 @@ SPRITE_POSITIONS = {
 }
 
 #choose to turn of splash screen or not
-SPLASH_SCREEN_ON: bool = True
+SPLASH_SCREEN_ON: bool = False
 
 #Audio settings
 GAME_VOLUME = 0.2 #0-1
@@ -108,6 +129,7 @@ GOAL_COLOR = (255, 255, 0)
 GROUND_COLOR = (88, 57, 39)
 ICE_COLOR = (173, 216, 230)
 PALLET_HIGHLIGHT_COLOR = (230, 237, 28)
+PALLET_NO_HIGHLIGHT_COLOR = (50, 133, 168)
 DARK_GRAY = (43, 45, 47)
 NAVY_BLUE = (11, 42, 81)
 GRAY_BLUE = (47, 86, 122)

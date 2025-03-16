@@ -46,6 +46,32 @@ def CellToPoint(cell: Cell, difficulty: GameDifficulty) -> Point:
     y = Border_Size_Lookup[difficulty].width + (cell.row * CELL_DIMENSIONS.height) + (CELL_DIMENSIONS.height // 2)
     return Point(round(x), round(y))
 
+def CellToPoint_TopLeft(cell: Cell, difficulty: GameDifficulty) -> Point:
+    """
+    Converts a `Cell` object to the top-left pixel coordinates of the cell.
+
+    Parameters:
+    -----------
+    - `cell` (Cell): The cell object.
+    - `difficulty` (GameDifficulty): The game difficulty.
+
+    Returns:
+    --------
+    - Point : The top-left pixel coordinates of the cell.
+    """
+    if cell.row < 0 or cell.col < 0:
+        raise ValueError(f"cell.row and cell.col cannot be negative.")
+
+    if cell.row > Board_Size_Lookup[difficulty].height - 1:
+        raise ValueError(f"cell.row is outside the bounds for {difficulty} difficulty.")
+
+    if cell.col > Board_Size_Lookup[difficulty].width - 1:
+        raise ValueError(f"cell.col is outside the bounds for {difficulty} difficulty.")
+
+    x = Border_Size_Lookup[difficulty].width + (cell.col * CELL_DIMENSIONS.width)
+    y = Border_Size_Lookup[difficulty].width + (cell.row * CELL_DIMENSIONS.height)
+    return Point(round(x), round(y))
+
 def PointToCell(point: Point, difficulty: GameDifficulty) -> Cell:
     """
     Converts a `Point` object, representing x and y pixel coordinates on the screen,
@@ -97,3 +123,33 @@ def PointToCell(point: Point, difficulty: GameDifficulty) -> Cell:
 
     return cell
 
+
+def IsPointInGameboard(point: Point, difficulty: GameDifficulty) -> bool:
+    """
+    Takes a point and determines if that pixel position is inside of the gameboard.
+
+    Parameters:
+    -----------
+    - `point` (Point): An object representing the x and y pixel coordinates on the screen.
+    - `difficulty` (GameDifficulty): An enumeration value or similar representation indicating the game's difficulty level.
+      This affects the border size around the game board, which in turn influences the calculation of cell coordinates.
+
+    
+    """
+
+    col = (point.x - Border_Size_Lookup[difficulty].width) // CELL_DIMENSIONS.width
+    row = (point.y - Border_Size_Lookup[difficulty].height) // CELL_DIMENSIONS.height
+
+    cell = Cell(row=int(row), col=int(col))
+
+    if cell.row < 0:
+        return False
+    if cell.col < 0:
+        return False
+
+    if cell.row > Board_Size_Lookup[difficulty].height - 1:
+        return False
+    
+    if cell.col > Board_Size_Lookup[difficulty].width - 1:
+        return False
+    return True

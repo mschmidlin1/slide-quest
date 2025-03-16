@@ -1,15 +1,17 @@
 import pygame
-from sq_src.configs import CELL_DIMENSIONS, WHITE, Border_Size_Lookup, LEFT_CLICK, RIGHT_CLICK, WINDOW_DIMENSIONS
+from sq_src.configs import CELL_DIMENSIONS, PALLET_NO_HIGHLIGHT_COLOR, WHITE, Border_Size_Lookup, LEFT_CLICK, RIGHT_CLICK, WINDOW_DIMENSIONS
 from sq_src.data_structures.game_enums import CellType, GameDifficulty
 from sq_src.data_structures.data_types import Cell, Point, Size
 from sq_src.core.game_board import GameBoard
+from sq_src.data_structures.neighbors import Neighbors
 from sq_src.level_generation.level_io import LevelIO, MapgenIO
 from sq_src.singletons.banner_manager import BannerManager
 from sq_src.singletons.my_logging import LoggingService
 from sq_src.data_structures.converters import PointToCell, CellToPoint
 from sq_src.core.gameboard_sprite_manager import GameboardSpriteManager
-from sq_src.sprites.background_spites import Block, Ground, Ice
+from sq_src.sprites.background_spites import Block, Ice
 from sq_src.sprites.level_editor_sprites import Highlighter, HollowSquareSprite, SelectorTool
+from sq_src.sprites.snow import GroundSnow
 
 class LevelEditor:
     """
@@ -43,23 +45,37 @@ class LevelEditor:
         self.select_tool_sprite = SelectorTool()
         self.select_tool_sprite.rect.center = Point(CELL_DIMENSIONS.width, 100)
 
-        self.block_pallet_sprite = Block(Cell(0, 0),GameDifficulty.BEGINNER) #the constructor arguments don't matter because we're gonna set the location manually
+        self.block_pallet_sprite = Block(Cell(0, 0),GameDifficulty.BEGINNER, neighbors=Neighbors(CellType.GROUND, CellType.GROUND, CellType.GROUND, CellType.GROUND,CellType.GROUND, CellType.GROUND, CellType.GROUND, CellType.GROUND)) #the constructor arguments don't matter because we're gonna set the location manually
         self.block_pallet_sprite.rect.center = Point(CELL_DIMENSIONS.width, 150)
 
         self.ice_pallet_sprite = Ice(Cell(0, 0), GameDifficulty.BEGINNER) #the constructor arguments don't matter because we're gonna set the location manually
         self.ice_pallet_sprite.rect.center = Point(CELL_DIMENSIONS.width, 200)
 
-        self.ground_pallet_sprite = Ground(Cell(0, 0), GameDifficulty.BEGINNER) #the constructor arguments don't matter because we're gonna set the location manually
+        self.ground_pallet_sprite = GroundSnow(Cell(0, 0), GameDifficulty.BEGINNER, neighbors=Neighbors(CellType.GROUND, CellType.GROUND, CellType.GROUND, CellType.GROUND,CellType.GROUND, CellType.GROUND, CellType.GROUND, CellType.GROUND)) #the constructor arguments don't matter because we're gonna set the location manually
         self.ground_pallet_sprite.rect.center = Point(CELL_DIMENSIONS.width, 250)
 
         self.selected_pallet_sprite = HollowSquareSprite(Point(CELL_DIMENSIONS.width, 150), 4)
 
-        self.pallete_sprite_group = pygame.sprite.Group()
-        self.pallete_sprite_group.add(self.select_tool_sprite)
-        self.pallete_sprite_group.add(self.block_pallet_sprite)
-        self.pallete_sprite_group.add(self.ice_pallet_sprite)
-        self.pallete_sprite_group.add(self.selected_pallet_sprite)
-        self.pallete_sprite_group.add(self.ground_pallet_sprite)
+        self.select_tool_outline = HollowSquareSprite(Point(CELL_DIMENSIONS.width, 150), 4, color=PALLET_NO_HIGHLIGHT_COLOR)
+        self.select_tool_outline.rect.center = self.select_tool_sprite.rect.center
+        self.block_outline = HollowSquareSprite(Point(CELL_DIMENSIONS.width, 150), 4, color=PALLET_NO_HIGHLIGHT_COLOR)
+        self.block_outline.rect.center = self.block_pallet_sprite.rect.center
+        self.ice_outline = HollowSquareSprite(Point(CELL_DIMENSIONS.width, 150), 4, color=PALLET_NO_HIGHLIGHT_COLOR)
+        self.ice_outline.rect.center = self.ice_pallet_sprite.rect.center
+        self.ground_outline = HollowSquareSprite(Point(CELL_DIMENSIONS.width, 150), 4, color=PALLET_NO_HIGHLIGHT_COLOR)
+        self.ground_outline.rect.center = self.ground_pallet_sprite.rect.center
+
+
+        self.pallete_sprite_group = pygame.sprite.LayeredUpdates()
+        self.pallete_sprite_group.add(self.select_tool_sprite, layer=2)
+        self.pallete_sprite_group.add(self.block_pallet_sprite, layer=2)
+        self.pallete_sprite_group.add(self.ice_pallet_sprite, layer=2)
+        self.pallete_sprite_group.add(self.selected_pallet_sprite, layer=3)
+        self.pallete_sprite_group.add(self.ground_pallet_sprite, layer=2)
+        self.pallete_sprite_group.add(self.select_tool_outline, layer=2)
+        self.pallete_sprite_group.add(self.block_outline, layer=2)
+        self.pallete_sprite_group.add(self.ice_outline, layer=2)
+        self.pallete_sprite_group.add(self.ground_outline, layer=2)
 
     def reset_click(self):
         """
@@ -154,7 +170,7 @@ class LevelEditor:
                 #update gameboard
                 self.gameboard.UpdateCell(self.current_mouse_location, self.drag_type)
                 #update sprite group
-                self.gameboard_sprite_manager.SetSprite(self.current_mouse_location, self.drag_type)
+                self.gameboard_sprite_manager.SetSpriteAndToggleLevelEditor(self.current_mouse_location, self.drag_type)
 
     def handle_mouse_motion(self, event: pygame.event.Event):
         """
@@ -186,7 +202,7 @@ class LevelEditor:
                 #update gameboard
                 self.gameboard.UpdateCell(self.current_mouse_location, self.drag_type)
                 #update sprite group
-                self.gameboard_sprite_manager.SetSprite(self.current_mouse_location, self.drag_type)
+                self.gameboard_sprite_manager.SetSpriteAndToggleLevelEditor(self.current_mouse_location, self.drag_type)
     
     def handle_mouse_up(self, event: pygame.event.Event):
         """
@@ -225,10 +241,14 @@ class LevelEditor:
                 self.gameboard.UpdateCell(self.initial_mouse_location, CellType.ICE)
                 self.gameboard.UpdateCell(self.current_mouse_location, CellType.GOAL)
                 
+                #put goal at new drop location
+                #self.gameboard_sprite_manager.goal_sprite.rect.center = CellToPoint(self.current_mouse_location, self.gameboard.difficulty)
+                self.gameboard_sprite_manager.SetSprite(self.current_mouse_location, CellType.GOAL)
+                self.gameboard_sprite_manager.goal_sprite.toggle_level_editor()
+
                 #fill ice in initial location
                 self.gameboard_sprite_manager.SetSprite(self.initial_mouse_location, CellType.ICE)
-                #put goal at new drop location
-                self.gameboard_sprite_manager.SetSprite(self.current_mouse_location, CellType.GOAL)
+                
 
             #if operator tries to drop player on an "illegal" location, return the sprite to initial location.
             else:
