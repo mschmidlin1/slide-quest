@@ -156,8 +156,6 @@ class Game:
                         if self.isEditActive:
                             self.gameboard_sprite_manager.toggle_editor_on()
                         else:
-                            self.gameboard_sprite_manager.toggle_editor_off()
-                        if not self.isEditActive:
                             self.gameboard_sprite_manager.ClearAndPopulateGameSprites()
                 if event.key == pygame.K_ESCAPE:
                     self.navigation_manager.navigate_to(Screen.OPTIONS)

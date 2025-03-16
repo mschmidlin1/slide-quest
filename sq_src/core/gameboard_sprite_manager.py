@@ -139,12 +139,6 @@ class GameboardSpriteManager:
                 sprite.toggle_level_editor()
         self.large_block_sprites.empty()
 
-    def toggle_editor_off(self):
-        """ 
-        Toggle the sprites for the gameboard to "level editor" version or back to regular version. 
-        """
-        self.ClearAndPopulateGameSprites()
-
     def fill_background(self):
         for y in range(0, WINDOW_DIMENSIONS.height, CELL_DIMENSIONS.height):
             for x in range(0, WINDOW_DIMENSIONS.width, CELL_DIMENSIONS.width):
