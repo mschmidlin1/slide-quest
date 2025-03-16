@@ -26,10 +26,8 @@ class Block(GroundSnow):
         self.border_size = Border_Size_Lookup[difficulty]
         self.gameboard_loc = gameboard_loc
         self.neighbors = neighbors
-        self.level_manager = LevelManager()
-        rng = np.random.RandomState(self.level_manager.current_seed.number)
         block_variants = ['block_1x1_a', 'block_1x1_b', 'block_1x1_c', 'block_1x1_d', 'block_1x1_e']
-        self.chosen_block: str = rng.choice(block_variants)
+        self.chosen_block: str = np.random.choice(block_variants)
         self.block_image = SpriteLoader.get_sprite(self.chosen_block)# Use the chosen sprite
         if add_block_image:
             self.image.blit(self.block_image, (self.sprite_size, self.sprite_size))

@@ -94,7 +94,7 @@ class GameboardSpriteManager:
                         sprite_string = 'block_3x3_a'
                     if shape == (2, 2):
                         sprite_string = 'block_2x2_a'
-                        sprite_string = 'block_2x2_b'
+                        #sprite_string = 'block_2x2_b'
                     if shape == (3, 1):
                         sprite_string = 'block_3x1_a'
                     if shape == (2, 1):
