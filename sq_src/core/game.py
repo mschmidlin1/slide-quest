@@ -81,11 +81,9 @@ class Game:
                 if self.isEditActive:
                     self.solution_moves = ShortestPath(self.gameboard)
 
-    
     def load_all_resources(self):
         SpriteLoader.load_sprite_sheet()
 
-    
     def isComplete(self):
         """
         Checks whether the game has been completed.
@@ -109,7 +107,6 @@ class Game:
         minutes, seconds = divmod(total_time, 60)
         return f"{int(minutes):02}:{int(seconds):02}"
     
-    
     def draw(self):
         """
         Draw the necessary game elements on the screen. Draws all child elements of the game (level_background and levelEditor).
@@ -126,8 +123,6 @@ class Game:
         else:
             self.level_background.bottom_border_sprites.draw(self.screen)
 
-
-    
     def update(self, events: list[pygame.event.Event]):
         """
         The Game.update() method takes a list of pygame events. From this the game will extract the necessary movement information for the player.
@@ -180,3 +175,23 @@ class Game:
         Turns the Direction.MOVE enum into just a string of "MOVE".
         """
         return str(move).split('.')[1]
+
+    def calculate_score(self) -> int:
+        """Calculate the score for the player."""
+        seconds = self.total_time()
+        time_penalty = seconds//5
+        moves_penalty = int(self.num_moves-(1.5*self.least_moves))
+        total_penalty = time_penalty + moves_penalty
+        score = 100 - total_penalty
+        return score
+    
+    def calculate_stars(self) -> int:
+        """Calculate the number of stars earned by the player."""
+        score = self.calculate_score()
+        if score > 75:
+            return 3
+        if score > 50:
+            return 2
+        if score > 25:
+            return 1
+        return 0

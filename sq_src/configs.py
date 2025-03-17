@@ -72,7 +72,7 @@ PLAYER_SPRITE_SHEET = 'resources/sprites/player/Character spritesheet.png'
 PLAYERSHADOW_SPRITE_SHEET = 'resources/sprites/player/player-shadow.png'
 ENVIRONMENT_SPRITE_SHEET = 'resources/sprites/environment/Spritesheet_revised_2.0.png'
 SNOWFLAKE_FONT = 'resources/fonts/KR Kinda Flakey.ttf'
-
+LEVEL_COMPLETE_IMAGE = 'resources/images/level_complete_screen.png'
 #window information
 WINDOW_DIMENSIONS = Size(width=960, height=960) #must be set to a multiple of 64
 CELL_DIMENSIONS = Size(width=32,  height=32)
