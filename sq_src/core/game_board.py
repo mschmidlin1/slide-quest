@@ -2,7 +2,7 @@ import sys
 import os
 
 from sq_src.data_structures.neighbors import Neighbors
-#necessary to import things from the SQ_modules folder
+
 sys.path.append(os.getcwd())
 
 from sq_src.data_structures.game_enums import CellType, Direction, Str_to_CellType_vector_func

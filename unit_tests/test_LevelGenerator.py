@@ -2,7 +2,7 @@ import unittest
 import sys
 import os
 import numpy as np
-#necessary to import things from the SQ_modules folder
+
 sys.path.append(os.getcwd())
 from sq_src.data_structures.data_types import Cell
 from sq_src.level_generation.level_generator import LevelGenerator

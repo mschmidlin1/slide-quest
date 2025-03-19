@@ -3,7 +3,7 @@ import sys
 import os
 import re
 
-#necessary to import things from the SQ_modules folder
+
 sys.path.append(os.getcwd())
 from sq_src.core.game_board import GameBoard
 from sq_src.metas import SingletonMeta

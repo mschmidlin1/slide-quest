@@ -1,6 +1,32 @@
 import os
 
+def get_dependencies_recursive(folder_path: str) -> set[str]:
+    """
+    Recursively gets all the external dependencies from each python code file and returns the set of them.
+    """
+    module_files = os.listdir(folder_path)
 
+    dependencies = set()
+
+    for file in module_files:
+        if "__" in file:#eliminates __pycache__, __init__.py, and others of the sort
+            continue
+        file_path = os.path.join(folder_path, file)
+        if os.path.isdir(file_path):
+            dependencies.update(get_dependencies_recursive(file_path))
+        else:
+            try:
+                with open(file_path, 'r') as fhandle:
+                    lines = fhandle.readlines()
+                for line in lines:
+                    if "import" in line and "sq_src" not in line:#find import statements that are importing external libraries
+                        line = line.strip()
+                        segments = line.split()
+                        dependencies.add(segments[1])
+            except:
+                print(f"No file found {file_path}")
+                print(file)
+    return dependencies
 
 def get_external_dependencies(folder = "sq_src") -> list[str]:
     """
@@ -8,27 +34,8 @@ def get_external_dependencies(folder = "sq_src") -> list[str]:
     """
     parent_dir = os.path.dirname(os.path.dirname(__file__))#get the parent directory of the current file.
     modules_dir = os.path.join(parent_dir, folder)
-    module_files = os.listdir(modules_dir)
-
-    dependencies = set()
-
-    for file in module_files:
-        if "__" in file:#eliminates __pycache__, __init__.py, and others of the sort
-            continue
-        file_path = os.path.join(modules_dir, file)
-        try:
-            with open(file_path, 'r') as fhandle:
-                lines = fhandle.readlines()
-            for line in lines:
-                if "import" in line and "SQ_module" not in line:#find import statements that are importing external libraries
-                    line = line.strip()
-                    segments = line.split()
-                    dependencies.add(segments[1])
-        except:
-            print(f"No file found {file_path}")
-            print(file)
-
-    return list(dependencies)
+    
+    return list(get_dependencies_recursive(modules_dir))
 
 def list_to_str(l: list[str]) -> str:
     """

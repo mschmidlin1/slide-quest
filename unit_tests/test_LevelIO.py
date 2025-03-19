@@ -3,7 +3,7 @@ import sys
 import os
 import re
 import numpy as np
-#necessary to import things from the SQ_modules folder
+
 sys.path.append(os.getcwd())
 from sq_src.level_generation.level_io import LevelIO, eliminate_duplicates_dict
 

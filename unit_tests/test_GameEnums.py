@@ -2,7 +2,7 @@ import unittest
 import sys
 import os
 import numpy as np
-#necessary to import things from the SQ_modules folder
+
 sys.path.append(os.getcwd())
 from sq_src.core.game_board import GameBoard
 from sq_src.data_structures.game_enums import Direction, CellType, Str_to_CellType, Str_to_CellType_func, Str_to_CellType_vector_func
