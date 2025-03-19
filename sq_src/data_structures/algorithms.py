@@ -45,6 +45,40 @@ def ShortestPath(input_gameboard: GameBoard) -> list[Direction]:
     
     return []  # Return an empty list if there's no path to the goal
 
+def ReachablePositions(input_gameboard: GameBoard) -> set[Cell]:
+    """
+    This function takes in the gameboard and player position and returns a set of all
+    reachable positions from the player's starting position.
+
+    This function deep copys the input gameboard as to not manipulate it's state.
+
+    This function uses Breadth First Search Algorithm (BFS).
+    """
+
+    gameboard = copy.deepcopy(input_gameboard)  # Use deepcopy if gameboard has nested objects
+    queue = collections.deque()  # Use deque for efficient pops from the left
+    start_pos = gameboard.player_pos
+    queue.append(start_pos)  # Start with the player position
+    visited = set()
+
+    while queue:
+        current_pos = queue.popleft()
+
+        if current_pos in visited:
+            continue
+
+        visited.add(current_pos)
+
+        for direction in Direction:
+            gameboard.player_pos = current_pos
+            next_pos = gameboard.MovePlayer(direction)
+
+            # Check if next_pos is valid (not out of bounds or blocked)
+            if next_pos != current_pos and next_pos not in visited:
+                queue.append(next_pos)
+
+    return visited
+
 def FindConnectedBlocks(gameboard: GameBoard, start_cell: Cell) -> list[Cell]:
     """
     Finds all connected cells of the same type as the 'start_cell'.

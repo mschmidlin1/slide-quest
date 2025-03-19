@@ -2,7 +2,7 @@ from sq_src.data_structures.game_enums import GameDifficulty, CellType, Game_Dif
 from sq_src.configs import Board_Size_Lookup
 from sq_src.core.game_board import GameBoard
 from sq_src.level_generation.level_io import LevelIO
-from sq_src.data_structures.algorithms import ShortestPath
+from sq_src.data_structures.algorithms import ReachablePositions, ShortestPath
 from sq_src.level_generation.level_io import LevelIO, MapgenIO
 import numpy as np
 from sq_src.data_structures.data_types import Cell
@@ -247,7 +247,8 @@ class LevelGenerator:
         if gameboard.player_pos == gameboard.Find_Goal_Pos():
             self.logging_service.log_info(f"Goal position and player position both have location: {gameboard.player_pos}")
         return gameboard
-    
+
+
     def generate(self, starting_num=0) -> tuple[int, GameBoard]:
         """
         Generates a valid game board along with its seed.
@@ -266,9 +267,29 @@ class LevelGenerator:
             if candidate is None:
                 self.logging_service.log_info(f"Candidate failed as player or goal position could not be found.(seed={candidate_seed})")
                 continue
-            elif len(ShortestPath(candidate))<3:
+
+            if len(ShortestPath(candidate)) < 3:
                 self.logging_service.log_info(f"Candidate map failed.(seed={candidate_seed})")
                 continue
-            else:
+
+            player_pos = candidate.player_pos  # save player position for after this check
+            goal_pos = candidate.goal_pos
+            reachable_positions = ReachablePositions(candidate)
+            for position in reachable_positions:
+                if position in [player_pos, goal_pos]:#don't bother checking for player pos and goal position
+                    continue
+                candidate.SetPlayerPos(position)
+                if len(ShortestPath(candidate)) < 1:  # check to see if map is possible from this position
+                    self.logging_service.log_info(f"Candidate map failed from position {position}.(seed={candidate_seed})")
+                    break # break the inner loop and continue the outer loop
+
+            else: #if the inner for loop finishes without breaking
+                candidate.SetPlayerPos(player_pos)
                 return (candidate_seed, candidate)
+            
+            #if the for loop broke, continue the outer while loop.
+            continue
+
+
+    
 
