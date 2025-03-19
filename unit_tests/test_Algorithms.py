@@ -2,12 +2,15 @@ import unittest
 import sys
 import os
 import numpy as np
+
+
 #necessary to import things from the SQ_modules folder
 sys.path.append(os.getcwd())
 from sq_src.data_structures.data_types import Point, Cell
-from sq_src.data_structures.algorithms import DoesShapeFit, ShortestPath, FindConnectedBlocks, FindConnectedGroups
+from sq_src.data_structures.algorithms import DoesShapeFit, ReachablePositions, ShortestPath, FindConnectedBlocks, FindConnectedGroups
 from sq_src.data_structures.game_enums import GameDifficulty, CellType, Direction
 from sq_src.core.game_board import GameBoard
+from sq_src.level_generation.level_generator import LevelGenerator
 cell_dtype = np.dtype(CellType)
 
 # class Test_FindConnectedBlocks(unittest.TestCase):
@@ -491,5 +494,56 @@ class Test_DoesShapeFit(unittest.TestCase):
         shape = (3, 2)
         expected = []
         self.assertEqual(DoesShapeFit(cells, shape), expected)
+
+class Test_ReachablePositions(unittest.TestCase):
+    def test_corners(self):
+        board = np.array([
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.GOAL, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],     
+        ], dtype=cell_dtype)
+        gameboard = GameBoard(board, Cell(0, 0), 0)
+        reachable_positions = ReachablePositions(gameboard)
+        reachable_positions_truth = set([Cell(0, 0), Cell(9, 0), Cell(0, 9), Cell(9, 9)])
+        self.assertEqual(reachable_positions, reachable_positions_truth)
+        self.assertEqual(0, len(ShortestPath(gameboard)))
+
+    def test_middle(self):
+        board = np.array([
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.GOAL, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],
+            [CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE, CellType.ICE,],     
+        ], dtype=cell_dtype)
+        player_start = Cell(1, 1)
+        seed = 0
+        gameboard = GameBoard(board, player_start, seed)
+        reachable_positions = ReachablePositions(gameboard)
+        reachable_positions_truth = set([Cell(1, 1), Cell(0, 0), Cell(9, 0), Cell(0, 9), Cell(9, 9), Cell(1, 0), Cell(0, 1), Cell(1, 9), Cell(9, 1)])
+        self.assertEqual(reachable_positions, reachable_positions_truth)
+
+
+        self.assertEqual(0, len(ShortestPath(gameboard)))
+
+    def test_expert_15(self):
+        level_generator = LevelGenerator(GameDifficulty.EXPERT)
+        gameboard = level_generator.generate_candidate(15)
+        reachable_positions = ReachablePositions(gameboard)
+        self.assertTrue(Cell(0, 0) in reachable_positions)
+        gameboard.SetPlayerPos(Cell(0, 0))
+        self.assertTrue(len(ShortestPath(gameboard))<1)
 if __name__ == '__main__':
     unittest.main()
