@@ -97,18 +97,27 @@ class UserData(metaclass=SingletonMeta):
         Set the current seed for a particular difficulty.
         """
         self.user_data['current_seed'][difficulty] = seed
+
     def get_current_seed(self, difficulty: GameDifficulty) -> Seed:
         """
         Get the current seed for a particular difficulty.
         """
         return self.user_data['current_seed'][difficulty]
+
     def get_user_name(self) -> str:
         """
         Get the user name from the save data.
         """
         return self.user_data['user_name']
+
     def set_user_name(self, user_name: str):
         """
         Set the user name in the save data.
         """
         self.user_data['user_name'] = user_name.strip()
+
+    def get_seeds(self, difficulty: GameDifficulty) -> list[Seed]:
+        """
+        Get a list of Seed objects for the specified difficulty.
+        """
+        return list(self.user_data['maps'][difficulty])

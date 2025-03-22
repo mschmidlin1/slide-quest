@@ -19,6 +19,7 @@ class LevelManager(metaclass=SingletonMeta):
         - save_seed()  : saves a seed to user_data
         - next_seed()  : determines which seed is next using level_generator
         - get_current_gameboard() : gets the current gameboard object
+        - get_total_stars() : gets the total number of stars earned across all difficulties
     """
     current_seed: Seed
     level_generator: LevelGenerator
@@ -47,7 +48,7 @@ class LevelManager(metaclass=SingletonMeta):
             self.current_gameboard = self.level_generator.generate_candidate(self.current_seed.number)
 
     
-    def save_seed(self, shortest_path: Direction, completed: bool, time_ms: float, num_moves: int):
+    def save_seed(self, shortest_path: Direction, completed: bool, time_ms: float, num_moves: int, stars: int = 0):
         """
         Saves the seed data after completion of the map.
 
@@ -55,8 +56,9 @@ class LevelManager(metaclass=SingletonMeta):
         - completed: whether or not the map was completed.
         - time_ms: how long it took to complete the map.
         - num_moves: the number of moves it took to complete the map.
+        - stars: the number of stars earned (0-3).
         """
-        seed_to_save = Seed(self.current_seed.number, shortest_path, completed, True, time_ms, num_moves)
+        seed_to_save = Seed(self.current_seed.number, shortest_path, completed, True, time_ms, num_moves, stars)
         self.logging_service.log_info(f"Saving map seed: {seed_to_save}")
         self.current_seed = seed_to_save
         self.user_data.set_current_seed(self.current_difficulty, seed_to_save)
@@ -69,10 +71,10 @@ class LevelManager(metaclass=SingletonMeta):
         new_seed, gameboard = self.level_generator.generate(self.current_seed.number+1)
         #add all the failed seeds to the user data for saving
         for i in range(self.current_seed.number+1, new_seed):
-            failed_seed = Seed(i, [], False, False, 0, 0)
+            failed_seed = Seed(i, [], False, False, 0, 0, 0)
             self.user_data.replace_map(self.current_difficulty, failed_seed)
         
-        self.current_seed = Seed(new_seed, ShortestPath(gameboard), False, True, 0, 0)
+        self.current_seed = Seed(new_seed, ShortestPath(gameboard), False, True, 0, 0, 0)
         self.user_data.replace_map(self.current_difficulty, self.current_seed)
         self.user_data.set_current_seed(self.current_difficulty, self.current_seed)
         self.current_gameboard = gameboard
@@ -82,6 +84,21 @@ class LevelManager(metaclass=SingletonMeta):
         Gets the current gameboard.
         """
         return self.current_gameboard
+
+    def get_total_stars(self) -> int:
+        """
+        Gets the total number of stars earned across all difficulties.
+
+        Returns:
+            int: The total number of stars earned.
+        """
+        total_stars = 0
+        for difficulty in GameDifficulty:
+            seeds = self.user_data.get_seeds(difficulty)
+            for seed in seeds:
+                if seed.completed:
+                    total_stars += seed.stars
+        return total_stars
     
 
 

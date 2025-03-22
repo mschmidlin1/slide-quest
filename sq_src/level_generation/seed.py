@@ -1,11 +1,3 @@
-
-
-
-
-
-
-
-
 from sq_src.data_structures.game_enums import Direction
 
 
@@ -19,9 +11,10 @@ class Seed:
         completed (bool): A flag indicating whether the game has been completed using this seed.
         best_time_ms (float): The best time recorded for completing the game with this seed, in milliseconds.
         best_num_moves (int): The smallest number of moves taken to complete the game with this seed.
+        stars (int): The number of stars earned for this level (0-3).
 
     Methods:
-        __init__(self, seed, shortest_path, completed, best_time_ms, best_num_moves): Initializes a new Seed instance.
+        __init__(self, seed, shortest_path, completed, best_time_ms, best_num_moves, stars): Initializes a new Seed instance.
         __eq__(self, other): Checks equality based on the seed attribute.
         __hash__(self): Returns the hash based on the seed attribute.
     """
@@ -31,8 +24,9 @@ class Seed:
     is_possible: bool
     best_time_ms: float
     best_num_moves: int
+    stars: int
 
-    def __init__(self, seed: int, shortest_path: list[Direction], completed: bool, is_possible: bool, best_time_ms: float, best_num_moves: int):
+    def __init__(self, seed: int, shortest_path: list[Direction], completed: bool, is_possible: bool, best_time_ms: float, best_num_moves: int, stars: int = 0):
         """
         Constructs a Seed instance with the provided seed identifier, path, completion status, best time, and number of moves.
 
@@ -43,6 +37,7 @@ class Seed:
             is_possible (bool): Indicates whether the map is possible to solve.
             best_time_ms (float): The best time recorded for completing the game with this seed, in milliseconds.
             best_num_moves (int): The smallest number of moves taken to complete the game with this seed.
+            stars (int): The number of stars earned for this level (0-3). Defaults to 0.
         """
         self.number = seed
         self.shortest_path = shortest_path
@@ -50,6 +45,7 @@ class Seed:
         self.is_possible = is_possible
         self.best_time_ms = best_time_ms
         self.best_num_moves = best_num_moves
+        self.stars = stars
 
     def __eq__(self, other):
         """
@@ -75,5 +71,5 @@ class Seed:
         return hash(self.number)
     
     def __str__(self) -> str:
-        return f"Seed(Number: {self.number}   Completed: {self.completed}   Is_Possible: {self.is_possible})"
+        return f"Seed(Number: {self.number}   Completed: {self.completed}   Is_Possible: {self.is_possible}   Stars: {self.stars})"
 
