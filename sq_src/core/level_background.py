@@ -10,7 +10,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import pygame
 from sq_src.configs import BLACK, DARK_GRAY, NAVY_BLUE, TITLE_FONT, WINDOW_DIMENSIONS, TITLE_SCREEN_COLOR, TITLE_SCREEN_TEXT_COLOR, CELL_DIMENSIONS, Border_Size_Lookup, BLUE_ICE, MUTE_GREEN
 from sq_src.data_structures.game_enums import GameDifficulty
-from sq_src.data_structures.data_types import Point
+from sq_src.data_structures.data_types import Point, Anchor
 
 class LevelBackground():
     def __init__(self, screen: pygame.surface.Surface, map_seed: str, difficulty: GameDifficulty):
@@ -28,7 +28,7 @@ class LevelBackground():
             20,
             Point(10, WINDOW_DIMENSIONS.height-10),
             NAVY_BLUE, 
-            anchor='bottomleft')
+            anchor=Anchor.BOTTOM_LEFT)
 
         self.time_center_loc = Point(WINDOW_DIMENSIONS.width//2, WINDOW_DIMENSIONS.height-30)
         self.time_sprite = TextSprite(
@@ -37,7 +37,7 @@ class LevelBackground():
             40,
             self.time_center_loc,
             BLACK,
-            anchor='center')
+            anchor=Anchor.CENTER)
         
         self.time_background_rectangle = Rectangle(
             self.screen,
@@ -54,7 +54,7 @@ class LevelBackground():
             30,
             Point(WINDOW_DIMENSIONS.width-10, WINDOW_DIMENSIONS.height-10),
             (255, 0, 0),
-            anchor='bottomright')
+            anchor=Anchor.BOTTOM_RIGHT)
         
         self.time_sprite_group = pygame.sprite.Group()
         self.time_sprite_group.add(self.time_sprite)

@@ -7,7 +7,7 @@ from sq_src.sprites.text_sprite import TextSprite
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import pygame
 from sq_src.configs import TITLE_FONT, WINDOW_DIMENSIONS, TITLE_SCREEN_TEXT_COLOR, LEFT_CLICK, TITLE_SCREEN_COLOR, WHITE, DARK_GRAY, TITLE_FONT, MUTE_GREEN, BLUE_ICE
-from sq_src.data_structures.data_types import Point, Size
+from sq_src.data_structures.data_types import Point, Size, Anchor
 from sq_src.controls.button import Button, SqButton
 from sq_src.data_structures.game_enums import Screen
 from sq_src.metas import SqScreenMeta, SingletonMeta
@@ -49,7 +49,7 @@ class OptionsScreen(metaclass=SingletonMeta):
             TITLE_SCREEN_TEXT_COLOR,
             outline_color=(0,0,0),
             outline_width=1,
-            anchor='topright'
+            anchor=Anchor.TOP_RIGHT
             )
         
 
@@ -61,7 +61,7 @@ class OptionsScreen(metaclass=SingletonMeta):
             TITLE_SCREEN_TEXT_COLOR,
             outline_color=(0,0,0),
             outline_width=1,
-            anchor='center'
+            anchor=Anchor.CENTER
             )
 
 

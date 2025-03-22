@@ -1,6 +1,6 @@
 import pygame
 from sq_src.controls.rectangle import Rectangle
-from sq_src.data_structures.data_types import Point
+from sq_src.data_structures.data_types import Point, Size, Anchor
 from sq_src.configs import  BLUE_ICE, GRAY_BLUE, NAVY_BLUE, UGLY_PINK, MUTE_GREEN, LIGHT_BLUE, TITLE_FONT, DARK_GRAY
 from sq_src.sprites.text_sprite import TextSprite
 
@@ -35,7 +35,7 @@ class Button(Rectangle):
         self.font_file = font_file
         self.font_size = font_size
 
-        self.label = TextSprite(text, font_file, font_size, center_pos, self.font_color, anchor='center')
+        self.label = TextSprite(text, font_file, font_size, center_pos, self.font_color, anchor=Anchor.CENTER)
         self.label_sprite_group = pygame.sprite.Group()
         self.label_sprite_group.add(self.label)
 

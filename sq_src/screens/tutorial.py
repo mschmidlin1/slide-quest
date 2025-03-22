@@ -7,10 +7,10 @@
 
 
 import numpy as np
-from sq_src.configs import BEGINNER_DIMENSIONS, CELEBRATION_TIME_S
+from sq_src.configs import BEGINNER_DIMENSIONS, CELEBRATION_TIME_S, WINDOW_DIMENSIONS
 from sq_src.core.game import Game
 from sq_src.core.game_board import GameBoard
-from sq_src.data_structures.data_types import Cell
+from sq_src.data_structures.data_types import Anchor, Cell, Point
 from sq_src.data_structures.game_enums import CellType, Direction, Screen
 import pygame
 
@@ -33,7 +33,7 @@ class Tutorial:
         gameboard = GameBoard(ice_board, Cell(0, 0), 0)
         self.game = Game(self.screen, gameboard)
         self.banner_manager = BannerManager()
-        self.banner_manager.add_banner("Use arrow keys to Move!", 5, font_size = 23)
+        self.banner_manager.add_banner("Use arrow keys to Move!", 5, font_size = 23, anchor=Anchor.CENTER, position=Point(WINDOW_DIMENSIONS.width/2, WINDOW_DIMENSIONS.height/2-300), auto_size=True)
         self.navigation_manager = NavigationManager()
         self.set_blocks = False
         self.set_snow = False
@@ -48,13 +48,13 @@ class Tutorial:
                     self.game.gameboard_sprite_manager.SetSprite(Cell(row=0, col=5), CellType.BLOCK)
                     self.game.gameboard.UpdateCell(Cell(row=3, col=0), CellType.BLOCK)
                     self.game.gameboard_sprite_manager.SetSprite(Cell(row=3, col=0), CellType.BLOCK)
-                    self.banner_manager.add_banner("Ice sculptures block your path.", 5, font_size = 18)
+                    self.banner_manager.add_banner("Ice sculptures block your path.", 5, font_size = 23, anchor=Anchor.CENTER, position=Point(WINDOW_DIMENSIONS.width/2, WINDOW_DIMENSIONS.height/2-300), auto_size=True)
                     self.set_blocks = True
                 
                 elif event.key in [Direction.RIGHT.value, pygame.K_d, Direction.DOWN.value, pygame.K_s] and not self.set_snow and self.game.gameboard.player_pos in [Cell(row=0, col=4), Cell(row=2, col=0)]:
                     self.game.gameboard.UpdateCell(Cell(row=2, col=4), CellType.GROUND)
                     self.game.gameboard_sprite_manager.SetSprite(Cell(row=2, col=4), CellType.GROUND)
-                    self.banner_manager.add_banner("Snow lets you change direction.", 5, font_size = 18)
+                    self.banner_manager.add_banner("Snow lets you change direction.", 5, font_size = 23, anchor=Anchor.CENTER, position=Point(WINDOW_DIMENSIONS.width/2, WINDOW_DIMENSIONS.height/2-300), auto_size=True)
                     self.set_snow = True
         
         # self.game.update(events)
