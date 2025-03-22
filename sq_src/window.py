@@ -5,6 +5,7 @@ from sq_src.screens.title_screen import TitleScreen
 from sq_src.screens.level_complete_screen import LevelCompleteScreen
 from sq_src.core.game import Game
 from sq_src.configs import WINDOW_DIMENSIONS, WINDOW_TITLE, ICON, SPLASH_SCREEN_ON
+from sq_src.screens.tutorial import Tutorial
 from sq_src.singletons.banner_manager import BannerManager
 from sq_src.singletons.my_logging import LoggingService
 from sq_src.screens.splash_screen import SplashScreen
@@ -147,8 +148,11 @@ class Window():
                 self.game_audio.FadeOutTitleScreenMusic()
             self.current_screen = self.current_game
                 
-
-           
+        if self.navigation_manager.current_screen == Screen.TUTORIAL:
+            self.current_screen_type = Screen.TUTORIAL
+            if self.game_audio.is_music_on:
+                self.game_audio.FadeOutTitleScreenMusic()
+            self.current_screen = Tutorial(self.screen)
 
 
     def update(self, events: list[pygame.event.Event]):

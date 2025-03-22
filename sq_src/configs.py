@@ -53,7 +53,7 @@ SPRITE_POSITIONS = {
 }
 
 #choose to turn of splash screen or not
-SPLASH_SCREEN_ON: bool = True
+SPLASH_SCREEN_ON: bool = False
 
 #Audio settings
 GAME_VOLUME = 0.2 #0-1
