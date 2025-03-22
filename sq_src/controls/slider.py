@@ -1,6 +1,6 @@
 import pygame
-from sq_src.configs import LEFT_CLICK
-from sq_src.data_structures.data_types import Size, Point
+from sq_src.configs import LEFT_CLICK, TITLE_FONT, DARK_GRAY, GRAY, WHITE
+from sq_src.data_structures.data_types import Size, Point, Anchor
 from sq_src.sprites.text_sprite import TextSprite
 
 class Slider:
@@ -48,10 +48,10 @@ class Slider:
         self.knob_rect = pygame.Rect(top_left, width_height)
 
         self.percent_label_loc = Point(self.slider_rect.right+24, self.slider_rect.top)
-        self.percent_text_sprite = TextSprite(self.percent_str(), font, 28, self.percent_label_loc, self.knob_color, anchor='center')
+        self.percent_text_sprite = TextSprite(self.percent_str(), font, 28, self.percent_label_loc, self.knob_color, anchor=Anchor.CENTER)
 
         self.label_loc = Point(self.slider_rect.left, self.slider_rect.top-55)
-        self.slider_label_sprite = TextSprite(label, font, self.font_size, self.label_loc, self.knob_color, anchor='topleft')
+        self.slider_label_sprite = TextSprite(label, font, self.font_size, self.label_loc, self.knob_color, anchor=Anchor.TOP_LEFT)
 
         self.mouse_offset = (0, 0)
 

@@ -13,6 +13,7 @@ class Screen(Enum):
     GAME = 2
     LEVEL_COMPLETE = 3
     WELCOME = 4
+    TUTORIAL = 5
 
 
 

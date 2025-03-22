@@ -38,7 +38,7 @@ class TitleScreen(metaclass=SqScreenMeta):
             )
         
         self.options_button: SqButton = SqButton(screen, Point(50, 50), width=50, height=50, font_size=40, text="F", font_file=SNOWFLAKE_FONT)
-
+        self.tutorial_play_button: SqButton = SqButton(screen, Point(WINDOW_DIMENSIONS[0]//2, (WINDOW_DIMENSIONS[1]//2) - 100), width=300, height=50, font_size=40, text="Tutorial", font_file=TITLE_FONT)
         self.begginer_play_button: SqButton = SqButton(screen, Point(WINDOW_DIMENSIONS[0]//2, (WINDOW_DIMENSIONS[1]//2) + 0), width=300, height=50, font_size=40, text="Beginner", font_file=TITLE_FONT)
         self.intermediate_play_button: SqButton = SqButton(screen, Point(WINDOW_DIMENSIONS[0]//2, (WINDOW_DIMENSIONS[1]//2) + 100), width=300, height=50, font_size=40, text="Intermediate", font_file=TITLE_FONT)
         self.hard_play_button: SqButton = SqButton(screen, Point(WINDOW_DIMENSIONS[0]//2, (WINDOW_DIMENSIONS[1]//2) + 200), width=300, height=50, font_size=40, text="Hard", font_file=TITLE_FONT)
@@ -53,6 +53,7 @@ class TitleScreen(metaclass=SqScreenMeta):
         self.click_type = None
         self.title_screen_sprite_group.update()
         self.options_button.update(events)
+        self.tutorial_play_button.update(events)
         self.begginer_play_button.update(events)
         self.intermediate_play_button.update(events)
         self.hard_play_button.update(events)
@@ -64,7 +65,8 @@ class TitleScreen(metaclass=SqScreenMeta):
                 if event.button == LEFT_CLICK:
                     if self.options_button.is_over(event.pos):
                         self.navigation_manager.navigate_to(Screen.OPTIONS)
-
+                    if self.tutorial_play_button.is_over(event.pos):
+                        self.navigation_manager.navigate_to(Screen.TUTORIAL)
                     if self.begginer_play_button.is_over(event.pos):
                         self.navigation_manager.navigate_to(Screen.GAME)
                         self.navigation_manager.curent_difficulty = GameDifficulty.BEGINNER
@@ -88,6 +90,7 @@ class TitleScreen(metaclass=SqScreenMeta):
         self.faded_ellipse.draw()
         self.title_screen_sprite_group.draw(self.screen)
         self.options_button.draw()
+        self.tutorial_play_button.draw()
         self.begginer_play_button.draw()
         self.intermediate_play_button.draw()
         self.hard_play_button.draw()

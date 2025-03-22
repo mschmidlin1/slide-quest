@@ -1,14 +1,10 @@
-
-
-
-
 import pygame
 
-from sq_src.data_structures.data_types import Point
+from sq_src.data_structures.data_types import Point, Anchor
 
 
 class TextSprite(pygame.sprite.Sprite):
-    def __init__(self, text: str, font_file: str, font_size: int, location: Point, color: tuple = (0,0,0), anchor: str = 'center', outline_color: tuple = None, outline_width: int = 2):
+    def __init__(self, text: str, font_file: str, font_size: int, location: Point, color: tuple = (0,0,0), anchor: Anchor = Anchor.CENTER, outline_color: tuple = None, outline_width: int = 2):
         super().__init__()
         self.text = text
         self.font = pygame.font.Font(font_file, font_size)
@@ -43,15 +39,15 @@ class TextSprite(pygame.sprite.Sprite):
         self.text = text
         self.image = self.render_text_with_outline(text)
         self.rect = self.image.get_rect()
-        if self.anchor == 'center':
+        if self.anchor == Anchor.CENTER:
             self.rect.center = self.location
-        elif self.anchor == 'topleft':
+        elif self.anchor == Anchor.TOP_LEFT:
             self.rect.topleft = self.location
-        elif self.anchor == 'topright':
+        elif self.anchor == Anchor.TOP_RIGHT:
             self.rect.topright = self.location
-        elif self.anchor == 'bottomleft':
+        elif self.anchor == Anchor.BOTTOM_LEFT:
             self.rect.bottomleft = self.location
-        elif self.anchor == 'bottomright':
+        elif self.anchor == Anchor.BOTTOM_RIGHT:
             self.rect.bottomright = self.location
         else:
             raise ValueError("Invalid anchor point")
