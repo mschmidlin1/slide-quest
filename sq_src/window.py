@@ -112,7 +112,7 @@ class Window():
             self.game_audio.button_click_sfx.play()
         if self.navigation_manager.current_screen == Screen.TITLE:
             if self.current_game is not None:
-                self.level_manager.save_seed(self.current_game.shortest_path, False, 0, 0)
+                self.level_manager.save_seed(self.current_game.shortest_path, False, 0, 0, self.current_game.stars)
                 self.current_game = None
                 self.navigation_manager.game_active = False
             if not self.game_audio.is_music_on:
@@ -129,9 +129,8 @@ class Window():
         if self.navigation_manager.current_screen == Screen.LEVEL_COMPLETE:
             self.current_screen_type = Screen.LEVEL_COMPLETE
             if self.current_game.isComplete():
-                self.level_manager.save_seed(self.current_game.shortest_path, True, self.current_game.total_time(), self.current_game.num_moves) #save the time and number of moves etc... This gets saved to the user data.
-                stars = self.current_game.calculate_stars()
-                self.level_complete_screen = LevelCompleteScreen(self.screen, self.current_game.num_moves, self.current_game.totalTime(), self.current_game.least_moves, stars)
+                self.level_manager.save_seed(self.current_game.shortest_path, True, self.current_game.total_time(), self.current_game.num_moves, self.current_game.calculate_stars()) #save the time and number of moves etc... This gets saved to the user data.
+                self.level_complete_screen = LevelCompleteScreen(self.screen, self.current_game.num_moves, self.current_game.totalTime(), self.current_game.least_moves, self.current_game.calculate_stars())
                 self.current_game = None
                 self.navigation_manager.game_active = False
 
