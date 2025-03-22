@@ -1,3 +1,4 @@
+
 import sys
 import os
 
@@ -9,11 +10,10 @@ from sq_src.sprites.text_sprite import TextSprite
 
 import pygame
 from sq_src.configs import BLACK, BLUE_ICE, DARK_GRAY, GOAL_COLOR, GRAY, LEVEL_COMPLETE_IMAGE, TITLE_FONT, WINDOW_DIMENSIONS, TITLE_SCREEN_COLOR, TITLE_SCREEN_TEXT_COLOR, LEFT_CLICK
-from sq_src.data_structures.data_types import Point, Size, Anchor
+from sq_src.data_structures.data_types import Anchor, Point, Size
 from sq_src.singletons.navigation_manager import NavigationManager
 from sq_src.data_structures.game_enums import Screen
 from sq_src.controls.button import SqButton
-from sq_src.metas import SqScreenMeta
 
 class LevelCompleteScreen():
     def __init__(self, screen: pygame.surface.Surface, num_moves: int, time_str: str, least_possible_moves: int, stars: int):
@@ -36,26 +36,22 @@ class LevelCompleteScreen():
         self.star1 = Star(self.screen, GOAL_COLOR, Size(100, 100), (WINDOW_DIMENSIONS.width//2 - 150, WINDOW_DIMENSIONS.height//2 + 100), outline_color=GRAY, outline_thickness=5, inner_star_thickness=star1_inner_thickness)
         self.star2 = Star(self.screen, GOAL_COLOR, Size(100, 100), (WINDOW_DIMENSIONS.width//2, WINDOW_DIMENSIONS.height//2 + 75), outline_color=GRAY, outline_thickness=5, inner_star_thickness=star2_inner_thickness)
         self.star3 = Star(self.screen, GOAL_COLOR, Size(100, 100), (WINDOW_DIMENSIONS.width//2 + 150, WINDOW_DIMENSIONS.height//2 + 100), outline_color=GRAY, outline_thickness=5, inner_star_thickness=star3_inner_thickness)
-        self.title_sprite = TextSprite(
-            "Level Complete!", 
-            TITLE_FONT, 
-            100, 
-            Point(WINDOW_DIMENSIONS[0]//2, WINDOW_DIMENSIONS[1]//4),
-            TITLE_SCREEN_TEXT_COLOR,
-            outline_color=(0,0,0),
-            outline_width=1,
-            anchor=Anchor.CENTER
-            )
         self.time_sprite = TextSprite(
-            f"Time: {time_str}", 
+            f"{time_str}", 
             TITLE_FONT, 
-            50, 
-            Point(WINDOW_DIMENSIONS[0]//2, WINDOW_DIMENSIONS[1]//2),
-            TITLE_SCREEN_TEXT_COLOR,
-            outline_color=(0,0,0),
-            outline_width=1,
-            anchor=Anchor.CENTER
-            )
+            40, 
+            Point(WINDOW_DIMENSIONS.width//2, WINDOW_DIMENSIONS.height//2 + 200),
+            BLACK,
+            anchor=Anchor.CENTER)
+        self.time_background_rectangle = Rectangle(
+            self.screen,
+            BLUE_ICE,
+            Point(WINDOW_DIMENSIONS.width//2, WINDOW_DIMENSIONS.height//2 + 200 + 2),
+            width = 100,
+            height = 24,
+            outline_color=DARK_GRAY,
+            border_radius=5
+        )
         self.moves_text_sprite = TextSprite(
             f"{num_moves}/{least_possible_moves} moves",
             TITLE_FONT,
@@ -84,6 +80,8 @@ class LevelCompleteScreen():
 
     def draw(self):
         self.screen.blit(self.background_image, (0,0))
+        self.time_background_rectangle.draw()
+        self.moves_background_rectangle.draw()
         self.star1.draw()
         self.star2.draw()
         self.star3.draw()
