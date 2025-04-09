@@ -1,9 +1,48 @@
-# Slide-Quest
-"A fun puzzle game created by people who don't know how to code."
+https://img.shields.io/badge/any_text-you_like-blue
 
-Runs on python 3.11.9
+# Slide-Quest
+
+
+[Install Instructions](#install-instructions).
+
+
+
+A fun puzzle game where you slide around to escape the cave. 
+
+Python 3.11.9
 
 ![alt text](resources/images/Icy-Q-nobackground.png)
+
+
+
+
+#### Title Screen
+- Earn stars by playing the game.
+- Harder difficulty means larger map.
+![alt text](resources/images/title-screen-screenshot.png)
+
+
+
+#### Gameplay
+- Use the arrow keys or wasd to move towards the ladder.
+- You will slide over the ice until you hit the wall or an ice sculpture. 
+- Snow will stop your momentum and allow you to change direction.
+![alt text](resources/images/game-play-screenshot.png)
+
+
+
+#### Level Completion
+- Earn stars by completing levels in the least number of moves and the least time
+![alt text](resources/images/level-complete-screenshot.png)
+
+
+
+
+
+
+
+
+
 
 
 # Install Instructions
