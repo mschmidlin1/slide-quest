@@ -4,7 +4,7 @@
 USER_HOME=$HOME
 
 # Specify the folders and files to remove
-ITEMS_TO_REMOVE=("levels" "mapgen_resources" "resources" "SQ_modules" "SlideQuest" "SlideQuest-Intel")
+ITEMS_TO_REMOVE=("mapgen_resources" "resources" "SlideQuest")
 
 # Loop through each item and remove it from the user's home directory
 for item in "${ITEMS_TO_REMOVE[@]}"
