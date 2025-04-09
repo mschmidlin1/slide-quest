@@ -1,4 +1,7 @@
-https://img.shields.io/badge/any_text-you_like-blue
+![Static Badge](https://img.shields.io/badge/python-3.11-blue)
+![Static Badge](https://img.shields.io/badge/numpy-orange)
+![Static Badge](https://img.shields.io/badge/pygame-green)
+
 
 # Slide-Quest
 
@@ -8,8 +11,6 @@ https://img.shields.io/badge/any_text-you_like-blue
 
 
 A fun puzzle game where you slide around to escape the cave. 
-
-Python 3.11.9
 
 ![alt text](resources/images/Icy-Q-nobackground.png)
 
