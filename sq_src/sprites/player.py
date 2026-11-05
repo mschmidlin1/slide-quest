@@ -39,7 +39,7 @@ class Player(pygame.sprite.Sprite):
         Loads the sprite sheet, slices it into frames, and sets the initial sprite image.
         """
         self.sprite_sheet = pygame.image.load(PLAYER_SPRITE_SHEET).convert_alpha()  # Load the sprite sheet
-        self.shadow_sprite = self.sprite_sheet.subsurface((352, 140, self.sprite_size[0] / 2, self.sprite_size[1])) #magic numbers until I can annotate them better
+        self.shadow_sprite = self.sprite_sheet.subsurface((352, 140, int(self.sprite_size[0] / 2), self.sprite_size[1])) #magic numbers until I can annotate them better
 
         # Load frame sets for each direction
 

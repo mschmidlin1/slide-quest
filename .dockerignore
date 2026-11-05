@@ -1,0 +1,13 @@
+.git
+.venv
+slide-quest-env
+SQenv
+build
+**/__pycache__
+unit_tests
+administrative
+docs
+install_spec
+logs
+*.pyc
+save_data.pkl

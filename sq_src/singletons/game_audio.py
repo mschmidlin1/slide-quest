@@ -1,10 +1,21 @@
 import pygame
 import os
+import sys
 from sq_src.metas import SingletonMeta
 import random
-import time
 from sq_src.singletons.user_data import UserData
 from sq_src.configs import MUSIC_FADE_EVENT
+
+# This ogg is the looping edit of the original mp3. The mp3's ending tick is gone.
+TITLE_MUSIC = "resources/audio/music/PhilosophicalSongTitle - RoccoW  Chiptune [No Copyright Music].ogg"
+
+
+def audio_path(path: str) -> str:
+    """Use OGG in the browser. Desktop builds keep the original MP3 files."""
+    if sys.platform == "emscripten":
+        root, _extension = os.path.splitext(path)
+        return root + ".ogg"
+    return path
 
 
 class GameAudio(metaclass=SingletonMeta):
@@ -30,20 +41,23 @@ class GameAudio(metaclass=SingletonMeta):
         self.current_sfx_volume = self.user_data.user_data['volume_levels']['sfx']
 
         slide_sounds_dir = "resources/audio/sounds/SlideSounds"
+        audio_extension = ".ogg" if sys.platform == "emscripten" else ".mp3"
         self.slide_sfxs: list[pygame.mixer.Sound] = []
         for sound_file in os.listdir(slide_sounds_dir):
+            if not sound_file.lower().endswith(audio_extension):
+                continue
             sfx = pygame.mixer.Sound(os.path.join(slide_sounds_dir, sound_file))
             sfx.set_volume(self.current_sfx_volume)
             self.slide_sfxs.append(sfx)
 
 
-        self.level_complete_sfx = pygame.mixer.Sound("resources/audio/sounds/LevelCompleteSound.mp3")
+        self.level_complete_sfx = pygame.mixer.Sound(audio_path("resources/audio/sounds/LevelCompleteSound.mp3"))
         self.level_complete_sfx.set_volume(self.current_sfx_volume)
-        self.title_screen_music = pygame.mixer.Sound("resources/audio/music/PhilosophicalSongTitle - RoccoW  Chiptune [No Copyright Music].mp3")
+        self.title_screen_music = pygame.mixer.Sound(TITLE_MUSIC)
         self.title_screen_music.set_volume(self.current_music_volume)
-        self.button_click_sfx = pygame.mixer.Sound("resources/audio/sounds/multi-pop.mp3")
+        self.button_click_sfx = pygame.mixer.Sound(audio_path("resources/audio/sounds/multi-pop.mp3"))
         self.button_click_sfx.set_volume(self.current_sfx_volume)
-        self.splash_screen_sounds = pygame.mixer.Sound("resources/audio/sounds/vibes-windy-whoosh-magical-chimes.mp3")
+        self.splash_screen_sounds = pygame.mixer.Sound(audio_path("resources/audio/sounds/vibes-windy-whoosh-magical-chimes.mp3"))
         self.splash_screen_sounds.set_volume(self.current_sfx_volume)
 
         self.is_music_on: bool = False
@@ -66,12 +80,10 @@ class GameAudio(metaclass=SingletonMeta):
         Args:
             fade_duration_ms (int, optional): The duration of the fade out in milliseconds (default: 3000).
         """
-        #fade_out_sound(self.title_screen_music, fade_duration_ms)
         self.is_music_on = False
         original_volume = self.title_screen_music.get_volume()
         self.volume_step_size = original_volume / self.n_steps
         self.sleep_duration = fade_duration_ms // self.n_steps
-        #pygame.event.Event()
         pygame.time.set_timer(MUSIC_FADE_EVENT, self.sleep_duration, self.n_steps)
 
     def FadeInTitleScreenMusic(self):

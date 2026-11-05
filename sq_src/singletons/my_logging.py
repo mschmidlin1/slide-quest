@@ -1,6 +1,6 @@
 import logging
-from logging.config import dictConfig
 import functools
+import sys
 from sq_src.configs import FILE_LOG_LEVEL, STDOUT_LOG_LEVEL, LOG_FILE, LOG_PATH
 from sq_src.metas import SingletonMeta
 import os
@@ -19,54 +19,47 @@ class LoggingService(metaclass=SingletonMeta):
         self.file_log_level = FILE_LOG_LEVEL
         self.stdout_log_level = STDOUT_LOG_LEVEL
         self.logger = logging.getLogger(__name__)
-        self.setup_logging_directory()
+        self.file_logging_enabled = self.setup_logging_directory()
         self.setup_logger()
 
     def setup_logging_directory(self):
         """
         Ensures that the log directory exists and creates the log file if it does not exist.
         """
-        if not os.path.isdir(self.log_directory):
-            os.mkdir(self.log_directory)
-        if not os.path.isfile(self.log_file):
-            with open(self.log_file, 'w') as file:
-                pass
+        try:
+            if not os.path.isdir(self.log_directory):
+                os.mkdir(self.log_directory)
+            if not os.path.isfile(self.log_file):
+                with open(self.log_file, 'w') as file:
+                    pass
+            return True
+        except OSError as error:
+            print(f"File logging disabled: {error}")
+            return False
 
     def setup_logger(self):
         """
         Configures the logger with file and console handlers using the specified log levels and format.
+
+        The browser build of Python does not include logging.config, so handlers
+        are attached directly.
         """
-        logging_config = {
-            'version': 1,
-            'disable_existing_loggers': False,
-            'formatters': {
-                'standard': {
-                    'format': '%(asctime)s - %(levelname)s - %(message)s'
-                },
-            },
-            'handlers': {
-                'file': {
-                    'level': self.file_log_level,
-                    'class': 'logging.FileHandler',
-                    'filename': self.log_file,
-                    'formatter': 'standard',
-                },
-                'console': {
-                    'level': self.stdout_log_level,
-                    'class': 'logging.StreamHandler',
-                    'formatter': 'standard',
-                    'stream': 'ext://sys.stdout',
-                },
-            },
-            'loggers': {
-                '': {
-                    'handlers': ['file', 'console'],
-                    'level': 'DEBUG',
-                    'propagate': True
-                },
-            }
-        }
-        logging.config.dictConfig(logging_config)
+        formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+        self.logger.setLevel(logging.DEBUG)
+        self.logger.propagate = False
+        if self.logger.handlers:
+            return
+
+        console = logging.StreamHandler(sys.stdout)
+        console.setLevel(getattr(logging, self.stdout_log_level))
+        console.setFormatter(formatter)
+        self.logger.addHandler(console)
+
+        if self.file_logging_enabled:
+            file_handler = logging.FileHandler(self.log_file)
+            file_handler.setLevel(getattr(logging, self.file_log_level))
+            file_handler.setFormatter(formatter)
+            self.logger.addHandler(file_handler)
 
     def log_debug(self, message: str, **kwargs):
         """

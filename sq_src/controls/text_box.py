@@ -82,6 +82,50 @@ class TextBox:
                     if event.key == pygame.K_BACKSPACE:
                         self.text = self.text[:-1]
                     else:
-                        self.text += event.unicode
+                        self.text += self._typed_character(event)
+
+    def _typed_character(self, event) -> str:
+        """
+        Character produced by a key press.
+
+        The browser build leaves KEYDOWN.unicode empty, so fall back to the key code.
+        Desktop pygame already fills unicode, and that value is used as-is.
+        """
+        if event.unicode:
+            return event.unicode
+
+        key = event.key
+        if key in (pygame.K_RETURN, pygame.K_ESCAPE, pygame.K_TAB, pygame.K_BACKSPACE):
+            return ""
+
+        mods = pygame.key.get_mods()
+        if pygame.K_a <= key <= pygame.K_z:
+            char = chr(key)
+            if mods & (pygame.KMOD_SHIFT | pygame.KMOD_CAPS):
+                return char.upper()
+            return char
+        if pygame.K_0 <= key <= pygame.K_9:
+            if mods & pygame.KMOD_SHIFT:
+                return ")!@#$%^&*("[key - pygame.K_0]
+            return chr(key)
+
+        symbols = {
+            pygame.K_SPACE: (" ", " "),
+            pygame.K_MINUS: ("-", "_"),
+            pygame.K_EQUALS: ("=", "+"),
+            pygame.K_PERIOD: (".", ">"),
+            pygame.K_COMMA: (",", "<"),
+            pygame.K_SLASH: ("/", "?"),
+            pygame.K_SEMICOLON: (";", ":"),
+            pygame.K_QUOTE: ("'", '"'),
+            pygame.K_LEFTBRACKET: ("[", "{"),
+            pygame.K_RIGHTBRACKET: ("]", "}"),
+            pygame.K_BACKSLASH: ("\\", "|"),
+            pygame.K_BACKQUOTE: ("`", "~"),
+        }
+        pair = symbols.get(key)
+        if pair is None:
+            return ""
+        return pair[1] if mods & pygame.KMOD_SHIFT else pair[0]
 
 

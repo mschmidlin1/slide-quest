@@ -1,11 +1,14 @@
-from dataclasses import dataclass
 from sq_src.level_generation.seed import Seed
 from sq_src.metas import SingletonMeta
+import base64
 import os
+import pickle
+import sys
 from sq_src.configs import GAME_VOLUME
 from sq_src.data_structures.game_enums import GameDifficulty, Direction
-import pickle
 from sq_src.singletons.my_logging import LoggingService
+
+BROWSER_SAVE_KEY = "slidequest.save_data"
 
 
 
@@ -27,30 +30,33 @@ class UserData(metaclass=SingletonMeta):
         self.logging_service = LoggingService()
 
 
-        if not os.path.exists(self.file_name):
-            self.user_data = {
-                    "volume_levels": {
-                        "music": self.music_volume,
-                        "sfx": self.sfx_volume
-                    },
-                    "maps": self.seed_data,
-                    "current_seed": {difficulty: Seed(0, [], False, False, 0, 0) for difficulty in GameDifficulty},
-                    "user_name": "",
-                }
-            self.write()
-        else:
+        if os.path.exists(self.file_name):
             self.read()
+        if not hasattr(self, "user_data"):
+            if not self._read_browser():
+                self.user_data = {
+                        "volume_levels": {
+                            "music": self.music_volume,
+                            "sfx": self.sfx_volume
+                        },
+                        "maps": self.seed_data,
+                        "current_seed": {difficulty: Seed(0, [], False, False, 0, 0) for difficulty in GameDifficulty},
+                        "user_name": "",
+                    }
+                self.write()
     
 
     def write(self):
         """
         Saves the user data to file.
         """
+        payload = pickle.dumps(self.user_data)
         try:
             with open(self.file_name, 'wb') as f:
-                pickle.dump(self.user_data, f)
+                f.write(payload)
         except IOError as e:
             self.logging_service.log_error(f"Error writing to file: {e}")
+        self._write_browser(payload)
 
     def read(self):
         """
@@ -62,18 +68,53 @@ class UserData(metaclass=SingletonMeta):
                 self.user_data = loaded_data
         except (IOError, EOFError, pickle.UnpicklingError) as e:
             self.logging_service.log_error(f"Error reading from file: {e}")
+
+    def _browser_storage(self):
+        """Return the browser localStorage object when running under pygbag."""
+        if sys.platform != "emscripten":
+            return None
+        try:
+            from platform import window
+            return window.localStorage
+        except Exception:
+            return None
+
+    def _write_browser(self, payload: bytes):
+        storage = self._browser_storage()
+        if storage is None:
+            return
+        try:
+            storage.setItem(BROWSER_SAVE_KEY, base64.b64encode(payload).decode("ascii"))
+        except Exception as e:
+            self.logging_service.log_error(f"Error writing browser save: {e}")
+
+    def _read_browser(self) -> bool:
+        storage = self._browser_storage()
+        if storage is None:
+            return False
+        try:
+            raw = storage.getItem(BROWSER_SAVE_KEY)
+            if not raw:
+                return False
+            self.user_data = pickle.loads(base64.b64decode(str(raw)))
+            return True
+        except Exception as e:
+            self.logging_service.log_error(f"Error reading browser save: {e}")
+            return False
     
     def update_music_volume(self, volume: float):
         """
         Update the saved music volume.
         """
         self.user_data['volume_levels']['music'] = volume
+        self.write()
 
     def update_sfx_volume(self, volume: float):
         """
         Update the saved sound effects volume.
         """
         self.user_data['volume_levels']['sfx'] = volume
+        self.write()
 
     def add_map(self, difficulty: GameDifficulty, seed: Seed):
         """
@@ -115,6 +156,7 @@ class UserData(metaclass=SingletonMeta):
         Set the user name in the save data.
         """
         self.user_data['user_name'] = user_name.strip()
+        self.write()
 
     def get_seeds(self, difficulty: GameDifficulty) -> list[Seed]:
         """

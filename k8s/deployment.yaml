@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: slide-quest
+  namespace: slide-quest
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: slide-quest
+  template:
+    metadata:
+      labels:
+        app: slide-quest
+    spec:
+      containers:
+        - name: app
+          image: ghcr.io/mschmidlin1/slide-quest:latest
+          ports:
+            - containerPort: 80
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi

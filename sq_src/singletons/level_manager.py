@@ -1,3 +1,5 @@
+import time
+
 from sq_src.core.game_board import GameBoard
 from sq_src.level_generation.level_generator import LevelGenerator
 from sq_src.metas import SingletonMeta
@@ -30,6 +32,8 @@ class LevelManager(metaclass=SingletonMeta):
         self.current_difficulty = None
         self.user_data = UserData()
         self.logging_service = LoggingService()
+        self.is_loading = False
+        self._generator = None
 
 
     def load_level(self, new_difficulty: GameDifficulty):
@@ -42,8 +46,11 @@ class LevelManager(metaclass=SingletonMeta):
         self.current_difficulty = new_difficulty
         self.level_generator = LevelGenerator(new_difficulty)
         self.current_seed = self.user_data.get_current_seed(new_difficulty)
+        self._generator = None
+        self.is_loading = False
         if self.current_seed.completed or not self.current_seed.is_possible:
-            self.next_seed()
+            self._generator = self.level_generator.iter_valid_board(self.current_seed.number + 1)
+            self.is_loading = True
         else:
             self.current_gameboard = self.level_generator.generate_candidate(self.current_seed.number)
 
@@ -63,6 +70,37 @@ class LevelManager(metaclass=SingletonMeta):
         self.current_seed = seed_to_save
         self.user_data.set_current_seed(self.current_difficulty, seed_to_save)
         self.user_data.replace_map(self.current_difficulty, seed_to_save)
+        self.user_data.write()
+
+    def generation_step(self, budget_s: float = 0.03) -> bool:
+        """
+        Continue searching for a playable map for a short slice of time.
+
+        Returns True when the current gameboard is ready to play.
+        """
+        if not self.is_loading:
+            return True
+
+        started = time.perf_counter()
+        while time.perf_counter() - started < budget_s:
+            event = next(self._generator)
+            if event[0] == "tick":
+                continue
+            if event[0] == "reject":
+                failed_seed = Seed(event[1], [], False, False, 0, 0, 0)
+                self.user_data.replace_map(self.current_difficulty, failed_seed)
+                continue
+
+            new_seed, gameboard = event[1], event[2]
+            self.current_seed = Seed(new_seed, ShortestPath(gameboard), False, True, 0, 0, 0)
+            self.user_data.replace_map(self.current_difficulty, self.current_seed)
+            self.user_data.set_current_seed(self.current_difficulty, self.current_seed)
+            self.current_gameboard = gameboard
+            self.user_data.write()
+            self.is_loading = False
+            self._generator = None
+            return True
+        return False
 
     def next_seed(self):
         """

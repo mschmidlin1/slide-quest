@@ -4,6 +4,7 @@ packaging==23.2
 pefile==2023.2.7
 pydeps==1.12.18
 pygame==2.5.2
+pygbag==0.9.3
 pyinstaller==6.4.0
 pyinstaller-hooks-contrib==2024.1
 pywin32-ctypes==0.2.2

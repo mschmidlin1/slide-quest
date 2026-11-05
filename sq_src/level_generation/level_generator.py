@@ -249,6 +249,51 @@ class LevelGenerator:
         return gameboard
 
 
+    def iter_valid_board(self, starting_num=0):
+        """
+        Yield progress while searching for a playable map.
+
+        Each item is one of:
+        - ("tick",) while a candidate is still being checked
+        - ("reject", seed_number) when a candidate cannot be used
+        - ("ready", seed_number, gameboard) for the first playable map
+        """
+        candidate_seed = starting_num - 1
+        while True:
+            candidate_seed += 1
+            candidate = self.generate_candidate(candidate_seed)
+            if candidate is None:
+                self.logging_service.log_info(f"Candidate failed as player or goal position could not be found.(seed={candidate_seed})")
+                yield ("reject", candidate_seed)
+                continue
+
+            if len(ShortestPath(candidate)) < 3:
+                self.logging_service.log_info(f"Candidate map failed.(seed={candidate_seed})")
+                yield ("reject", candidate_seed)
+                continue
+
+            player_pos = candidate.player_pos  # save player position for after this check
+            goal_pos = candidate.goal_pos
+            reachable_positions = ReachablePositions(candidate)
+            failed = False
+            for position in reachable_positions:
+                if position in [player_pos, goal_pos]:#don't bother checking for player pos and goal position
+                    continue
+                candidate.SetPlayerPos(position)
+                if len(ShortestPath(candidate)) < 1:  # check to see if map is possible from this position
+                    self.logging_service.log_info(f"Candidate map failed from position {position}.(seed={candidate_seed})")
+                    failed = True
+                    break
+                yield ("tick",)
+
+            if failed:
+                yield ("reject", candidate_seed)
+                continue
+
+            candidate.SetPlayerPos(player_pos)
+            yield ("ready", candidate_seed, candidate)
+            return
+
     def generate(self, starting_num=0) -> tuple[int, GameBoard]:
         """
         Generates a valid game board along with its seed.
@@ -260,35 +305,10 @@ class LevelGenerator:
         Returns:
         tuple[int, GameBoard]: A tuple containing the seed used to generate the playable game board and the game board itself.
         """
-        candidate_seed = starting_num - 1
-        while True:
-            candidate_seed += 1
-            candidate = self.generate_candidate(candidate_seed)
-            if candidate is None:
-                self.logging_service.log_info(f"Candidate failed as player or goal position could not be found.(seed={candidate_seed})")
-                continue
-
-            if len(ShortestPath(candidate)) < 3:
-                self.logging_service.log_info(f"Candidate map failed.(seed={candidate_seed})")
-                continue
-
-            player_pos = candidate.player_pos  # save player position for after this check
-            goal_pos = candidate.goal_pos
-            reachable_positions = ReachablePositions(candidate)
-            for position in reachable_positions:
-                if position in [player_pos, goal_pos]:#don't bother checking for player pos and goal position
-                    continue
-                candidate.SetPlayerPos(position)
-                if len(ShortestPath(candidate)) < 1:  # check to see if map is possible from this position
-                    self.logging_service.log_info(f"Candidate map failed from position {position}.(seed={candidate_seed})")
-                    break # break the inner loop and continue the outer loop
-
-            else: #if the inner for loop finishes without breaking
-                candidate.SetPlayerPos(player_pos)
-                return (candidate_seed, candidate)
-            
-            #if the for loop broke, continue the outer while loop.
-            continue
+        for event in self.iter_valid_board(starting_num):
+            if event[0] == "ready":
+                return (event[1], event[2])
+        raise RuntimeError("Level generator ended without a playable map.")
 
 
     

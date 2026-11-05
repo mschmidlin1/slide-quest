@@ -5,9 +5,6 @@ from sq_src.data_structures.game_enums import GameDifficulty
 from sq_src.data_structures.data_types import Size
 import pygame
 
-#custome events
-MUSIC_FADE_EVENT = pygame.USEREVENT + 1#pygame.event.custom_type()
-
 # (x, y, width, ,height)
 SPRITE_POSITIONS = {
     'ice': (32, 192, 32, 32),     #one square of ice       
@@ -52,11 +49,14 @@ SPRITE_POSITIONS = {
     'border_bottomRight': (576, 384, 32, 32)
 }
 
+#custome events
+MUSIC_FADE_EVENT = pygame.USEREVENT + 1#pygame.event.custom_type()
+
 #choose to turn of splash screen or not
 SPLASH_SCREEN_ON: bool = True
 
 #Audio settings
-GAME_VOLUME = 0.2 #0-1
+GAME_VOLUME = 0.05 #0-1
 
 #logging settings
 FILE_LOG_LEVEL = "DEBUG"

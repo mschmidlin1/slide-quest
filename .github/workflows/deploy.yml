@@ -1,0 +1,44 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    env:
+      KUBECONFIG: /home/mike/.kube/config
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Log in to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+
+      - name: Build and push image
+        run: |
+          IMAGE=ghcr.io/mschmidlin1/slide-quest
+          docker build -t "${IMAGE}:${{ github.sha }}" -t "${IMAGE}:latest" .
+          docker push "${IMAGE}:${{ github.sha }}"
+          docker push "${IMAGE}:latest"
+
+      - name: Apply Kubernetes manifests
+        run: kubectl apply -k k8s/
+
+      - name: Roll out new image
+        run: |
+          kubectl set image deployment/slide-quest \
+            app=ghcr.io/mschmidlin1/slide-quest:${{ github.sha }} \
+            -n slide-quest
+          kubectl rollout status deployment/slide-quest \
+            -n slide-quest \
+            --timeout=5m

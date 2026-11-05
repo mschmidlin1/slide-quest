@@ -1,5 +1,6 @@
+import asyncio
+
 import pygame
-import sys
 from pygame.locals import *
 
 class SplashScreen():
@@ -35,15 +36,19 @@ class SplashScreen():
         if elapsed_time >= self.duration:
             self.state = 'done'
 
-    def run(self):
-        running = True
-        while running:
+    async def run(self):
+        """
+        Play the splash screen.
+
+        Returns False when the player closes the window during the splash.
+        """
+        clock = pygame.time.Clock()
+        while True:
             current_time = pygame.time.get_ticks() - self.start_time
             for event in pygame.event.get():
                 if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
-                    pygame.quit()
-                    sys.exit()
-                    
+                    return False
+
             self.draw()
             if self.state == 'fade_in':
                 self.fade_in(current_time)
@@ -53,6 +58,8 @@ class SplashScreen():
             elif self.state == 'fade_out':
                 self.fade_out(current_time)
             elif self.state == 'done':
-                running = False
+                return True
 
             pygame.display.update()
+            clock.tick(60)
+            await asyncio.sleep(0)

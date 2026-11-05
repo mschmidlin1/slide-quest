@@ -95,6 +95,16 @@ class Slider:
         pixel_position = percent * self.slider_size.width
         return int(round(pixel_position))
     
+    def _hit_rect(self) -> pygame.Rect:
+        """Track plus knob, so a click anywhere on the slider moves it."""
+        return self.slider_rect.inflate(self.knob_size.width, self.knob_size.height)
+
+    def _set_knob_x(self, x_px: int):
+        """Move the knob so its center is at x_px, clamped to the track."""
+        new_x = max(self.slider_rect.left, min(int(x_px), self.slider_rect.right))
+        self.current_slider_percent = self.calculate_percent(new_x - self.slider_rect.left)
+        self.knob_rect.centerx = new_x
+
     def is_over(self, pos) -> bool:
         """
         Checks if the given mouse position is over the slider's knob.
@@ -138,19 +148,14 @@ class Slider:
 
         for event in events:
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == LEFT_CLICK:
-                    if self.is_over(event.pos):
-                        self.dragging = True
-                        self.mouse_offset = event.pos[0]-self.knob_rect.centerx
+                if event.button == LEFT_CLICK and self._hit_rect().collidepoint(event.pos):
+                    self.dragging = True
+                    self._set_knob_x(event.pos[0])
+                    self.mouse_offset = event.pos[0] - self.knob_rect.centerx
             if event.type == pygame.MOUSEMOTION:
                 if self.dragging == True:
                     new_x = event.pos[0] - self.mouse_offset
-                    #make sure the new position is inside the slider
-                    new_x = max(new_x, self.slider_rect.left)
-                    new_x = min(new_x, self.slider_rect.right)
-                    self.current_slider_percent = self.calculate_percent(new_x - self.slider_rect.left)
-                    move_distance = new_x - self.knob_rect.centerx
-                    self.knob_rect.move_ip(move_distance, 0)
+                    self._set_knob_x(new_x)
             if event.type == pygame.MOUSEBUTTONUP:
                 if event.button == LEFT_CLICK:
                     self.dragging = False

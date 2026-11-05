@@ -1,10 +1,19 @@
+import asyncio
 import sys
 import pygame
 from sq_src.level_generation.level_io import LevelIO
 from sq_src.screens.title_screen import TitleScreen
 from sq_src.screens.level_complete_screen import LevelCompleteScreen
 from sq_src.core.game import Game
-from sq_src.configs import WINDOW_DIMENSIONS, WINDOW_TITLE, ICON, SPLASH_SCREEN_ON
+from sq_src.configs import (
+    NAVY_BLUE,
+    SPLASH_SCREEN_ON,
+    TITLE_FONT,
+    WHITE,
+    WINDOW_DIMENSIONS,
+    WINDOW_TITLE,
+    ICON,
+)
 from sq_src.screens.tutorial import Tutorial
 from sq_src.singletons.banner_manager import BannerManager
 from sq_src.singletons.my_logging import LoggingService
@@ -44,29 +53,65 @@ class Window():
         """
         pygame.init()
         self.screen = pygame.display.set_mode(WINDOW_DIMENSIONS)
-        pygame.display.set_caption(WINDOW_TITLE)
+        pygame.display.set_caption("Slide Quest!" if sys.platform == "emscripten" else WINDOW_TITLE)
         pygame.display.set_icon(ICON)
+        if sys.platform == "emscripten":
+            self._style_browser_frame()
         self.clock = pygame.time.Clock()
         pygame.mixer.init()
 
+    def _style_browser_frame(self):
+        """Navy page around the square, with the button cyan as a thin frame."""
+        import platform
+        platform.document.body.style.background = "#0B2A51"
+        canvas = platform.window.canvas
+        canvas.style.outline = "2px solid #43B8D6"
+        canvas.style.outlineOffset = "0px"
+
     
-    def run_splash_screen(self):
+    async def run_splash_screen(self):
         """
         Creates and instance of SplashScreen and runs it.
         """
         self.game_audio.splash_screen_sounds.play()
         splash_screen = SplashScreen(self.screen)
-        splash_screen.run()
+        return await splash_screen.run()
 
+    def _shutdown(self):
+        """Save progress and close the desktop window."""
+        self.user_data.write()
+        if sys.platform != "emscripten":
+            pygame.quit()
+
+    def _start_loaded_game(self):
+        """Create the playable game from the level that just finished generating."""
+        self.current_game = Game(self.screen, self.level_manager.get_current_gameboard())
+        self.navigation_manager.game_active = True
+        self.current_screen = self.current_game
+        self.current_screen_type = Screen.GAME
+
+    def _draw_loading(self):
+        """Show a holding screen while a level is being generated."""
+        self.screen.fill(NAVY_BLUE)
+        if not hasattr(self, "_loading_text"):
+            font = pygame.font.Font(TITLE_FONT, 80)
+            self._loading_text = font.render("Generating level...", True, WHITE)
+            self._loading_rect = self._loading_text.get_rect(
+                center=(WINDOW_DIMENSIONS.width // 2, WINDOW_DIMENSIONS.height // 2)
+            )
+        self.screen.blit(self._loading_text, self._loading_rect)
     
-    def run(self):
+    async def run(self):
         """
         Main game loop.
         - updates events
         - draws sprites
         """
+        self._running = True
         if SPLASH_SCREEN_ON:
-            self.run_splash_screen()    
+            if not await self.run_splash_screen():
+                self._shutdown()
+                return
 
         self.game_audio.FadeInTitleScreenMusic()
         self.title_screen = TitleScreen(self.screen)
@@ -84,18 +129,23 @@ class Window():
             self.navigation_manager.navigate_to(Screen.TITLE)
         
         self.banner_manager.add_banner("Welcome!", 5)
-        while True:
+        while self._running:
             events = pygame.event.get()
             self.update(events)
             self.draw()
             pygame.display.flip()
             self.clock.tick(60)
+            await asyncio.sleep(0)
+        self._shutdown()
     
     def draw(self):
         """
         Draw window elements onto the screen.
         """
-        self.current_screen.draw()
+        if self.level_manager.is_loading or self.current_screen is None:
+            self._draw_loading()
+        else:
+            self.current_screen.draw()
         self.banner_manager.draw()
     
 
@@ -112,7 +162,9 @@ class Window():
             self.game_audio.button_click_sfx.play()
         if self.navigation_manager.current_screen == Screen.TITLE:
             if self.current_game is not None:
-                self.level_manager.save_seed(self.current_game.shortest_path, False, 0, 0, self.current_game.stars)
+                # The level was left unfinished, so it earns no stars.
+                # Game has no stars attribute; reading one used to kill the loop.
+                self.level_manager.save_seed(self.current_game.shortest_path, False, 0, 0, 0)
                 self.current_game = None
                 self.navigation_manager.game_active = False
             if not self.game_audio.is_music_on:
@@ -140,12 +192,16 @@ class Window():
         if self.navigation_manager.current_screen == Screen.GAME:
             self.current_screen_type = Screen.GAME
             if self.current_game is None:
-                self.level_manager.load_level(self.navigation_manager.curent_difficulty)
-                self.current_game = Game(self.screen, self.level_manager.get_current_gameboard())
-                self.navigation_manager.game_active = True
+                if not self.level_manager.is_loading:
+                    self.level_manager.load_level(self.navigation_manager.curent_difficulty)
+                if self.level_manager.is_loading:
+                    self.current_screen = None
+                else:
+                    self._start_loaded_game()
+            else:
+                self.current_screen = self.current_game
             if self.game_audio.is_music_on:
                 self.game_audio.FadeOutTitleScreenMusic()
-            self.current_screen = self.current_game
                 
         if self.navigation_manager.current_screen == Screen.TUTORIAL:
             self.current_screen_type = Screen.TUTORIAL
@@ -160,11 +216,16 @@ class Window():
         """
         for event in events:
             if event.type == pygame.QUIT:
-                self.user_data.write()
-                pygame.quit()
-                sys.exit()
+                self._running = False
+                return
         #pass events to game audio
         self.game_audio.update(events)
+
+        if self.level_manager.is_loading:
+            if self.level_manager.generation_step():
+                self._start_loaded_game()
+            self.banner_manager.update(events)
+            return
 
         #pass events to which ever screen is current
         self.current_screen.update(events)

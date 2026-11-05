@@ -1,5 +1,12 @@
+import asyncio
+
 from sq_src.window import Window
 
-if __name__=="__main__":
+
+async def main():
     window = Window()
-    window.run()
+    await window.run()
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
