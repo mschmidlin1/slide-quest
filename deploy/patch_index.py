@@ -33,6 +33,28 @@ CORS_BOOTSTRAP = """<script data-slide-quest="cdn-cors">
       desc.set.call(this, value);
     }
   });
+
+  // The wheel CDN gzips the file but leaves Content-Length at the
+  // compressed size. The loader allocates that many bytes, the last
+  // chunk does not fit, and the zip is cut off. pygame.base is then
+  // missing and the page stays on the navy background.
+  var origFetch = window.fetch;
+  window.fetch = function (input, init) {
+    var url = typeof input === "string" ? input : (input && input.url) || "";
+    var pending = origFetch.call(this, input, init);
+    if (!/\.whl(\?|$)/.test(url)) return pending;
+    return pending.then(function (response) {
+      return response.arrayBuffer().then(function (buf) {
+        var headers = new Headers(response.headers);
+        headers.set("Content-Length", String(buf.byteLength));
+        return new Response(buf, {
+          status: response.status,
+          statusText: response.statusText,
+          headers: headers
+        });
+      });
+    });
+  };
 })();
 </script>"""
 
