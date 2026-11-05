@@ -6,7 +6,7 @@ RUN pip install --no-cache-dir pygame==2.5.2 numpy==1.26.1 pygbag==0.9.3
 
 COPY . .
 
-RUN python -m pygbag --build \
+RUN python -m pygbag --build --no_opt \
         --cdn https://pygame-web.github.io/archives/0.8/ \
         --PYBUILD 3.11 \
         --width 960 \
